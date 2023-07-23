@@ -1,0 +1,79 @@
+
+   
+<div class="card py-5">
+    <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">PRODUCT LIST</h5>
+        <form class="search-container">
+            <div class="input-group mb-3">
+              <input type="search" class="form-control search-input" name="search" placeholder="Search products...">
+              <button type="submit" class="btn btn-primary search-button">Search</button>
+            </div>
+          </form>
+          
+
+        <table class="table text-nowrap mb-0 align-middle" style="table-layout: fixed;">
+            <thead class="text-dark fs-4">
+                <tr>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Index</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Description</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Price</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Category</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Image</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Delete</h6>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productData.forEach((product, index) => { %>
+                <tr>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0"><%= index + 1 %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= product.name %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <p class="mb-0 fw-normal"><%= product.description %></p>
+                    </td>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0 fs-4"><%= product.price %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <p class="mb-0 fw-normal"><%= product.category %></p>
+                    </td>
+                    <td class="border-bottom-0" style="max-width: 200px;">
+                        <div style="display: flex; flex-wrap: wrap;">
+                            <% product.images.forEach(img => { %>
+                                <img src="images/<%= img %>" alt="Product Image" class="img-fluid" style="max-width: 100px; max-height: 100px; object-fit: cover; margin-right: 10px; margin-bottom: 10px;">
+                            <% }); %>
+                        </div>
+                    </td>
+                    <td class="border-bottom-0">
+                        <a href="/admin/edit-product/<%= product._id %>" class="btn btn-primary" style="font-size: 12px;">Edit</a>
+                    </td>
+                    <td class="border-bottom-0">
+                        <a href="/admin/delete?id=<%= product._id %>" class="btn btn-primary" style="font-size: 12px;">Delete</a>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>

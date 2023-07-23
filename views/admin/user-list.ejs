@@ -1,0 +1,60 @@
+
+<div class="card py-5">
+    <!-- views/admin/usersList.ejs -->
+    <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">USERS LIST</h5>
+        <table class="table text-nowrap mb-0 align-middle">
+            <thead class="text-dark fs-4">
+                <tr>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Id</h6>
+                    </th> 
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Name</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Email</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Mobile</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% user.forEach(user => { %>
+                <tr>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0"><%= user.id %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= user.name %></h6>
+                        <span class="fw-normal">Web Designer</span>
+                    </td>
+                    <td class="border-bottom-0">
+                        <p class="mb-0 fw-normal"><%= user.email %></p>
+                    </td>
+                    <td class="border-bottom-0">
+                        <p class="mb-0 fw-normal"><%= user.mobile %></p>
+                    </td>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0"><%= user.isBlocked ? 'Blocked' : 'Active' %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <% if (user.is_blocked) { %>
+                        <a href="/admin/unblock?id=<%= user.id %>" class="btn btn-success">Unblock</a>
+                        <% } else { %>
+                        <a href="/admin/block?id=<%= user.id %>" class="btn btn-danger">Block</a>
+                        <% } %>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>

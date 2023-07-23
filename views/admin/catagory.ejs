@@ -1,0 +1,39 @@
+
+<div class="card py-5">
+  <div class="card-body">
+    <h5 class="card-title fw-semibold mb-4">ADD CATEGORY</h5>
+    <form action="/admin/category" method="post">
+      <div class="mb-3">
+        <label for="categoryName" class="form-label">Category Name</label>
+        <input type="text" class="form-control" id="categoryName" name="name" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Category</button>
+    </form>
+
+    <h5 class="card-title fw-semibold mt-5">LIST OF CATEGORIES</h5>
+    <table class="table text-nowrap mb-0 align-middle">
+      <thead class="text-dark fs-4">
+        <tr>
+          <th class="border-bottom-0">
+            <h6 class="fw-semibold mb-0">Index</h6>
+          </th>
+          <th class="border-bottom-0">
+            <h6 class="fw-semibold mb-0">Category Name</h6>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% categoriesData.forEach((category, index) => { %>
+        <tr>
+          <td class="border-bottom-0">
+            <h6 class="fw-semibold mb-0"><%= index + 1 %></h6>
+          </td>
+          <td class="border-bottom-0">
+            <p class="mb-0 fw-normal"><%= category.name %></p>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>

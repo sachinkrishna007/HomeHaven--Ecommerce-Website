@@ -1,0 +1,32 @@
+<!-- include header -->
+<%- include('./includes/header') %>
+
+
+
+<!--================Login Box Area =================-->
+<section class="login_box_area section_gap">
+    <div class="container">
+            <div class="col-lg-12">
+                <div class="login_form_inner">
+                    <h3>Enter YouR OTP</h3>
+                    <form class="row login_form" action="/loginotp" method="post" id="contactForm" novalidate="novalidate">
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control" id="name" name="otp" placeholder="OTP" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
+                        </div>
+                        
+                        <div class="col-md-12 form-group">
+                            <button type="submit" value="submit" class="primary-btn">Verify</button>
+                        </div>
+                    </form>
+        <%=(typeof message!=='undefined')?message:""%>
+        <div id="countdown" style="display: none;"></div>
+        <a href="/resendOtp" id="resendLink" style="display: none;">Resend OTP</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Login Box Area =================-->
+
+<!-- include footer -->
+<%- include('./includes/footer') %>
