@@ -1,6 +1,8 @@
 const express = require('express')
 const userRoute = express()
 const isAuth=require('../middlewares/userAuth')
+const blocked=require('../middlewares/auth')
+
 
 //mongodb session
 const session=require('express-session')
@@ -29,14 +31,15 @@ userRoute.use(bodyParser.json());
 userRoute.use(bodyParser.urlencoded({ extended: true }))
 
 //reqire controllers
-const userController = require("../controllers/usercontroller")
+const userController = require("../controllers/userController")
 const userMiddleWare = require("../middlewares/auth")
+const productController = require('../controllers/cartController')
 userRoute.use(userMiddleWare.sessionCheck)
 
 
 //user login
 userRoute.get('/',userController.loadhome)
-userRoute.get('/login',userController.loadlogin)
+userRoute.get('/login',userMiddleWare.isloggedIn,userController.loadlogin)
 userRoute.post('/login',userController.verifyLogin)
 //logout
 userRoute.get('/logout',userController.logout)
@@ -46,19 +49,26 @@ userRoute.post('/otplogin',userController.verifynumber)
 userRoute.post('/loginotp',userController.verifyOtpLogin)
 
 
+
 //register
-userRoute.get('/register',userController.loadRegister)
+userRoute.get('/register',userMiddleWare.isloggedIn,userController.loadRegister)
 userRoute.post('/register',userController.validation)
 userRoute.post('/verifyOtp',userController.verifyOtp)
 
 
 
 //products
-userRoute.get('/product',userController.listProduct)
+userRoute.get('/product',userMiddleWare.checkBlockedUser,userController.listProduct)
+userRoute.get('/productDetail/:id',userMiddleWare.checkBlockedUser,userController.productDetail)
+userRoute.get('/error',userController.errorpage)
+userRoute.get('/block',userController.blockpage)
+
+//profileRoutes
+userRoute.get('/profile',userController.loadProfile)
 
 
 
-
+//cartRoutes
 
 
 

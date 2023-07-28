@@ -1,4 +1,5 @@
 require('dotenv').config();
+const nocache=require('nocache')
 const mongoose=require('mongoose')
 mongoose.connect(process.env.MONGODBURL,{
     useNewUrlParser:true,
@@ -17,7 +18,7 @@ const express=require("express")
 const app=express()
 
 
-
+app.use(nocache())
 
 //user route
 const userRoute=require('./routes/userRoute')
@@ -30,7 +31,9 @@ const adminRoute=require('./routes/adminRoute');
 app.use('/admin',adminRoute)
 
 
-
+app.use('*',(req,res)=>{
+    res.redirect('/error')
+})
 
 //port
 app.listen(3000,function(){

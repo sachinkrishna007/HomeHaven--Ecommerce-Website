@@ -1,7 +1,8 @@
-const User=require("../models/userModel")
-const Admin=require("../models/adminModel")
-const Product=require('../models/productModel')
-const Category=require('../models/catagoryModel')
+
+const User = require("../models/userModel")
+const Admin = require("../models/adminModel")
+const Product = require('../models/productModel')
+const Category = require('../models/catagoryModel')
 const path = require('path')
 
 
@@ -42,14 +43,18 @@ const addProduct = async (req, res) => {
                 return res.redirect('/admin'); 
             }
 
-            const { name, description, price, category } = req.body;
+            // const { name, description, price, category } = req.body;
             const imageNames = req.files.map((file) => path.basename(file.path));
+            const category = await Category.findOne({_id:req.body.category})
 
             const newProduct = new Product({
-                name,
-                description,
-                price,
-                category,
+                name:req.body.name,
+                description:req.body.description,
+                price:req.body.price,
+                category:category.name,
+                stock:req.body.stock,
+                offerprice:req.body.offerprice,
+
                 images: imageNames,
             });
 
@@ -98,7 +103,7 @@ const productView = async(req,res)=>{
 
             {name:{$regex:'.*'+search+'.*',$options:'i'}},
         ]
-    });
+    }).sort({id:-1});
 
         // const productData= await Product.find({})
         res.render('product-list',{productData})
@@ -117,7 +122,7 @@ const deleteProduct = async(req,res)=>{
         console.log(error);
     }
 }
-
+// add error image and render
 const editProduct = async(req,res)=>{
     try{
         const productId = req.params.id;
@@ -129,7 +134,7 @@ const editProduct = async(req,res)=>{
         res.status(500).send('Internal Server Error');
     }
 }
-
+// uncle bob cleancode structure
 const updateEditProduct = async (req, res) => {
     try {
       
@@ -140,17 +145,22 @@ const updateEditProduct = async (req, res) => {
             }
 
             const productId = req.params.id;
-            const { name, description, price, category } = req.body;
+            // const { name, description, price, category } = req.body;
             const imageNames = req.files.map((file) => path.basename(file.path));
+            const category = await Category.findOne({_id:req.body.category})
+
 
             const updatedProduct = await Product.findByIdAndUpdate(
                 productId,
                 {
-                    name,
-                    description,
-                    price,
-                    category,
+                    name:req.body.name,
+                    description:req.body.description,
+                    price:req.body.price,
+                    category:category.name,
+                    stock:req.body.stock,
+                    offerprice:req.body.offerprice,
                     images: imageNames,
+
                 },
                 { new: true }
             );

@@ -13,14 +13,22 @@ const productSchema = new mongoose.Schema({
     type: Array,
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
+    type:String,
     ref: 'Category',
     required: true,
   },
   price:{
     type:Number,
     required:true
+  },offerprice:{
+    type:Number,
+    required:true
   },
+  stock:{
+    type:Number,
+    required:true
+  },
+
   isListed:{
     type:Boolean,
     default:true

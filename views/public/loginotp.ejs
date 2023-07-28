@@ -19,8 +19,8 @@
                         </div>
                     </form>
         <%=(typeof message!=='undefined')?message:""%>
-        <div id="countdown" style="display: none;"></div>
-        <a href="/resendOtp" id="resendLink" style="display: none;">Resend OTP</a>
+        <div id="countdownn" style="display: none;"></div>
+        <!-- <a href="/resendOtpLogin" id="resendLinky" style="display: none;">Resend OTP</a> -->
                 </div>
             </div>
         </div>
@@ -29,4 +29,28 @@
 <!--================End Login Box Area =================-->
 
 <!-- include footer -->
-<%- include('./includes/footer') %>
+<%- include('./includes/footer')%>
+
+<!-- <script>
+    var timeLeft = 10; // Set the countdown time in seconds
+
+    function startCountdown() {
+        var countdownElement = document.getElementById('countdownn');
+        var resendLink = document.getElementById('resendLinky');
+
+        countdownElement.style.display = 'inline';
+        resendLink.style.display = 'none';
+
+        var countdownInterval = setInterval(function() {
+            timeLeft--;
+            countdownElement.textContent = 'Resend OTP in ' + timeLeft + ' seconds';
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.style.display = 'none';
+                resendLink.style.display = 'inline';
+            }
+        }, 1000);
+    }
+    startCountdown()
+</script> -->

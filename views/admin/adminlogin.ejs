@@ -37,6 +37,7 @@
                     <a class="text-primary fw-bold" href="./index.html">Forgot Password ?</a>
                   </div>
                   <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">LogIn</button>
+                  <%=(typeof message!=='undefined')?message:""%>
                 </form>
               </div>
             </div>
@@ -45,6 +46,7 @@
       </div>
     </div>
   </div>
+  <%=(typeof message!=='undefined')?message:""%>
   <script src="./assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="./assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>

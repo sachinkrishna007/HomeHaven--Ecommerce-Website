@@ -20,7 +20,7 @@
 		<div class="row">
 			<div class="col-xl-3 col-lg-4 col-md-5">
 				<div class="sidebar-categories">
-					<div class="head">Browse Categories</div>
+					<div class="head" style="background-color: black;" >Browse Categories</div>
 					<ul class="main-categories">
 						
 
@@ -38,7 +38,7 @@
 					</ul>
 				</div>
 				<div class="sidebar-filter mt-50">
-					<div class="top-filter-head">Product Filters</div>
+					<div class="top-filter-head"  style="background-color:black">Product Filters</div>
 					<div class="common-filter">
 						<div class="head">Brands</div>
 						<form action="#">
@@ -83,7 +83,7 @@
 			</div>
 			<div class="col-xl-9 col-lg-8 col-md-7">
 				<!-- Start Filter Bar -->
-				<div class="filter-bar d-flex flex-wrap align-items-center">
+				<div class="filter-bar d-flex flex-wrap align-items-center" style="background-color: black;">
 					<div class="sorting">
 						<select>
 							<option value="1">Default sorting</option>
@@ -118,30 +118,30 @@
                                 <% productData.forEach(product => { %>
                                 <div class="col-lg-4 col-md-6">
                                     <div class="single-product">
-                                        <img class="img-fluid" src="../admin/images/<%= product.images[0] %>" alt="<%= product.name %>">
+                                      <a href="/productDetail/<%= product._id%>"> <img class="img-fluid" src="../admin/images/<%= product.images[0] %>" alt="<%= product.name %>"></a>  
                                         <div class="product-details">
                                             <h6><%= product.name %></h6>
                                             <div class="price">
-                                                <h6>$<%= product.price %></h6>
+                                                <h6>₹<%= product.price %></h6>
                                                 <% if (product.oldPrice) { %>
-                                                <h6 class="l-through">$<%= product.oldPrice %></h6>
+                                                <h6 class="l-through">₹<%= product.oldPrice %></h6>
                                                 <% } %>
                                             </div>
                                             <div class="prd-bottom">
                                                 <a href="" class="social-info">
-                                                    <span class="ti-bag"></span>
+                                                    <span class="ti-bag" style="background-color:black"></span>
                                                     <p class="hover-text">add to bag</p>
                                                 </a>
                                                 <a href="" class="social-info">
-                                                    <span class="lnr lnr-heart"></span>
+                                                    <span class="lnr lnr-heart"style="background-color:red" ></span>
                                                     <p class="hover-text">Wishlist</p>
                                                 </a>
                                                 <a href="" class="social-info">
-                                                    <span class="lnr lnr-sync"></span>
+                                                    <span class="lnr lnr-sync"  style="background-color:black"></span>
                                                     <p class="hover-text">compare</p>
                                                 </a>
                                                 <a href="" class="social-info">
-                                                    <span class="lnr lnr-move"></span>
+                                                    <span class="lnr lnr-move"  style="background-color:black"></span>
                                                     <p class="hover-text">view more</p>
                                                 </a>
                                             </div>

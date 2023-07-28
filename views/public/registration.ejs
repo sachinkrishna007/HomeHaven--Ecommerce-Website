@@ -2,14 +2,13 @@
 <%- include('./includes/header') %>
 
     <!-- Start Banner Area -->
-    <section class="banner-area organic-breadcrumb">
+    
         <div class="container">
-            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+            
                 <div class="col-first">
-                    <h1>Login/Register</h1>
+                    
                     <nav class="d-flex align-items-center">
-                        <a href="">Home<span class="lnr lnr-arrow-right"></span></a>
-                        <a href="">Signup</a>
+                        
                     </nav>
                 </div>
             </div>
@@ -23,17 +22,19 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="login_box_img">
-                        <img class="img-fluid" src="../assets/img/login.jpg" alt="">
+                        <img class="img-fluid" src="../admin/images/armchair-green-living-room-with-copy-space_43614-910.avif
+                        " alt="">
                         <div class="hover">
-                            <h4>New to our website?</h4>
+                            <h4></h4>
                             <p></p>
                             <!-- <a class="primary-btn" href="registration.html">Create an Account</a> -->
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="login_form_inner">
-                        <h3>Log in to enter</h3>
+                <div class="col-lg-6"  >
+                    
+                    <div class="login_form_inner" style="padding: 0px;" >
+                        <h3>Register Here</h3>
                         <form class="row login_form" action="" method="post" id="contactForm" novalidate="novalidate">
                             <div class="col-md-12 form-group">
                                 <input type="text" class="form-control" name="name" placeholder="Username"
@@ -44,22 +45,22 @@
                                     onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" name="mobile" placeholder="Enter mobile"
+                                <input type="number" class="form-control" name="mobile" placeholder="Enter mobile"
                                     onfocus="this.placeholder = ''" onblur="this.placeholder = 'Mobile Number'">
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" name="password" placeholder="Password"
+                                <input type="password" class="form-control" name="password" placeholder="Password"
                                     onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
                             </div>
 
                             <div class="col-md-12 form-group">
                                 <div class="creat_account">
-                                    <input type="checkbox" id="f-option2" name="selector">
-                                    <label for="f-option2">Keep me logged in</label>
+                                    <!-- <input type="checkbox" id="f-option2" name="selector"> -->
+                                    <!-- <label for="f-option2">Keep me logged in</label> -->
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
-                                <button type="submit" value="submit" class="primary-btn">Log In</button>
+                                <button type="submit" value="submit" class="primary-btn">Create Account</button>
                                 <% if(typeof message!=='undefined' ){ %>
                                     <h4>
                                         <%= message %>

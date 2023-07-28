@@ -33,19 +33,19 @@ const verifyLogin = async (req, res) => {
         const adminData = await Admin.findOne({ email: email });
         if (adminData) {
             
-            // const passwordMatch = await bcrypt.compare(password, adminData.password);
-                  const passwordMatch=true
+            const passwordMatch = await bcrypt.compare(password, adminData.password);
+                  
             if (passwordMatch) {
                 req.session.admin_id = adminData._id;
                 res.redirect('/admin/dashboard');
             } else {
                 
                 
-                res.render("adminlogin",{layout:false},{message:"error"});
+                res.render("adminlogin",{layout:false,message:"error"});
             }
         } else {
            
-            res.render("adminlogin",{layout:false},{message:"error"});
+            res.render("adminlogin",{layout:false,message:"error"});
         }
     } catch (error) {
         console.log(error.message);
@@ -55,7 +55,7 @@ const verifyLogin = async (req, res) => {
 //logout
 const logout=async(req,res)=>{
     try {
-        req.session.Admin_id=null
+        req.session.admin_id=null
         res.redirect('/admin')
     } catch (error) {
         

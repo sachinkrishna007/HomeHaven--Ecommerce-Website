@@ -1,5 +1,6 @@
 const express=require('express')
 const adminRoute = express()
+const auth = require('../middlewares/adminAuth')
 
 //session
 const session=require('express-session')
@@ -33,32 +34,32 @@ adminRoute.use(express.static('public'))
 adminRoute.use(expressEjsLayout)
 
 //login route
-adminRoute.get('/',adminController.loadLogin)
+adminRoute.get('/',auth.islogout,adminController.loadLogin)
 adminRoute.post('/',adminController.verifyLogin)
-adminRoute.get('/dashboard',adminController.loadDashboard)
+adminRoute.get('/dashboard',auth.islogin,adminController.loadDashboard)
 
 //logout
-adminRoute.get('/logout',adminController.logout)
+adminRoute.get('/logout',auth.islogin,adminController.logout)
 
 //users options
-adminRoute.get('/users',adminController.userList)
-adminRoute.get('/userview',adminController.userView)
+adminRoute.get('/users',auth.islogin,adminController.userList)
+adminRoute.get('/userview',auth.islogin,adminController.userView)
 adminRoute.get('/block',adminController.blockUser)
 adminRoute.get('/unblock',adminController.unblockUser)
 
 
 //product routes
-adminRoute.post('/product',productContoller.addProduct)
-adminRoute.get('/loadProduct',productContoller.loadProduct)
-adminRoute.get('/showProduct',productContoller.loadProductPage)
-adminRoute.get('/productView',productContoller.productView)
+adminRoute.post('/product',auth.islogin,productContoller.addProduct)
+adminRoute.get('/loadProduct',auth.islogin,productContoller.loadProduct)
+adminRoute.get('/showProduct',auth.islogin,productContoller.loadProductPage)
+adminRoute.get('/productView',auth.islogin,productContoller.productView)
 adminRoute.get('/delete',productContoller.deleteProduct)
-adminRoute.get('/edit-product/:id',productContoller.editProduct)
+adminRoute.get('/edit-product/:id',auth.islogin,productContoller.editProduct)
 adminRoute.post('/edit-product/:id',productContoller.updateEditProduct)
 
 //catagory routes
 adminRoute.post('/category', catagoryController.createCategory);
-adminRoute.get('/loadCategory',catagoryController.loadCategory)
+adminRoute.get('/loadCategory',auth.islogin,auth.islogin,catagoryController.loadCategory)
 adminRoute.get('/search',productContoller.ProductSearch)
 
 
