@@ -33,7 +33,7 @@ userRoute.use(bodyParser.urlencoded({ extended: true }))
 //reqire controllers
 const userController = require("../controllers/userController")
 const userMiddleWare = require("../middlewares/auth")
-const productController = require('../controllers/cartController')
+const cartController = require('../controllers/cartController')
 userRoute.use(userMiddleWare.sessionCheck)
 
 
@@ -68,8 +68,12 @@ userRoute.get('/profile',userController.loadProfile)
 
 
 
-//cartRoutes
 
+//cartRoutes
+userRoute.post('/add-to-cart/:id',cartController.addToCart);
+userRoute.get('/loadCart',cartController.loadCart)
+userRoute.put('/editQuantity',cartController.editQuantity)
+userRoute.delete('/deleteProduct',cartController.deleteProduct)
 
 
 

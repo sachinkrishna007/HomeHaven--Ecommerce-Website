@@ -4,11 +4,11 @@ require('dotenv').config();
 const otpHelper = require("../Helper/otphelper");
 const Product = require("../models/productModel")
 const path = require('path');
-const { error } = require('console');
 
-const accountSid = "ACed90d087c6b517767eb6dd3faa7ab484";
-const authToken = "30cb029b74a7a96ee6419c1d038aa328";
-const verifySid = "VAaca0ce8735bf40622afbe6155952c423";
+
+const accountSid =process.env.TWILIO_SID;
+const authToken =process.env.TWILIO_AUTH_TOKEN;
+const verifySid =process.env.VERIFY_SID;
 const client = require("twilio")(accountSid, authToken);
 
 //bcrypt
@@ -291,16 +291,6 @@ const loadProfile = async(req,res) =>{
     }
 }
 
-const emptyCart = async(req,res) =>{
-    try{
-       
-       
-        res.render('empty-cart')
-    }catch(error){
-      
-        console.log(error.message);
-    }
-}
 
 
 module.exports = {

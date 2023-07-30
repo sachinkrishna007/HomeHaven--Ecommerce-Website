@@ -1,4 +1,12 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
 <%- include("./includes/header") %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
 	<div class="product_image_area">
         <div class="container">
             <div class="row s_product_inner">
@@ -35,7 +43,7 @@
                                 class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
                         </div>
                         <div class="card_area d-flex align-items-center">
-                            <a class="primary-btn" href="#">Add to Cart</a>
+							<button class="primary-btn" onclick="addtocart('<%=product._id%>')">Add to Cart</button>
                             <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
                             <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
                         </div>
@@ -509,7 +517,52 @@
 	</section>
 	<!-- End related-product Area -->
 
+	<script>
+		function addtocart(proId) {
+		  $.ajax({
+			url: '/add-to-cart/' + proId,
+			method: 'POST',
+	  
+			success: (response) => {
+				console.log(response);
+			  if (response.status==false) {
+				Swal.fire({
+				  title: 'Added To Cart',
+				  text: 'Your Product has been added to Cart',
+				  icon: 'success',
+				  timer: 5000
+				})
+				
+			  }
+			}
+		  })
+		}
+	</script>
 
 
 </html>
     <%- include("./includes/footer") %>
+
+<!-- 
+
+	  <script>
+		function addtocart(proId) {
+		  $.ajax({
+			url: '/add-to-cart/' + proId,
+			method: 'POST',
+	  
+			success: (response) => {
+				console.log(response);
+			  if (response.status) {
+				Swal.fire({
+				  title: 'Added To Cart',
+				  text: 'Your Product has been added to Cart',
+				  icon: 'success',
+				  timer: 5000
+				})
+				
+			  }
+			}
+		  })
+		}
+	</script> -->

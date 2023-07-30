@@ -1,0 +1,262 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+<%- include("./includes/header") %>
+  
+
+    <!-- Start Banner Area -->
+   
+        <div class="container">
+            <div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
+                <div class="col-first">
+                    <h1>Shopping Cart</h1>
+                    <nav class="d-flex align-items-center">
+                        <a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+                        <a href="category.html">Cart</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End Banner Area -->
+
+    <!--================Cart Area =================-->
+   
+   <h1 style="font-family: sans-serif;" pad>Shopping Cart</h1>
+    <section class="cart_area">
+        <div class="container">
+            <div class="cart_inner">
+                <div class="table-responsive">
+                  <%if(cart.length!=0){%>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Remove</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% cart.forEach(function(cart,index) {%>
+
+                            <tr>
+                                <td>
+                                    <div class="media">
+                                        <div class="d-flex">
+                                            <img src="../admin/images/<%= cart.carted.images[0]%>" width="50px" height="50px"  alt="">
+                                        </div>
+                                        <div class="media-body">
+                                            <p><%=cart.carted.name%></p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td >
+                                    <h5><i class="fa fa-inr" aria-hidden="true"></i>
+                                        <%=cart.carted.price%></h5>
+                                </td>
+                    
+                                <td class="" data-title="Stock">
+                                    <div class="product_count">
+                                      <input type="number" name="qty" id="qty-val-<%= cart.item %>" maxlength="12" title="Quantity:"
+                                            class="qty-val" value="<%= cart.quantity %>">
+                                            <span id="qty-val-<%= cart.item %>" class="qty-val"></span>
+
+                                      <button class="increase items-count" onclick="editQuantity('<%= cart._id %>','<%=cart.item%>','<%=user._id%>','<%=index%>',1)"><i class="lnr lnr-chevron-up"></i></button>
+                                      <button class="reduced items-count" onclick="editQuantity('<%= cart._id %>','<%=cart.item%>','<%=user._id%>','<%=index%>',-1)"><i class="lnr lnr-chevron-down"></i></button>
+                                    </div>
+                                  </td>
+                              
+                                    
+                                <td>
+                                    <span id="subTotal-<%=cart.item%>" class="subTotalVal">₹<%= cart.total %></span> 
+
+                                </td>
+                                <td class="action" style="padding-left: 40px; font-size: 20px;" data-title="Remove"><a href="#" class="text-muted" onclick="deleteProduct('<%=cart._id%>','<%=cart.item%>','<%= cart.quantity %>')"><i class="fa fa-trash" aria-hidden="true"></i>
+                                </a></td>
+                       
+
+                                
+                            </tr>
+                            <% }) %>
+                            <tr class="bottom_button">
+                                <td>
+                                </td>
+                                <td></td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                             
+                            </tr>
+                            <tr>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <h5>Sub Total</h5>
+                                </td>
+                                <td>
+                                    <h5 id="total">₹<%=cartTotal%></h5>
+                                </td>
+                            </tr>
+                            <tr class="out_button_area">
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <div class="checkout_btn_inner d-flex align-items-center">
+                                        <a class="gray_btn" href="#">Continue Shopping</a>
+                                        <a class="primary-btn" href="/checkOut">checkout</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <%}else{%>
+                      <center>
+                        <div class="col-md-lg-5">
+                            <div class="typography">
+                                <h1>THERE ARE NO ITEMS IN CART</h1>
+                            </div>
+                        </div>
+                    </center>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    </button>
+    <%- include("./includes/footer") %>
+
+
+    <script>
+        //to change the quantity of products in cart
+      
+        function editQuantity(cartId, proId, userId, index, count) {
+          const quantity = document.getElementById(`qty-val-${proId}`).value
+          count = parseInt(count)
+          if (quantity == 1 && count == -1) {
+            Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!',
+              timer: 3000
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $.ajax({
+                  url: '/editQuantity',
+                  method: 'PUT',
+                  data: {
+                    cartId: cartId,
+                    proId: proId,
+                    userId: userId,
+                    count: count,
+                    quantity: quantity
+                  },
+                  success: (response) => {
+                    console.log(response.status,'ll');
+                    if (response.status) {
+                      location.reload()
+      
+                    }
+                  }
+                })
+              }
+            })
+          } else {
+            $.ajax({
+              url: '/editQuantity',
+              method: 'PUT',
+              data: {
+                cartId: cartId,
+                proId: proId,
+                userId: userId,
+                count: count,
+                quantity: quantity
+              },
+              success: (response) => {
+                if (response.status) {
+                  const qtyElem = document.querySelector(`#qty-val-${proId}`);
+                  qtyElem.value = response.newQuantity;
+                  const subTotalVal = document.querySelector(`#subTotal-${proId}`);
+                  console.log("Subtotal;"+subTotalVal)
+                  subTotalVal.innerHTML = response.newSubTotal;
+                  document.getElementById('total').innerHTML = response.cartTotal;
+
+                }
+                else{
+                  Swal.fire({
+              icon: 'warning',
+              title: response.message,
+              showConfirmButton: false,
+              timer : 4000
+            });
+  
+                }
+              }
+            })
+          }
+      
+        }
+
+        function deleteProduct(cartId, proId,quantity) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      timer: 3000
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: '/deleteProduct',
+          method: 'DELETE',
+          data: {
+            cartId: cartId,
+            proId: proId,
+            quantity,quantity
+          },
+          success: (response) => {
+            if (response.status) {
+              location.reload()
+            }
+          }
+        })
+      }
+    })
+
+  }
+        </script>
