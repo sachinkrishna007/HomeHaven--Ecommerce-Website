@@ -1,0 +1,52 @@
+<%- include('./includes/header') %>
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5>Edit Address</h5>
+        </div>
+        <div class="card-body">
+          <form action="/users/update-address/<%= addressToEdit._id %>" method="POST">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="name" name="name" value="<%= addressToEdit.name %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="mobile" class="form-label">Mobile</label>
+              <input type="tel" class="form-control" id="mobile" name="mobile" value="<%= addressToEdit.mobile %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="landmark" class="form-label">Landmark</label>
+              <input type="text" class="form-control" id="landmark" name="landmark" value="<%= addressToEdit.landmark %>">
+            </div>
+            <div class="mb-3">
+              <label for="city" class="form-label">City</label>
+              <input type="text" class="form-control" id="city" name="city" value="<%= addressToEdit.city %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="state" class="form-label">State</label>
+              <input type="text" class="form-control" id="state" name="state" value="<%= addressToEdit.state %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="pincode" class="form-label">Pincode</label>
+              <input type="text" class="form-control" id="pincode" name="pincode" value="<%= addressToEdit.pincode %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="district" class="form-label">District</label>
+              <input type="text" class="form-control" id="district" name="district" value="<%= addressToEdit.district %>" required>
+            </div>
+            <div class="mb-3">
+              <label for="address" class="form-label">Address</label>
+              <textarea class="form-control" id="address" name="address" rows="3" required><%= addressToEdit.address %></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./includes/footer') %>

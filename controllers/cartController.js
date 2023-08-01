@@ -22,10 +22,6 @@ const loadCart = async (req, res) => {
     try {
       
       const user =req.session.user_id ;
-      
-      // console.log(user);
-
-      
 
       const count = await cartHelper.getCartCount(user);
     
@@ -67,11 +63,11 @@ const loadCart = async (req, res) => {
             }
           }
         ]);
-        console.log(cart);
+        
 
         res.render("cart", { cart, user, count, cartTotal });
       } else {
-        res.render("cart", { user, count, cartTotal, cart: [] });
+        res.render("cart", { user, count, cartTotal, cart: [],address });
       }
     } catch (error) {
       console.log(error); 

@@ -1,0 +1,139 @@
+
+
+
+<%- include('./includes/header') %>
+
+<!--================Checkout Area =================-->
+<section class="checkout_area section_gap">
+    <div class="container">
+        <!-- Returning Customer section -->
+        <div class="returning_customer">
+            <!-- Returning Customer content here -->
+        </div>
+
+        <!-- Coupon area section -->
+        <div class="cupon_area">
+            <!-- Coupon area content here -->
+        </div>
+
+      <!-- Billing Details section -->
+<div class="billing_details">
+    <div class="row">
+      <div class="col-lg-8">
+        <h3>Billing Details</h3>
+        <% if (user.address.length > 0) { %>
+          <form action="/selectAddress" method="post">
+            <% user.address.forEach((address, index) => { %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <label>
+                    <input type="radio" name="selectedAddress" value="<%= address._id %>" <% if (index === 0) { %>checked<% } %>>
+                    <h5 class="card-title">Address <%= index + 1 %></h5>
+                    <p>Name: <%= address.name %></p>
+                    <p>Mobile: <%= address.mobile %></p>
+                    <p>Landmark: <%= address.landmark || 'N/A' %></p>
+                    <p>City: <%= address.city %></p>
+                    <p>State: <%= address.state %></p>
+                    <p>Pincode: <%= address.pincode %></p>
+                    <p>District: <%= address.district %></p>
+                    <p>Address: <%= address.address %></p>
+                    <!-- Add an "Edit Address" button -->
+                  </label>
+                </div>
+              </div>
+            <% }) %>
+            <!-- Move the submit button inside the form -->
+            <button type="submit">Select Address and Proceed</button>
+          </form>
+        <% } else { %>
+          <p>No addresses added yet.</p>
+        <% } %>
+      </div>
+      <!-- Rest of the checkout form -->
+    </div>
+  </div>
+  
+                <!-- Rest of the content -->
+            </div>
+        </div>
+        
+                <div class="col-lg-8">
+                    <!-- Your Order section -->
+                    <div class="order_box">
+                        <h2>Your Order</h2>
+                    <ul class="list">
+                        <li>
+                          <div class="d-flex justify-content-between">
+                            <div><strong>Product</strong></div>
+                            <div><strong>Total</strong></div>
+                          </div>
+                        </li>
+                        <% let cartTotal = 0; %>
+                        <% cartItems.forEach((item, index) => { %>
+                          <li>
+                            <div class="d-flex justify-content-between">
+                              <div><%= item.carted.name %> <span class="middle">x <%= item.quantity %></span></div>
+                              <div>₹<%= item.total %></div>
+                            </div>
+                          </li>
+                          <% cartTotal += item.total; %>
+                        <% }) %>
+                      </ul>
+                        <ul class="list list_2">
+                            <li>Subtotal 
+                             
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>₹<%= cartTotal %></span></li>
+                            <!-- Replace the shipping rate with your shipping rate calculation -->
+                            
+                        <div class="payment_item">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option5" name="selector" checked>
+                                <label for="f-option5">Check payments</label>
+                                <div class="check"></div>
+                            </div>
+                            <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
+                                Store Postcode.</p>
+                        </div>
+                        <div class="payment_item active">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option6" name="selector">
+                                <label for="f-option6">Paypal </label>
+                                <img src="img/product/card.jpg" alt="">
+                                <div class="check"></div>
+                            </div>
+
+                        <div class="payment_item active">
+                            <div class="radion_btn">
+                                <input type="radio" id="f-option7" name="selector">
+                                <label for="f-option7">Cash On Delivery </label>
+                                <img src="img/product/card.jpg" alt="">
+                                <div class="check"></div>
+                                <p>Please pay with cash upon delivery.</p>
+                            </div>
+                            <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal
+                                account.</p>
+                        </div>
+                        <div class="creat_account">
+                            <input type="checkbox" id="f-option4" name="selector">
+                            <label for="f-option4">I’ve read and accept the </label>
+                            <a href="#">terms & conditions*</a>
+                        </div>
+                        <form action="/checkout" method="post">
+                            <!-- ... Add your existing form fields here ... -->
+
+                            <!-- Add a hidden input field to hold the selected payment method -->
+                            <input type="hidden" id="selectedPaymentMethod" name="paymentMethod" value="COD">
+
+                            <!-- Add the Proceed to Payment button -->
+                            <button type="submit" class="primary-btn">Proceed to Payment</button>
+                        </form>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Checkout Area =================-->
+
+<%- include('./includes/footer') %>

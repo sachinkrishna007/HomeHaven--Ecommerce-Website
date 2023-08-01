@@ -1,0 +1,69 @@
+<!-- ... Other HTML content ... -->
+<%- include('./includes/header') %>
+
+<!-- Your existing HTML content -->
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div class="details_item">
+  <h4>Shipping Address</h4>
+  <ul class="list">
+    <li><span>Name</span> : <%= orders[0].address.name %></li>
+    <li><span>Address</span> : <%= orders[0].address.address %></li>
+    <li><span>City</span> : <%= orders[0].address.city %></li>
+    <li><span>Locality</span> : <%= orders[0].address.landmark || 'N/A' %></li>
+    <li><span>Pincode</span> : <%= orders[0].address.pincode %></li>
+    <li><span>State</span> : <%= orders[0].address.state %></li>
+  </ul>
+</div>
+
+<div class="order_details_table">
+  <h2>Order Details</h2>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">Price / Unit</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders[0].items.forEach(function (item, index) { %>
+        <tr>
+          <td>
+            <p><%= item.productId.name %></p>
+          </td>
+          <td>
+            <p>₹ <%= item.productId.price %></p>
+          </td>
+          <td>
+            <h5>x <%= item.quantity %></h5>
+          </td>
+          <td>
+            <p>₹ <%= item.total %></p>
+          </td>
+        </tr>
+        <% }) %>
+        <!-- ... Other rows for coupon code, discount, and total ... -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('./includes/footer') %>
+<!-- ... Other HTML content ... -->

@@ -34,6 +34,7 @@ userRoute.use(bodyParser.urlencoded({ extended: true }))
 const userController = require("../controllers/userController")
 const userMiddleWare = require("../middlewares/auth")
 const cartController = require('../controllers/cartController')
+const profileContoller = require('../controllers/profilecontoller')
 userRoute.use(userMiddleWare.sessionCheck)
 
 
@@ -65,6 +66,12 @@ userRoute.get('/block',userController.blockpage)
 
 //profileRoutes
 userRoute.get('/profile',userController.loadProfile)
+userRoute.get('/loadAddress',profileContoller.loadAddress)
+userRoute.post('/addAddress',profileContoller.addAddress)
+userRoute.get('/orderHistory',profileContoller.orderHistory)
+userRoute.post('/selectAddress',profileContoller.selectAddress)
+userRoute.get('/orderDetails/:orderId',profileContoller.orderDetails)
+
 
 
 
@@ -75,6 +82,9 @@ userRoute.get('/loadCart',cartController.loadCart)
 userRoute.put('/editQuantity',cartController.editQuantity)
 userRoute.delete('/deleteProduct',cartController.deleteProduct)
 
-
+//checkout
+userRoute.get('/checkout',userController.loadCheckout)
+userRoute.post('/checkout', userController.processCheckout)
+userRoute.get('/confirmation',userController.confirmation)
 
 module.exports = userRoute

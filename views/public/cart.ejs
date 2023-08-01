@@ -22,7 +22,7 @@
 
     <!--================Cart Area =================-->
    
-   <h1 style="font-family: sans-serif;" pad>Shopping Cart</h1>
+   <h1 style="font-family: sans-serif; padding-left: 40%;" >Shopping Cart</h1>
     <section class="cart_area">
         <div class="container">
             <div class="cart_inner">
@@ -129,7 +129,10 @@
                                 <td>
                                     <div class="checkout_btn_inner d-flex align-items-center">
                                         <a class="gray_btn" href="#">Continue Shopping</a>
-                                        <a class="primary-btn" href="/checkOut">checkout</a>
+                                      
+                                        <a  href="/checkout"  class="btn btn-primary">Checkout</a>
+                                              
+
                                     </div>
                                 </td>
                             </tr>
@@ -138,8 +141,9 @@
                     <%}else{%>
                       <center>
                         <div class="col-md-lg-5">
-                            <div class="typography">
-                                <h1>THERE ARE NO ITEMS IN CART</h1>
+                          
+                                <img src="../admin/images/cart_empty.png" style="height: 400px;">
+                                <h1>cart is empty</h1>
                             </div>
                         </div>
                     </center>

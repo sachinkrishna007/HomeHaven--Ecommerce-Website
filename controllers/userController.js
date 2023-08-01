@@ -4,6 +4,9 @@ require('dotenv').config();
 const otpHelper = require("../Helper/otphelper");
 const Product = require("../models/productModel")
 const path = require('path');
+const Cart = require('../models/cart')
+const mongoose = require('mongoose');
+const Order = require("../models/orderModel")
 
 
 const accountSid =process.env.TWILIO_SID;
@@ -282,15 +285,100 @@ const blockpage = async (req, res) => {
 
 const loadProfile = async(req,res) =>{
     try{
-        const user = req.session.user;
+        const user =  await User.findById(req.session.user_id).populate('address');
        
         res.render('user-profile',{user})
     }catch(error){
       
         console.log(error.message);
     }
-}
+}   
 
+const loadCheckout = async (req, res) => {
+    try {
+      const user = await User.findById(req.session.user_id).populate('address');
+      const cartItems = await Cart.aggregate([
+        {
+          $match: { user: new mongoose.Types.ObjectId(req.session.user_id) }
+        },
+        {
+          $unwind: "$cartItems"
+        },
+        {
+          $project: {
+            item: { $toObjectId: ("$cartItems.productId") },
+            quantity: "$cartItems.quantity",
+            total: "$cartItems.total"
+          }
+        },
+        {
+          $lookup: {
+            from: "products",
+            localField: "item",
+            foreignField: "_id",
+            as: "carted"
+          }
+        },
+        {
+          $project: {
+            item: 1,
+            quantity: 1,
+            total: 1,
+            carted: { $arrayElemAt: ["$carted", 0] }
+          }
+        }
+      ]);
+  
+      res.render('checkout', { user, cartItems });
+    } catch (error) {
+      console.log(error.message);
+      res.redirect('/cart'); 
+    }
+  };
+
+  const processCheckout = async (req, res) => {
+    try {
+      const { paymentMethod, selectAddress } = req.body; // Updated variable name to selectAddress
+      const userId = req.session.user_id;
+      const user = await User.findById(userId).populate('address');
+      const cartItems = await Cart.findOne({ user: userId });
+      if (!cartItems) {
+        return res.status(400).json({ error: 'No items in the cart.' });
+      }
+  
+      const address = user.selectedAddress
+      
+      if (!address) {
+        return res.status(404).json({ error: 'Selected address not found.' });
+      }
+  
+      const order = new Order({
+        user: userId,
+        address: address,
+        items: cartItems.cartItems,
+        total: cartItems.cartTotal,
+        paymentMethod: paymentMethod,
+        status: 'Pending',
+      });
+      await order.save();
+  
+      // Clear cart after placement
+      await Cart.findOneAndUpdate({ user: userId }, { cartItems: [], cartTotal: 0 });
+  
+      res.redirect('/confirmation');
+    } catch (error) {
+      console.log(error.message);
+      res.redirect('/checkout');
+    }
+  };
+  
+  const confirmation = async (req,res)=>{
+    try {
+        res.render("confirmation")
+    } catch (error) {
+        console.log(error.message);
+  }
+}
 
 
 module.exports = {
@@ -308,6 +396,10 @@ module.exports = {
     errorpage,
     loadProfile,
     blockpage,
+    loadCheckout,
+    processCheckout,
+    confirmation,
+    
     
 
 }

@@ -1,0 +1,49 @@
+<%- include('./includes/header') %>
+  <!-- Add Address Form -->
+  <br>
+  ,<br>
+  ,<br>
+  ,<br>
+  ,<br>
+  
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5 class="card-title">Add New Address</h5>
+      <form action="/addAddress" method="POST">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label for="mobile" class="form-label">Mobile</label>
+          <input type="tel" class="form-control" id="mobile" name="mobile" required>
+        </div>
+        <div class="mb-3">
+          <label for="landmark" class="form-label">Landmark</label>
+          <input type="text" class="form-control" id="landmark" name="landmark">
+        </div>
+        <div class="mb-3">
+          <label for="city" class="form-label">City</label>
+          <input type="text" class="form-control" id="city" name="city" required>
+        </div>
+        <div class="mb-3">
+          <label for="state" class="form-label">State</label>
+          <input type="text" class="form-control" id="state" name="state" required>
+        </div>
+        <div class="mb-3">
+          <label for="pincode" class="form-label">Pincode</label>
+          <input type="text" class="form-control" id="pincode" name="pincode" required>
+        </div>
+        <div class="mb-3">
+          <label for="district" class="form-label">District</label>
+          <input type="text" class="form-control" id="district" name="district" required>
+        </div>
+        <div class="mb-3">
+          <label for="address" class="form-label">Address</label>
+          <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Address</button>
+      </form>
+    </div>
+  </div>
+  <%- include('./includes/footer') %>

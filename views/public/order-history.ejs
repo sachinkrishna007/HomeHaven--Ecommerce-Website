@@ -1,0 +1,55 @@
+<%- include('./includes/header') %>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0 text-align-center">Your Orders</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" style="width: 90%; margin-left: 10%;">
+                    <thead>
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <% if (orders) { %>
+                        <tbody>
+                            <% orders.forEach(function (order, index) { %>
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td>  <%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                    <td><%= order.status %></td>
+                                    <td>₹<%= order.total %></td>
+                                    <td>
+                                       
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5"><h1>No Orders Placed</h1></td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- start footer Area -->
+
+<%- include('./includes/footer') %>

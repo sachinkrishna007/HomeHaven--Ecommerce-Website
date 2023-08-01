@@ -32,10 +32,18 @@
             <div class="card-body p-0">
               <ul class="list-group list-group-flush rounded-3">
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                  <i class="fas fa-globe fa-lg text-warning"></i>
-                  <p class="mb-0">https://mdbootstrap.com</p>
+                
+                 
+                  <a class="btn btn-primary" style="margin-left: 25%;" href="/loadAddress">ADD ADDRESS</a>
+          
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                
+                 
+                  
+                  <a class="btn btn-primary" style="margin-left: 25%;" href="/orderHistory">Order History</a>
+                </li>
+                <!-- <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                   <i class="fab fa-github fa-lg" style="color: #333333;"></i>
                   <p class="mb-0">mdbootstrap</p>
                 </li>
@@ -46,11 +54,11 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                   <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
                   <p class="mb-0">mdbootstrap</p>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                </li> -->
+                <!-- <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                   <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
                   <p class="mb-0">mdbootstrap</p>
-                </li>
+                </li> -->
               </ul>
             </div>
           </div>
@@ -99,22 +107,49 @@
                   <p class="mb-0">Address</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                 <!-- Display existing addresses -->
+<%   if (user.address.length>0) { %>
+  <% user.address.forEach((address, index) => { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Address <%= index + 1 %></h5>
+        <p>Name: <%= address.name %></p>
+        <p>Mobile: <%= address.mobile %></p>
+        <p>Landmark: <%= address.landmark || 'N/A' %></p>
+        <p>City: <%= address.city %></p>
+        <p>State: <%= address.state %></p>
+        <p>Pincode: <%= address.pincode %></p>
+        <p>District: <%= address.district %></p>
+        <p>Address: <%= address.address %></p>
+        <!-- Add an "Edit Address" button -->
+        
+      
+        </form>
+      </div>
+      
+    </div>
+  <% }) %>
+<% } else { %>
+  <p>No addresses added yet.</p>
+<% } %>
                 </div>
               </div>
             </div>
           </div>
          <!-- Add an "Edit Profile" button -->
-    <div class="row justify-content-center mt-3">
-      <button id="editButton" class="btn btn-primary">Edit Profile</button>
+    
+    
   </div>
+<!-- Edit Profile Form -->
 
   </section>
 
 
 
-
-
-
-
+  
   <%- include('./includes/footer') %>
+  
+
+
+
+
