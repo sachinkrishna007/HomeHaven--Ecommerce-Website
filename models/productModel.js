@@ -29,7 +29,7 @@ const productSchema = new mongoose.Schema({
     required:true
   },
 
-  isListed:{
+  is_Listed:{
     type:Boolean,
     default:true
   },

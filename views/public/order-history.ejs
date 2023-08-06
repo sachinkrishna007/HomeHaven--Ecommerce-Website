@@ -1,3 +1,4 @@
+
 <%- include('./includes/header') %>
 <br>
 <br>
@@ -30,11 +31,25 @@
                             <% orders.forEach(function (order, index) { %>
                                 <tr>
                                     <td><%= index + 1 %></td>
-                                    <td>  <%= new Date(order.createdAt).toLocaleDateString() %></td>
-                                    <td><%= order.status %></td>
+                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                    <td>
+                                        <% if (order.status === 'Pending') { %>
+                                            <span class="order-status text-primary">Pending</span>
+                                        <% } else if (order.status === 'Processing') { %>
+                                            <span class="order-status text-warning">Processing</span>
+                                        <% } else if (order.status === 'Shipped') { %>
+                                            <span class="order-status text-success">Shipped</span>
+                                        <% } else if (order.status === 'Delivered') { %>
+                                            <span class="order-status text-info">Delivered</span>
+                                        <% }  else if (order.status === 'CANCELLED') { %>
+                                            <span class="order-status text-info">Cancelled</span>
+                                        <% }%>
+                                    </td>
+                                    
                                     <td>₹<%= order.total %></td>
                                     <td>
-                                       
+                                        <a href="/orderDetails/<%= order._id %>" class="btn btn-primary">View</a>
+                                        <!-- Add more actions here if needed -->
                                     </td>
                                 </tr>
                             <% }) %>

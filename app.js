@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGODBURL,{
     console.log(error.message);
 })
 
-
+// mongoose.set('debug',true)
  
 const express=require("express")
 const app=express()

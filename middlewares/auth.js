@@ -3,7 +3,7 @@ const User = require('../models/userModel')
 const sessionCheck = (req, res, next) => {
   const isAuthenticated = req.session.user_id ? true : false;
   res.locals.isAuthenticated = isAuthenticated;
-  // res.locals.userName = req.session.userName;
+  res.locals.userName = req.session.name;
 next();
 }
 

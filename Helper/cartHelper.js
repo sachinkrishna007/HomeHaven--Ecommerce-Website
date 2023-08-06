@@ -3,7 +3,7 @@ const Admin = require("../models/adminModel")
 const Product = require('../models/productModel')
 const Category = require('../models/catagoryModel')
 const Cart = require('../models/cart')
-
+const {ObjectId} = require('mongodb')
 
 
 
@@ -83,31 +83,46 @@ const getCartCount = (userId) => {
 }
 
 const updateQuantity = async(data) => {
-  
-    const cartId = data.cartId;
-    const proId = data.proId;
-    const userId = data.userId;
-    const count = data.count;
-    const quantity = data.quantity;
-    const product = await Product.findOne({_id:proId})
+  const cartId = data.cartId;
+  const proId = data.proId;
+  const userId = data.userId;
+  const count = data.count;
+  const quantity = data.quantity;
+  const product = await Product.findOne({_id:proId})
 
-    try {
-      return new Promise(async (resolve, reject) => {
-        if (count == -1 && quantity == 1) {
+  const quantitySingle = await Cart.aggregate([
+    { $match: { user: userId.toString() } },
+    { $unwind: "$cartItems" },
+    { $match: { 'cartItems.productId': new ObjectId(proId) } },
+    {$project:{'cartItems.quantity':1}}
+
+  ]);
+
+
+
+  try {
+    return new Promise(async (resolve, reject) => {
+      if (count == -1 && quantity == 1) {
+      
+        Cart.findOneAndUpdate(
+          { _id: cartId, "cartItems.productId": proId },
+          {
+            $pull: { cartItems: { productId: proId } },
+            $inc: {cartTotal:product.price * count } 
+          },
+          { new: true }
+        )
         
-          Cart.findOneAndUpdate(
-            { _id: cartId, "cartItems.productId": proId },
-            {
-              $pull: { cartItems: { productId: proId } },
-              $inc: {cartTotal:product.price * count } 
-            },
-            { new: true }
-          )
+        .then(() => { 
+          resolve({ status: true });
+        });
+      } else {
+          if(product.stock-quantity < 1 && count==1){
+            resolve({ status: 'outOfStock' });
+
+
+        }else{
           
-          .then(() => { 
-            resolve({ status: true });
-          });
-        } else {
           Cart.updateOne(
             { _id: cartId, "cartItems.productId": proId },
             {
@@ -131,13 +146,14 @@ const updateQuantity = async(data) => {
               resolve({ status: true, newQuantity: newQuantity,newSubTotal:newSubTotal,cartTotal:cartTotal});
             });
           }); 
-        }
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
 
+        }
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+}
   const deleteProduct =  async (data) => {
     const cartId = data.cartId;
     const proId = data.proId;

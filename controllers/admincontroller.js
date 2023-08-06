@@ -1,6 +1,7 @@
 const User=require("../models/userModel")
 const Admin=require("../models/adminModel")
 const bcrypt=require('bcrypt');
+const Category=require('../models/catagoryModel')
 
 
 // load the loginpage 
@@ -106,6 +107,7 @@ const logout=async(req,res)=>{
     }
   }
  
+
 
 module.exports={
     loadLogin,

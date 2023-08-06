@@ -1,39 +1,80 @@
+<!-- ... Other HTML content ... -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+<h5 class="card-title fw-semibold mt-5">LIST OF CATEGORIES</h5>
+<table class="table text-nowrap mb-0 align-middle">
+  <thead class="text-dark fs-4">
+    <tr>
+      <th class="border-bottom-0">
+        <h6 class="fw-semibold mb-0">Index</h6>
+      </th>
+      <th class="border-bottom-0">
+        <h6 class="fw-semibold mb-0">Category Name</h6>
+      </th>
+      <th class="border-bottom-0">
+        <h6 class="fw-semibold mb-0">Actions</h6>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% categoriesData.forEach((category, index) => { %>
+    <tr>
+      <td class="border-bottom-0">
+        <h6 class="fw-semibold mb-0"><%= index + 1 %></h6>
+      </td>
+      <td class="border-bottom-0">
+        <p class="mb-0 fw-normal"><%= category.name %></p>
+      </td>
+      <td class="border-bottom-0">
+       
+        <a href="/admin/editCategory/<%= category._id %>" class="btn btn-primary">Edit</a>
+         <button type="button" class="btn btn-danger" onclick="deleteCategory('<%= category._id %>')">Delete Category</button>
+      </td>
+    </tr>
+    <% }); %>
+  </tbody>
+</table>
 
-<div class="card py-5">
-  <div class="card-body">
-    <h5 class="card-title fw-semibold mb-4">ADD CATEGORY</h5>
-    <form action="/admin/category" method="post">
-      <div class="mb-3">
-        <label for="categoryName" class="form-label">Category Name</label>
-        <input type="text" class="form-control" id="categoryName" name="name" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Add Category</button>
-    </form>
-
-    <h5 class="card-title fw-semibold mt-5">LIST OF CATEGORIES</h5>
-    <table class="table text-nowrap mb-0 align-middle">
-      <thead class="text-dark fs-4">
-        <tr>
-          <th class="border-bottom-0">
-            <h6 class="fw-semibold mb-0">Index</h6>
-          </th>
-          <th class="border-bottom-0">
-            <h6 class="fw-semibold mb-0">Category Name</h6>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <% categoriesData.forEach((category, index) => { %>
-        <tr>
-          <td class="border-bottom-0">
-            <h6 class="fw-semibold mb-0"><%= index + 1 %></h6>
-          </td>
-          <td class="border-bottom-0">
-            <p class="mb-0 fw-normal"><%= category.name %></p>
-          </td>
-        </tr>
-        <% }); %>
-      </tbody>
-    </table>
-  </div>
-</div>
+<!-- ... Other HTML content ... -->
+<script>
+  function deleteCategory(categoryId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You are about to delete this category. This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Send a POST request to the server to delete the category
+        fetch(`/admin/deleteCategory/${categoryId}`, {
+          method: 'POST',
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle the response data if needed
+            console.log(data);
+            // Show a success message or redirect to the category list page
+            Swal.fire({
+              icon: 'success',
+              title: 'Category deleted successfully!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            // Handle errors if necessary
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+            });
+          });
+      }
+    });
+  }
+</script>

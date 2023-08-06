@@ -1,3 +1,7 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+<!-- ... Other HTML content ... -->
 <!-- ... Other HTML content ... -->
 <%- include('./includes/header') %>
 
@@ -14,19 +18,18 @@
 <br>
 <br>
 <br>
-<br>
-<br>
-<br>
 
-<div class="details_item">
+<div class="details_item" style="padding:2%;">
   <h4>Shipping Address</h4>
   <ul class="list">
-    <li><span>Name</span> : <%= orders[0].address.name %></li>
-    <li><span>Address</span> : <%= orders[0].address.address %></li>
-    <li><span>City</span> : <%= orders[0].address.city %></li>
-    <li><span>Locality</span> : <%= orders[0].address.landmark || 'N/A' %></li>
-    <li><span>Pincode</span> : <%= orders[0].address.pincode %></li>
-    <li><span>State</span> : <%= orders[0].address.state %></li>
+    <li><span>Name</span> : <%=selectedAddress.name %></li>
+    <li><span>Name</span> : <%=selectedAddress.mobile %></li>
+    <li><span>Address</span> : <%= selectedAddress.address %></li>
+    <li><span>City</span> : <%= selectedAddress.city %></li>
+    <li><span>Locality</span> : <%= selectedAddress.landmark || 'N/A' %></li>
+    <li><span>Pincode</span> : <%= selectedAddress.pincode %></li>
+    <li><span>State</span> : <%= selectedAddress.district %></li>
+    <li><span>State</span> : <%= selectedAddress.state %></li>
   </ul>
 </div>
 
@@ -37,16 +40,21 @@
       <thead>
         <tr>
           <th scope="col">Product</th>
-          <th scope="col">Price / Unit</th>
+          <th scope="col">Image</th> <!-- New column for product image -->
+          <th scope="col">Price</th>
           <th scope="col">Quantity</th>
           <th scope="col">Total</th>
         </tr>
       </thead>
       <tbody>
-        <% orders[0].items.forEach(function (item, index) { %>
+        <% order.items.forEach(function (item, index) { %>
         <tr>
           <td>
             <p><%= item.productId.name %></p>
+          </td>
+          <td>
+            <!-- Display the product image -->
+            <img src="../admin/images/<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" style="width: 50px; height: 50px;">
           </td>
           <td>
             <p>₹ <%= item.productId.price %></p>
@@ -59,7 +67,26 @@
           </td>
         </tr>
         <% }) %>
+        <tr>
+          <td colspan="4">
+            <h4>Total Amount</h4>
+          </td>
+          <td>
+            <p>₹ <%= order.total %></p>
+          </td>
+        </tr>
         <!-- ... Other rows for coupon code, discount, and total ... -->
+
+        <!-- Add the cancel order button -->
+        <tr>
+          <td colspan="5">
+            <% if (order.status !== 'CANCELLED' && order.status!=='Delivered') { %>
+              <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button>
+            <% } else  { %>
+              <button class="btn btn-danger" disabled> <%= order.status %></button>
+            <% } %>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -67,3 +94,35 @@
 
 <%- include('./includes/footer') %>
 <!-- ... Other HTML content ... -->
+<script>
+  function cancelOrder(orderId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to revert this action!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, cancel it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Send a POST request to the server to cancel the order
+        fetch(`/cancel-order/${orderId}`, {
+          method: 'POST',
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle
+            console.log(data);
+            // Redirect to the homepage or display a success message
+            window.location.href = '/orderHistory';
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            // Handle errors if necessary
+          });
+      }
+    });
+  }
+</script>
+

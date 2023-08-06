@@ -35,7 +35,7 @@
                     
                     <div class="login_form_inner" style="padding: 0px;" >
                         <h3>Register Here</h3>
-                        <form class="row login_form" action="" method="post" id="contactForm" novalidate="novalidate">
+                        <form class="row login_form" action="" method="post" id="contactForm" novalidate="novalidate" onsubmit="return validatePassword();" >
                             <div class="col-md-12 form-group">
                                 <input type="text" class="form-control" name="name" placeholder="Username"
                                     onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
@@ -50,8 +50,14 @@
                             </div>
                             <div class="col-md-12 form-group">
                                 <input type="password" class="form-control" name="password" placeholder="Password"
-                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-                            </div>
+                                  onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                              </div>
+                              <div class="col-md-12 form-group">
+                                <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password"
+                                  oninput="validatePassword()" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                                <span id="passwordMatchStatus"></span>
+                              </div>
+                            
 
                             <div class="col-md-12 form-group">
                                 <div class="creat_account">
@@ -66,8 +72,7 @@
                                         <%= message %>
                                     </h4>
                                     <% } %>
-                                        <a href="#">Forgot Password?</a>
-                            </div>
+                                     
                         </form>
                     </div>
                 </div>
@@ -79,3 +84,46 @@
 
     <!-- include footer -->
     <%- include('./includes/footer')%>
+
+
+   
+    <script>
+        function validatePassword() {
+          const password = document.getElementsByName('password')[0].value;
+          const confirmPassword = document.getElementsByName('confirmPassword')[0].value;
+          const passwordMatchStatus = document.getElementById('passwordMatchStatus');
+      
+          if (password.trim() === '' || confirmPassword.trim() === '') {
+            passwordMatchStatus.textContent = ''; // Clear previous status
+            return;
+          }
+      
+          if (password !== confirmPassword) {
+            passwordMatchStatus.textContent = 'Passwords do not match';
+          } else {
+            passwordMatchStatus.textContent = 'Passwords match';
+          }
+        }
+      </script>
+<style>
+    .password-match-status {
+      font-size: 1rem;
+      margin-top: 5px;
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 50%;
+      color: #fff;
+      font-weight: bold;
+    }
+  
+    .password-match-status.match {
+      background-color: #00cc00; /* Green background for matching */
+    }
+  
+    .password-match-status.no-match {
+      background-color: #cc0000; /* Red background for not matching */
+    }
+  </style>

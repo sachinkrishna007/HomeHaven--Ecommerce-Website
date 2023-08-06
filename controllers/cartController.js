@@ -36,6 +36,7 @@ const loadCart = async (req, res) => {
           {
             $match: {user: new mongoose.Types.ObjectId(user)}
           },
+          
           {
             $unwind: "$cartItems"
           },
@@ -64,7 +65,7 @@ const loadCart = async (req, res) => {
           }
         ]);
         
-
+           
         res.render("cart", { cart, user, count, cartTotal });
       } else {
         res.render("cart", { user, count, cartTotal, cart: [],address });

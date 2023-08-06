@@ -40,7 +40,7 @@
 			<nav class="navbar navbar-expand-lg navbar-light main_box">
 				<div class="container">
 					<!-- Brand and toggle get grouped for better mobile display -->
-					<a class="navbar-brand logo_h" href="index.html"><img src="/admin/images/1690050860743.png" width="100"></a>
+					<a class="navbar-brand logo_h" href="/"><img src="/admin/images/1690050860743.png" width="100"></a>
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 					 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="icon-bar"></span>
@@ -48,39 +48,66 @@
 						<span class="icon-bar"></span>
 					</button>
 					<!-- Collect the nav links, forms, and other content for toggling -->
-					<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
-						<ul class="nav navbar-nav menu_nav ml-auto">
-							<li class="nav-item "><a class="nav-link" href="/">Home</a></li>
-							<li class="nav-item submenu dropdown">
-								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								 aria-expanded="false">Shop</a>
-								<ul class="dropdown-menu">
-									<li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li>
-									<li class="nav-item"><a class="nav-link" href="/product">Product Details</a></li>
-									<li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li>
-									<li class="nav-item"><a class="nav-link" href="/loadCart">Shopping Cart</a></li>
-									<li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li>
-								</ul>
-							</li>
-							<!-- <li class="nav-item submenu dropdown">
-								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								 aria-expanded="false">Blog</a>
-								<ul class="dropdown-menu">
-									<li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
-									<li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
-								</ul>
-							</li> -->
+				
 							<% if (isAuthenticated) { %>
+								<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+									<ul class="nav navbar-nav menu_nav ml-auto">
+										<li class="nav-item "><a class="nav-link" href="/">Home</a></li>
+										<li class="nav-item submenu dropdown">
+											<a href="/product" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+											 aria-expanded="false">Shop</a>
+											<ul class="dropdown-menu">
+												<!-- <li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li> -->
+												<li class="nav-item"><a class="nav-link" href="/product">Product</a></li>
+												<!-- <li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li> -->
+												<li class="nav-item"><a class="nav-link" href="/loadCart">Shopping Cart</a></li>
+												<!-- <li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li> -->
+											</ul>
+										</li>
+										<!-- <li class="nav-item submenu dropdown">
+											<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+											 aria-expanded="false">Blog</a>
+											<ul class="dropdown-menu">
+												<li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+												<li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
+											</ul>
+										</li> -->
 							<li class="nav-item submenu dropdown">
 								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 								 aria-expanded="false">Account</a>
 								<ul class="dropdown-menu">
 									<li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
-									<li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+									<li class="nav-item"><a class="nav-link" href="/profile">profile</a></li>
+
 
 								</ul>
+
 							</li>
+							
 							<% } else{%>
+								<div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+									<ul class="nav navbar-nav menu_nav ml-auto">
+										<li class="nav-item "><a class="nav-link" href="/">Home</a></li>
+										<li class="nav-item submenu dropdown">
+											<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+											 aria-expanded="false">Shop</a>
+											<ul class="dropdown-menu">
+												<!-- <li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li> -->
+												<li class="nav-item"><a class="nav-link" href="/product">Product Details</a></li>
+												<!-- <li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li> -->
+												<!-- <li class="nav-item"><a class="nav-link" href="/loadCart">Shopping Cart</a></li> -->
+												<!-- <li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li> -->
+											</ul>
+										</li>
+										<!-- <li class="nav-item submenu dropdown">
+											<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+											 aria-expanded="false">Blog</a>
+											<ul class="dropdown-menu">
+												<li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+												<li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
+											</ul>
+										</li> -->
+
 							<li class="nav-item submenu dropdown">
 								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 								 aria-expanded="false">Account</a>
@@ -94,20 +121,30 @@
 
 							<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
 						</ul>
+						<% if (isAuthenticated) { %>
 						<ul class="nav navbar-nav navbar-right">
-							<li class="nav-item"><a href="#" class="cart"><span class="ti-bag"></span></a></li>
+							<li class="nav-item"><a href="/loadCart" class="cart"><span class="ti-bag"></span></a></li>
 							<li class="nav-item">
 								<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
 							</li>
+							
 						</ul>
+						<% } else{%> 
+							<ul class="nav navbar-nav navbar-right">
+								<li class="nav-item"><a href="/login" class="cart"><span class="ti-bag"></span></a></li>
+								<li class="nav-item">
+									<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
+								</li>
+							</ul>
+							<% } %>  
 					</div>
 				</div>
 			</nav>
 		</div>
 		<div class="search_input" id="search_input_box">
 			<div class="container">
-				<form class="d-flex justify-content-between">
-					<input type="text" class="form-control" id="search_input" placeholder="Search Here">
+				<form class="d-flex justify-content-between" action="/product">
+					<input type="text" class="form-control" id="search_input" placeholder="Search Here" name="search" value="  %>">
 					<button type="submit" class="btn"></button>
 					<span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
 				</form>
@@ -115,3 +152,6 @@
 		</div>
 	</header>
 	<!-- End Header Area -->
+
+<script></script>
+	

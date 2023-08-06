@@ -28,7 +28,10 @@ const securePassword = async (password) => {
 //load the homepage
 const loadhome = async (req, res) => {
     try {
-        res.render('home', { user: res.locals.user })
+        
+        // const user =  await User.findById(req.session.user_id)
+      
+        res.render('home', {})
     } catch (error) {
         console.log(error.message);
     }
@@ -137,7 +140,9 @@ const verifyOtp = async (req, res) => {
 };
 
 
-//verifylogin normal
+
+
+
 
 const verifyLogin = async (req, res) => {
 
@@ -240,14 +245,39 @@ const logout = async (req, res) => {
 
 
 const listProduct = async (req, res) => {
-    try {
-        const productData = await Product.find({})
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const ITEMS_PER_PAGE = 6;
+    const totalProducts = await Product.countDocuments({ is_Listed: true });
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+    const searchQuery = req.query.search || '';
 
-        res.render('products', { productData })
-    } catch (error) {
-        error.message
+    let searchFilter = { is_Listed: true };
+
+    // Add search query to the filter if it is not empty
+    if (searchQuery) {
+      searchFilter.$or = [
+        { name: { $regex: new RegExp(searchQuery, 'i') } },
+        // Add other fields for searching, if needed
+      ];
     }
-}
+
+    const productData = await Product.find(searchFilter)
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      .limit(ITEMS_PER_PAGE);
+
+    res.render('products', {
+      productData,
+      totalPages,
+      currentPage: page,
+      searchQuery: req.query.search || '', // Pass the searchQuery to the template
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+  
 
 const productDetail = async (req, res) => {
     try {
@@ -271,6 +301,13 @@ const productDetail = async (req, res) => {
 const errorpage = async (req, res) => {
     try {
         res.render('error-page')
+    } catch (error) {
+        console.log(error);
+    }
+}
+const errormessage = async (req, res) => {
+    try {
+        res.render('error-message')
     } catch (error) {
         console.log(error);
     }
@@ -338,18 +375,34 @@ const loadCheckout = async (req, res) => {
 
   const processCheckout = async (req, res) => {
     try {
-      const { paymentMethod, selectAddress } = req.body; // Updated variable name to selectAddress
+      const { paymentMethod, selectAddress } = req.body; 
       const userId = req.session.user_id;
       const user = await User.findById(userId).populate('address');
       const cartItems = await Cart.findOne({ user: userId });
-      if (!cartItems) {
-        return res.status(400).json({ error: 'No items in the cart.' });
+      if (cartItems.cartTotal==0 ) {
+        return res.render('error-message',{message:"no items in cart"})
       }
+      console.log(cartItems);
   
       const address = user.selectedAddress
       
       if (!address) {
-        return res.status(404).json({ error: 'Selected address not found.' });
+        return res.render('error-message',{message:"Address not found"})
+      }
+      const orderItems = cartItems.cartItems;
+
+      // Check if there is enough stock for each product in the order
+      for (const item of orderItems) {
+        const product = await Product.findById(item.productId);
+  
+        if (!product || product.stock < item.quantity) {
+          
+          return res.render('error-message',{message:"sorry product out of stock/not found"})
+        }
+  
+        // Reduce the stock quantity of the product
+        product.stock -= item.quantity;
+        await product.save();
       }
   
       const order = new Order({
@@ -365,7 +418,8 @@ const loadCheckout = async (req, res) => {
       // Clear cart after placement
       await Cart.findOneAndUpdate({ user: userId }, { cartItems: [], cartTotal: 0 });
   
-      res.redirect('/confirmation');
+      res.redirect('/confirmation/' + order._id);
+     
     } catch (error) {
       console.log(error.message);
       res.redirect('/checkout');
@@ -374,11 +428,105 @@ const loadCheckout = async (req, res) => {
   
   const confirmation = async (req,res)=>{
     try {
-        res.render("confirmation")
+        const orderId = req.params.orderId;
+        const order = await Order.findById(orderId).populate('items.productId');
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found.' });
+          }
+          const userId = req.session.user_id;
+    const user = await User.findById(userId);
+    const selectedAddressId = user.selectedAddress;
+    let selectedAddress;
+    if (selectedAddressId) {
+      selectedAddress = user.address.find((address) => address._id.equals(selectedAddressId));
+    }
+        res.render("confirmation",{ order: order, selectedAddress: selectedAddress })
     } catch (error) {
         console.log(error.message);
   }
 }
+const forgotPassword = async (req,res)=>{
+    try {
+        res.render('forgotPassword')
+    } catch (error) {
+        error.mesage
+    }
+}
+const forgotPasswordOtp = async (req,res)=>{
+    console.log("1");
+    try {
+       const mobile =  req.body.mobile
+       const user = await User.findOne({mobile: mobile})
+       console.log(user);
+       if(!user){
+        res.render('forgotPassword',{message:"Mobile number Not found"})
+         
+       }
+       
+       else{
+        client.verify.v2
+        .services(verifySid)
+        .verifications.create({ to: `+91${mobile}`, channel: 'sms' })
+        .then((verification) => {
+          console.log(verification.status)
+          res.render('passwordOtp', { mobile: mobile });
+        })
+        .catch(error => {
+            console.error('Error sending message:', error)
+            res.render('login', { otpError: true, msg: 'Error sending OTP' });
+          })
+       }
+    } catch (error) {
+        error.mesage
+    }
+}
+
+const forgotpasswordVerify =async(req,res)=>{
+    try {
+      const otp = req.body.otp;
+      const mobile = req.body.mobile;
+  
+      const user = await User.findOne({ mobile: mobile });
+      if (!user) {
+        return res.render('login', { msg: 'User not found. Please register or try again.' });
+      }
+  
+      if (user.is_Blocked) {
+        return res.render('login', { msg: 'You are Blocked' });
+      }
+      client.verify.v2
+        .services(verifySid)
+        .verificationChecks.create({ to: `+91${mobile}`, code: otp })
+        .then((verification_check) => {
+          console.log(verification_check.status);
+          res.render('password-reset',{mobile:mobile})
+        })
+  
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  const resetPassword = async (req, res) => {
+    try {
+        const { password, confirmPassword, mobile } = req.body;
+        if (password !== confirmPassword) {
+            return res.render('password-reset', {
+                mobile: mobile,
+                message: "Passwords do not match",
+            });
+        }
+        const hashedPassword = await securePassword(password);
+        await User.findOneAndUpdate({ mobile: mobile }, { password: hashedPassword });
+        return res.render('login', { message: "Password reset successful" });
+
+    } catch (error) {
+        console.log(error.message);
+        
+        return res.render('reset-error', { message: "Password reset failed" });
+    }
+};
+
 
 
 module.exports = {
@@ -399,7 +547,10 @@ module.exports = {
     loadCheckout,
     processCheckout,
     confirmation,
-    
-    
-
+    errormessage,
+    forgotPassword,
+    forgotPasswordOtp,
+    forgotpasswordVerify,
+    resetPassword,
+  
 }

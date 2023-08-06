@@ -1,0 +1,96 @@
+<div class="card py-5">
+    <!-- views/admin/ordersList.ejs -->
+    <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">ORDERS LIST</h5>
+        <table class="table text-nowrap mb-0 align-middle">
+            <thead class="text-dark fs-4">
+                <tr>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Order ID</h6>
+                    </th> 
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">User</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Total</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Status</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Action</h6>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.forEach(order => { %>
+                <tr>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0"><%= order._id %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-1"><%= order.user.name %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <p class="mb-0 fw-normal">₹<%= order.total %></p>
+                    </td>
+                    <td class="border-bottom-1">
+                        <% if (order.status === 'Shipped') { %>
+                            <h6 class="fw-semibold mb-0 text-success"><%= order.status %></h6>
+                        <% } else if (order.status === 'Pending') { %>
+                            <h6 class="fw-semibold mb-0 text-danger"><%= order.status %></h6>
+                        <% } else if (order.status === 'Processing') { %>
+                            <h6 class="fw-semibold mb-0 text-warning"><%= order.status %></h6>
+                        <% } else if (order.status === 'Delivered') { %>
+                            <h6 class="fw-semibold mb-0 text-info"><%= order.status %></h6>
+                        <% } else if (order.status === 'CANCELLED') { %>
+                            <h6 class="fw-semibold mb-0 text-info"><%= order.status %></h6>
+                        <% } %>
+                    </td>
+                    
+                    <td class="border-bottom-0">
+                        <form action="/admin/updateStatus/<%= order._id %>" method="post">
+                            <select name="newStatus">
+                                <option value="Pending" class="text-danger" <% if (order.status === 'Pending') { %>selected<% } %>>Pending</option>
+                                <option value="Processing"class="text-warning" <% if (order.status === 'Processing') { %>selected<% } %>>Processing</option>
+                                <option value="Shipped" class="text-success" <% if (order.status === 'Shipped') { %>selected<% } %>>Shipped</option>
+                                <option value="Delivered" class="text-success" <% if (order.status === 'Delivered') { %>selected<% } %>>Delivered</option>
+                                <!-- Add more options for different statuses as needed -->
+                            </select>
+                       
+                      
+
+                     
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- ... Table and other content ... -->
+
+<!-- Pagination Links -->
+<div class="pagination justify-content-center mt-4">
+    <% if (currentPage > 1) { %>
+      <a href="?page=1" class="page-link btn btn-dark">First</a>
+      <a href="?page=<%= currentPage - 1 %>" class="page-link btn btn-dark">Previous</a>
+    <% } %>
+  
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <% if (i === currentPage) { %>
+        <span class="page-link btn btn-secondary current-page"><%= i %></span>
+      <% } else { %>
+        <a href="?page=<%= i %>" class="page-link btn btn-dark"><%= i %></a>
+      <% } %>
+    <% } %>
+  
+    <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>" class="page-link btn btn-dark">Next</a>
+      <a href="?page=<%= totalPages %>" class="page-link btn btn-dark">Last</a>
+    <% } %>
+  </div>
+  
+  

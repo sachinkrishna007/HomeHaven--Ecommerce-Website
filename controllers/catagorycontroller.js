@@ -16,7 +16,7 @@ const createCategory = async (req, res) => {
       res.redirect('/admin/loadcategory');
     } catch (error) {
       console.error(error);
-      res.status(500).send('Internal Server Error');
+      return res.render('display-error',{message:"Category already added",})
     }
   };
   
@@ -28,7 +28,62 @@ const loadCategory=async(req,res)=>{
         console.log(error.message);
     }
 }
+const editCategory=async(req,res)=>{
+    try {
+      const id = req.params.id
+      const categoriesData = await Category.findById({_id:id});
+        res.render('edit-category',{categoriesData})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const updateCategory = async (req, res) => {
+  try {
+    const id = req.params.id;
+   
+    const name= req.body.updatedname;
+ 
+  
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      {_id:id},
+      { $set: { name: name } },
+     
+    );
+   
+    if (!updatedCategory) {
+      
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Redirect to the page where you list all categories after updating
+    res.redirect('/admin/loadCategory');
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+
+const deleteCategory = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const deletedCategory = await Category.findByIdAndDelete(id);
+    if (!deletedCategory) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+    res.status(200).json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+module.exports = { editCategory, updateCategory, deleteCategory };
+
 module.exports = {
   createCategory,
-  loadCategory
+  loadCategory,
+  editCategory,
+  updateCategory,deleteCategory
 };

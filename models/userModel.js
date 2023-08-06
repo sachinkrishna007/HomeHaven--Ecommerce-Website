@@ -7,7 +7,7 @@ const addressSchema = new mongoose.Schema({
     state: { type: String, required: true },
     pincode: { type: String, required: true },
     district: { type: String, required: true },
-    address: { type: String, required: true },
+    address: { type: String, required:true},
   });
 
 const userSchema=mongoose.Schema({
@@ -34,7 +34,7 @@ const userSchema=mongoose.Schema({
         default:false
     },
     address:[addressSchema],
-    
+
     selectedAddress: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',

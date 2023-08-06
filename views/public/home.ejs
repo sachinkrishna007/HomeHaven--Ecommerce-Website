@@ -1,7 +1,7 @@
 <%- include("./includes/header") %>
 
     
-        
+     <body>
             
 				<div style="padding-top:10% ;" class="container-fluid">
 					<img class="img-fluid" src="../admin/images/pott.webp" alt="" style=" padding-top:2%; margin: 0;">
@@ -67,7 +67,7 @@
 	<!-- end features Area -->
 
 	<!-- Start category Area -->
-	<section class="category-area">
+	<!-- <section class="category-area">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-lg-8 col-md-12">
@@ -108,7 +108,7 @@
 						<div class="col-lg-4 col-md-4">
 							<div class="single-deal">
 								<div class="overlay"></div>
-								<img class="img-fluid w-100" src="../admin/images/light.avif" alt="">
+								<img class="img-fluid w-80" src="../admin/images/light.avif" alt="">
 								<a href="../assets/img/category/c4.jpg" class="img-pop-up" target="_blank">
 									<div class="deal-details">
 										<h6 class="deal-title">sofa</h6>
@@ -121,7 +121,7 @@
 				<div class="col-lg-4 col-md-6">
 					<div class="single-deal">
 						<div class="overlay"></div>
-						<img class="img-fluid w-100" src="../admin/images/bed.avif" alt="">
+						<img class="img-fluid w-80" src="../admin/images/bed.avif" alt="">
 						<a href="../assets/img/category/c5.jpg" class="img-pop-up" target="_blank">
 							<div class="deal-details">
 								<h6 class="deal-title">sofa</h6>
@@ -131,8 +131,56 @@
 				</div>
 			</div>
 		</div>
-	</section>
+
+
+
+	</section> -->
 	<!-- End category Area -->
+	<section class="category-area">
+        <div class="container xyx">
+            <div class="single-deal">
+				<div class="overlay"></div>
+                <img class="img-fluid" src="../admin/images/recliner.avif" alt="Image 1">
+				<a href="../assets/img/category/c5.jpg" class="img-pop-up" target="_blank">
+					
+						<h6 class="deal-title">sofas and Seatings</h6>
+            </div>
+            <div class="single-deal">
+				<div class="overlay"></div>
+                <img class="img-fluid" src="../admin/images/light front.avif" alt="Image 1">
+				<a href="../assets/img/category/c5.jpg" class="img-pop-up" target="_blank">
+					
+						<h6 class="deal-title">Lightings</h6>
+            </div>
+            <div class="single-deal">
+				<div class="overlay"></div>
+                <img class="img-fluid" src="../admin/images/horse front.webp" alt="Image 1">
+				<a href="../assets/img/category/c5.jpg" class="img-pop-up" target="_blank">
+					
+						<h6 class="deal-title">Show Pieces</h6>
+            </div>
+
+        </div>
+		<style>
+			.xyx {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content:space-between;
+			}
+	
+			.single-deal {
+				flex: 0 0 30%; /* Set each item to occupy 30% of the container width */
+				max-width: 30%; /* Ensure images don't exceed 30% width */
+				margin: 10px;
+			}
+	
+			.single-deal img {
+				width: 100%;
+				height: auto; /* Maintain aspect ratio */
+				display: block;
+			}
+		</style>
+    </section>
 
 	<!--  -->
 	
@@ -216,5 +264,6 @@
 
 	<!-- Start related-product Area -->
 	
-	
+		
+	</body>
 	<%-include('./includes/footer') %>

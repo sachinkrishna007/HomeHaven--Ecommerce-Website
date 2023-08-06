@@ -162,7 +162,78 @@
     <script>
         //to change the quantity of products in cart
       
+        // function editQuantity(cartId, proId, userId, index, count) {
+        //   const quantity = document.getElementById(`qty-val-${proId}`).value
+        //   count = parseInt(count)
+        //   if (quantity == 1 && count == -1) {
+        //     Swal.fire({
+        //       title: 'Are you sure?',
+        //       text: "You won't be able to revert this!",
+        //       icon: 'warning',
+        //       showCancelButton: true,
+        //       confirmButtonColor: '#3085d6',
+        //       cancelButtonColor: '#d33',
+        //       confirmButtonText: 'Yes, delete it!',
+        //       timer: 3000
+        //     }).then((result) => {
+        //       if (result.isConfirmed) {
+        //         $.ajax({
+        //           url: '/editQuantity',
+        //           method: 'PUT',
+        //           data: {
+        //             cartId: cartId,
+        //             proId: proId,
+        //             userId: userId,
+        //             count: count,
+        //             quantity: quantity
+        //           },
+        //           success: (response) => {
+        //             if (response.status) {
+        //               location.reload()
+      
+        //             }
+        //           }
+        //         })
+        //       }
+        //     })
+        //   } else {
+        //     $.ajax({
+        //       url: '/editQuantity',
+        //       method: 'PUT',
+        //       data: {
+        //         cartId: cartId,
+        //         proId: proId,
+        //         userId: userId,
+        //         count: count,
+        //         quantity: quantity
+        //       },
+        //       success: (response) => {
+        //         if (response.status) {
+        //           const qtyElem = document.querySelector(`#qty-val-${proId}`);
+        //           qtyElem.value = response.newQuantity;
+        //           const subTotalVal = document.querySelector(`#subTotal-${proId}`);
+        //           console.log("Subtotal;"+subTotalVal)
+        //           subTotalVal.innerHTML = response.newSubTotal;
+        //           document.getElementById('total').innerHTML = response.cartTotal;
+
+        //         }
+        //         else{
+        //           Swal.fire({
+        //       icon: 'warning',
+        //       title: response.message,
+        //       showConfirmButton: false,
+        //       timer : 4000
+        //     });
+  
+        //         }
+        //       }
+        //     })
+        //   }
+      
+        // }
+        
         function editQuantity(cartId, proId, userId, index, count) {
+          console.log(cartId, proId, userId, index, count);
           const quantity = document.getElementById(`qty-val-${proId}`).value
           count = parseInt(count)
           if (quantity == 1 && count == -1) {
@@ -209,7 +280,7 @@
                 quantity: quantity
               },
               success: (response) => {
-                if (response.status) {
+                if (response.status==true) {
                   const qtyElem = document.querySelector(`#qty-val-${proId}`);
                   qtyElem.value = response.newQuantity;
                   const subTotalVal = document.querySelector(`#subTotal-${proId}`);
@@ -218,10 +289,10 @@
                   document.getElementById('total').innerHTML = response.cartTotal;
 
                 }
-                else{
+                else if(response.status=='outOfStock'){
                   Swal.fire({
               icon: 'warning',
-              title: response.message,
+              title: 'Out of Stock',
               showConfirmButton: false,
               timer : 4000
             });

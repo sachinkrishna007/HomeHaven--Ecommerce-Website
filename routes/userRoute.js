@@ -35,6 +35,8 @@ const userController = require("../controllers/userController")
 const userMiddleWare = require("../middlewares/auth")
 const cartController = require('../controllers/cartController')
 const profileContoller = require('../controllers/profilecontoller')
+const ProductController = require('../controllers/productcontroller')
+
 userRoute.use(userMiddleWare.sessionCheck)
 
 
@@ -51,6 +53,7 @@ userRoute.post('/loginotp',userController.verifyOtpLogin)
 
 
 
+
 //register
 userRoute.get('/register',userMiddleWare.isloggedIn,userController.loadRegister)
 userRoute.post('/register',userController.validation)
@@ -61,20 +64,20 @@ userRoute.post('/verifyOtp',userController.verifyOtp)
 //products
 userRoute.get('/product',userMiddleWare.checkBlockedUser,userController.listProduct)
 userRoute.get('/productDetail/:id',userMiddleWare.checkBlockedUser,userController.productDetail)
-userRoute.get('/error',userController.errorpage)
 userRoute.get('/block',userController.blockpage)
 
 //profileRoutes
-userRoute.get('/profile',userController.loadProfile)
-userRoute.get('/loadAddress',profileContoller.loadAddress)
-userRoute.post('/addAddress',profileContoller.addAddress)
-userRoute.get('/orderHistory',profileContoller.orderHistory)
-userRoute.post('/selectAddress',profileContoller.selectAddress)
-userRoute.get('/orderDetails/:orderId',profileContoller.orderDetails)
+userRoute.get('/profile',userMiddleWare.checkBlockedUser,userController.loadProfile)
+userRoute.get('/loadAddress',userMiddleWare.checkBlockedUser,profileContoller.loadAddress)
+userRoute.post('/addAddress',userMiddleWare.checkBlockedUser,profileContoller.addAddress)
+userRoute.get('/orderHistory',userMiddleWare.checkBlockedUser,profileContoller.orderHistory)
+userRoute.post('/selectAddress',userMiddleWare.checkBlockedUser,profileContoller.selectAddress)
+userRoute.get('/orderDetails/:orderId',userMiddleWare.checkBlockedUser,profileContoller.orderDetails)
 
 
-
-
+//error
+userRoute.get('/errroMessage',userController.errormessage)
+userRoute.get('/error',userController.errorpage)
 
 //cartRoutes
 userRoute.post('/add-to-cart/:id',cartController.addToCart);
@@ -85,6 +88,19 @@ userRoute.delete('/deleteProduct',cartController.deleteProduct)
 //checkout
 userRoute.get('/checkout',userController.loadCheckout)
 userRoute.post('/checkout', userController.processCheckout)
-userRoute.get('/confirmation',userController.confirmation)
+userRoute.get('/confirmation/:orderId',userController.confirmation)
+
+//forgotPassword
+userRoute.get('/forgotPassword',userController.forgotPassword)
+userRoute.post('/forgotPassword',userController.forgotPasswordOtp)
+userRoute.post('/verifyForgotPassword',userController.forgotpasswordVerify)
+userRoute.post('/resetPassword',userController.resetPassword)
+userRoute.get('/updatePassword',profileContoller.updatePasswordLoad)
+
+userRoute.post('/updatePassword',profileContoller.updatePassword)
+userRoute.post('/verify-oldPassword',profileContoller.verifyOldPassword)
+
+//cancel order
+userRoute.post('/cancel-order/:orderId',ProductController.cancelOrder)
 
 module.exports = userRoute

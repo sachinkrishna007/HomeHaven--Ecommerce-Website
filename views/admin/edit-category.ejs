@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css">
+
+<!-- Add jQuery (required by Cropper.js) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Add Cropper.js -->
+<script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
+<div class="card py-5">
+    <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">Edit Category</h5>
+        <form action="/admin/editCategory/<%= categoriesData._id %>" method="POST" >
+            <div class="mb-3">
+              <label for="categoryName" class="form-label">Category Name</label>
+              <input type="text" class="form-control" id="categoryName" name="updatedname" value="<%= categoriesData.name %>" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Category</button>
+          </form>
+          
+           
+
+
+
