@@ -14,20 +14,20 @@
     <h5 class="card-title fw-semibold mb-4">ADD PRODUCT</h5>
 
 
-    <form action="/admin/product" method="post" enctype="multipart/form-data" id="myForm">
+    <form action="/admin/product" method="post" enctype="multipart/form-data" id="myForm" onsubmit="return validateProduct()">
 
       <div>
-        <input class="btn btn-primary" value="SUBMIT" type="submit"></input>
+        <button class="btn btn-success" type="submit">Submit</button>
       </div>
       <div class="mb-3">
         <label for="productName" class="form-label">Name</label>
-        <input type="text" class="form-control" id="productName" name="name" onkeyup="nameValidation()" >
+        <input type="text" class="form-control" id="productName" name="name" onkeyup="nameValidation()" required>
         <span id="nameError"></span>
       </div>
       <div class="mb-3">
         <label for="productDescription" class="form-label">Description</label>
         <textarea class="form-control" id="productDescription" name="description" rows="3"
-          onkeyup="descriptionValidation()" ></textarea>
+          onkeyup="descriptionValidation()" required></textarea>
         <span id="desError"></span>
       </div>
 
@@ -48,19 +48,19 @@
       <div class="mb-3">
         <label for="productPrice" class="form-label">Price</label>
         <input type="number" step="0.01" class="form-control" id="productPrice" name="price" onkeyup="priceValidation()"
-          >
+         required >
         <span id="priceError"></span>
       </div>      
 
       <div class="mb-3">
         <label for="productPrice" class="form-label">Offer Price</label>
         <input type="number" step="0.01" class="form-control" id="offerprice" name="offerprice"
-          onkeyup="opriceValidation()" >
+          onkeyup="opriceValidation()" required >
         <span id="opriceError"></span>
       </div>
       <div class="mb-3">
         <label for="productPrice" class="form-label">Stock</label>
-        <input type="number" step="1" class="form-control" id="stock" name="stock" onkeyup="stockValidation()" >
+        <input type="number" step="1" class="form-control" id="stock" name="stock" onkeyup="stockValidation()" required >
         <span id="stockError"></span>
       </div>
       <hr class="mb-4 mt-0">
@@ -314,6 +314,11 @@
     return true;
   }
 
+
+  // function validateProduct(){
+
+  //   return false
+  // }
 
   // myForm.addEventListener("submit", (event) => {
   //   event.preventDefault();

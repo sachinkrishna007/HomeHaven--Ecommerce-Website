@@ -1,0 +1,71 @@
+<div class="card py-5">
+    <!-- views/admin/ordersList.ejs -->
+    <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">ORDER DETAILS</h5>
+        <table class="table text-nowrap mb-0 align-middle">
+            <thead class="text-dark fs-4">
+                <tr>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Product</h6>
+                    </th> 
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Image</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Price</h6>
+                    </th>
+                    
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Quantity</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Total</h6>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.items.forEach(function(item,index) { %>
+                <tr>
+                    <td class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0"><%=item.productId.name  %></h6>
+                    </td>
+                    <td class="border-bottom-0">
+                        <img src="../images/<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" style="width: 50px; height: 50px;">
+                    </td>
+                    <td class="border-bottom-0">
+                        <p class="mb-0 fw-normal">₹<%= item.productId.price %></p>
+                    </td>
+                   
+                    <td class="border-bottom-1">
+                        <h5>x <%= item.quantity %></h5>
+                    </td>
+                    
+                    <td>
+                        <p>₹ <%= item.total %></p>
+                      </td>
+                        
+                          
+                       
+                      
+
+                     
+                    
+                </tr>
+                <% }); %>
+                <tr>
+                    <td colspan="4">
+                      <h4>Total Amount</h4>
+                    </td>
+                    <td>
+                      <p>₹ <%= order.total %></p>
+                    </td>
+                  </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- ... Table and other content ... -->
+
+<!-- Pagination Links -->
+
+  

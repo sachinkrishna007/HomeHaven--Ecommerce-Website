@@ -1,6 +1,6 @@
 const express = require('express')
 const userRoute = express()
-const isAuth=require('../middlewares/userAuth')
+// const isAuth=require('../middlewares/userAuth')
 const blocked=require('../middlewares/auth')
 
 
@@ -67,12 +67,15 @@ userRoute.get('/productDetail/:id',userMiddleWare.checkBlockedUser,userControlle
 userRoute.get('/block',userController.blockpage)
 
 //profileRoutes
-userRoute.get('/profile',userMiddleWare.checkBlockedUser,userController.loadProfile)
-userRoute.get('/loadAddress',userMiddleWare.checkBlockedUser,profileContoller.loadAddress)
+userRoute.get('/profile',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,userController.loadProfile)
+userRoute.get('/loadAddress',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,profileContoller.loadAddress)
 userRoute.post('/addAddress',userMiddleWare.checkBlockedUser,profileContoller.addAddress)
-userRoute.get('/orderHistory',userMiddleWare.checkBlockedUser,profileContoller.orderHistory)
+userRoute.get('/orderHistory',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,profileContoller.orderHistory)
 userRoute.post('/selectAddress',userMiddleWare.checkBlockedUser,profileContoller.selectAddress)
-userRoute.get('/orderDetails/:orderId',userMiddleWare.checkBlockedUser,profileContoller.orderDetails)
+userRoute.get('/orderDetails/:orderId',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,profileContoller.orderDetails)
+// userRoute.get('/editAddress/:userId/:addressIndex',profileContoller.EditAddressPage)
+// userRoute.post('/editAddress/:userId/:addressIndex',profileContoller.updateAddress)
+
 
 
 //error
@@ -86,16 +89,16 @@ userRoute.put('/editQuantity',cartController.editQuantity)
 userRoute.delete('/deleteProduct',cartController.deleteProduct)
 
 //checkout
-userRoute.get('/checkout',userController.loadCheckout)
+userRoute.get('/checkout',userMiddleWare.isloggedout,userMiddleWare.checkoutMiddleware,userController.loadCheckout)
 userRoute.post('/checkout', userController.processCheckout)
-userRoute.get('/confirmation/:orderId',userController.confirmation)
+userRoute.get('/confirmation/:orderId',userMiddleWare.isloggedout,userController.confirmation)
 
 //forgotPassword
-userRoute.get('/forgotPassword',userController.forgotPassword)
+userRoute.get('/forgotPassword',userMiddleWare.isloggedIn,userController.forgotPassword)
 userRoute.post('/forgotPassword',userController.forgotPasswordOtp)
 userRoute.post('/verifyForgotPassword',userController.forgotpasswordVerify)
 userRoute.post('/resetPassword',userController.resetPassword)
-userRoute.get('/updatePassword',profileContoller.updatePasswordLoad)
+userRoute.get('/updatePassword',userMiddleWare.isloggedout,profileContoller.updatePasswordLoad)
 
 userRoute.post('/updatePassword',profileContoller.updatePassword)
 userRoute.post('/verify-oldPassword',profileContoller.verifyOldPassword)

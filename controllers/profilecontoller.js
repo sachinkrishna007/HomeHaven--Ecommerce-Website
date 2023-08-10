@@ -48,7 +48,8 @@ const addAddress = async (req, res) => {
       users.address.push(newAddress)
   
       await users.save()
-      res.redirect('/loadAddress')
+      res.json({ success: true, message: 'Address added successfully' });
+    
       
     } catch (error) {
       console.log(error.message);
@@ -168,6 +169,10 @@ const updatePassword = async (req, res) => {
   }
 };
 
+
+
+
+
   
   module.exports ={
     loadAddress,
@@ -177,6 +182,7 @@ const updatePassword = async (req, res) => {
     orderDetails,
     updatePassword,
     updatePasswordLoad,
-    verifyOldPassword
+    verifyOldPassword,
+  
    
   }

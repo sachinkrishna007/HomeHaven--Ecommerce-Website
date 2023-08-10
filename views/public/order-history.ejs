@@ -21,6 +21,7 @@
                         <tr>
                             <th>Sl No</th>
                             <th>Date</th>
+                          
                             <th>Status</th>
                             <th>Total</th>
                             <th>Actions</th>
@@ -32,6 +33,7 @@
                                 <tr>
                                     <td><%= index + 1 %></td>
                                     <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                   
                                     <td>
                                         <% if (order.status === 'Pending') { %>
                                             <span class="order-status text-primary">Pending</span>

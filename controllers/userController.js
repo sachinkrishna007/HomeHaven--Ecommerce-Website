@@ -28,10 +28,12 @@ const securePassword = async (password) => {
 //load the homepage
 const loadhome = async (req, res) => {
     try {
-        
+
+        const product = await Product.find().limit(6).sort({_id:-1})
         // const user =  await User.findById(req.session.user_id)
-      
-        res.render('home', {})
+      const successMessage = req.session.successMessage;
+      req.session.successMessage = null;
+        res.render('home', {product,successMessage})
     } catch (error) {
         console.log(error.message);
     }
@@ -163,6 +165,7 @@ const verifyLogin = async (req, res) => {
                 req.session.user_id = userData._id;
                 req.session.user = await User.findOne({ _id: req.session.user_id });
                 console.log(req.session.user_id)
+                req.session.successMessage = "Successfully signed in!";
                 console.log("sucessfully signed in")
                 res.redirect('/')
             } else {
@@ -251,6 +254,8 @@ const listProduct = async (req, res) => {
     const totalProducts = await Product.countDocuments({ is_Listed: true });
     const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
     const searchQuery = req.query.search || '';
+    const minPrice = parseFloat(req.query.minPrice); // Get the minimum price from request query parameters
+      const maxPrice = parseFloat(req.query.maxPrice)
 
     let searchFilter = { is_Listed: true };
 
@@ -261,6 +266,7 @@ const listProduct = async (req, res) => {
         // Add other fields for searching, if needed
       ];
     }
+    
 
     const productData = await Product.find(searchFilter)
       .skip((page - 1) * ITEMS_PER_PAGE)
@@ -394,7 +400,7 @@ const loadCheckout = async (req, res) => {
       // Check if there is enough stock for each product in the order
       for (const item of orderItems) {
         const product = await Product.findById(item.productId);
-  
+             
         if (!product || product.stock < item.quantity) {
           
           return res.render('error-message',{message:"sorry product out of stock/not found"})
@@ -404,6 +410,7 @@ const loadCheckout = async (req, res) => {
         product.stock -= item.quantity;
         await product.save();
       }
+      
   
       const order = new Order({
         user: userId,
@@ -412,6 +419,7 @@ const loadCheckout = async (req, res) => {
         total: cartItems.cartTotal,
         paymentMethod: paymentMethod,
         status: 'Pending',
+    
       });
       await order.save();
   
@@ -440,7 +448,8 @@ const loadCheckout = async (req, res) => {
     if (selectedAddressId) {
       selectedAddress = user.address.find((address) => address._id.equals(selectedAddressId));
     }
-        res.render("confirmation",{ order: order, selectedAddress: selectedAddress })
+    
+        res.render("confirmation",{ order: order, selectedAddress: selectedAddress,  })
     } catch (error) {
         console.log(error.message);
   }
@@ -518,7 +527,7 @@ const forgotpasswordVerify =async(req,res)=>{
         }
         const hashedPassword = await securePassword(password);
         await User.findOneAndUpdate({ mobile: mobile }, { password: hashedPassword });
-        return res.render('login', { message: "Password reset successful" });
+        return res.render('login', { message: "Password reset successfull please login Again" });
 
     } catch (error) {
         console.log(error.message);

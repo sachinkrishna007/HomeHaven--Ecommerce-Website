@@ -45,7 +45,7 @@ adminRoute.get('/logout',auth.islogin,adminController.logout)
 adminRoute.get('/users',auth.islogin,adminController.userList)
 adminRoute.get('/userview',auth.islogin,adminController.userView)
 adminRoute.get('/block',auth.islogin,adminController.blockUser)
-adminRoute.get('/unblock',adminController.unblockUser)
+adminRoute.get('/unblock',adminController.unblockUser) 
 
 
 //product routes
@@ -57,13 +57,13 @@ adminRoute.get('/delete',productContoller.deleteProduct)
 adminRoute.get('/edit-product/:id',auth.islogin,productContoller.editProduct)
 adminRoute.post('/edit-product/:id',productContoller.updateEditProduct)
 adminRoute.get('/list',auth.islogin,productContoller.listProduct)
-adminRoute.get('/unlist',productContoller.unlistProduct)
+adminRoute.get('/unlist',auth.islogin,productContoller.unlistProduct)
 
 
 //catagory routes
 adminRoute.post('/category', catagoryController.createCategory);
 adminRoute.get('/loadCategory',auth.islogin,auth.islogin,catagoryController.loadCategory)
-adminRoute.get('/search',productContoller.ProductSearch)
+adminRoute.get('/search',auth.islogin,productContoller.ProductSearch)
 adminRoute.get('/editCategory',catagoryController.editCategory)
 adminRoute.get('/editCategory/:id',catagoryController.editCategory)
 adminRoute.post('/editCategory/:id',catagoryController.updateCategory)
@@ -73,6 +73,7 @@ adminRoute.post('/deleteCategory/:id',catagoryController.deleteCategory)
 //orders route
 adminRoute.get('/orders',productContoller.orderStatus)
 adminRoute.post('/updateStatus/:orderId',productContoller.updateStatus)
+adminRoute.get('/adminOrderDetails/:orderId',productContoller.adminViewOrders)
 
 
 module.exports=adminRoute

@@ -7,18 +7,30 @@ const Category=require('../models/catagoryModel')
 
 //  function to create a new category
 const createCategory = async (req, res) => {
-    try {
+  try {
       const { name } = req.body;
+
+      // Check if category with the same name already exists
+      const existingCategory = await Category.findOne({ name });
+      
+
+      if (existingCategory) {
+          return res.render('display-error', { layouts:false,message: "Category already added" });
+      }
+
+      // If category doesn't exist, create a new category
       const newCategory = new Category({
-        name,
+          name,
       });
+
       await newCategory.save();
       res.redirect('/admin/loadcategory');
-    } catch (error) {
+  } catch (error) {
       console.error(error);
-      return res.render('display-error',{message:"Category already added",})
-    }
-  };
+      return res.render('display-error', { message: "An error occurred" });
+  }
+};
+
   
 const loadCategory=async(req,res)=>{
     try {

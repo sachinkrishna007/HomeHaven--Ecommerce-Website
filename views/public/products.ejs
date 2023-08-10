@@ -59,17 +59,7 @@
 								  <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
 									  <ul class="nav navbar-nav menu_nav ml-auto">
 										  <li class="nav-item "><a class="nav-link" href="/">Home</a></li>
-										  <li class="nav-item submenu dropdown">
-											  <a href="/product" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-											   aria-expanded="false">Shop</a>
-											  <ul class="dropdown-menu">
-												  <!-- <li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li> -->
-												  <li class="nav-item"><a class="nav-link" href="/product">Product</a></li>
-												  <!-- <li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li> -->
-												  <li class="nav-item"><a class="nav-link" href="/loadCart">Shopping Cart</a></li>
-												  <!-- <li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li> -->
-											  </ul>
-										  </li>
+										  <li class="nav-item"><a class="nav-link" href="/product">Shop</a></li>
 										  <!-- <li class="nav-item submenu dropdown">
 											  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 											   aria-expanded="false">Blog</a>
@@ -94,17 +84,7 @@
 								  <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
 									  <ul class="nav navbar-nav menu_nav ml-auto">
 										  <li class="nav-item "><a class="nav-link" href="/">Home</a></li>
-										  <li class="nav-item submenu dropdown">
-											  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-											   aria-expanded="false">Shop</a>
-											  <ul class="dropdown-menu">
-												  <!-- <li class="nav-item"><a class="nav-link" href="category.html">Shop Category</a></li> -->
-												  <li class="nav-item"><a class="nav-link" href="/product">Product Details</a></li>
-												  <!-- <li class="nav-item"><a class="nav-link" href="checkout.html">Product Checkout</a></li> -->
-												  <!-- <li class="nav-item"><a class="nav-link" href="/loadCart">Shopping Cart</a></li> -->
-												  <!-- <li class="nav-item"><a class="nav-link" href="confirmation.html">Confirmation</a></li> -->
-											  </ul>
-										  </li>
+										  <li class="nav-item"><a class="nav-link" href="/product">Shop</a></li>
 										  <!-- <li class="nav-item submenu dropdown">
 											  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
 											   aria-expanded="false">Blog</a>
@@ -150,7 +130,7 @@
 		  <div class="search_input" id="search_input_box">
 			  <div class="container">
 				  <form class="d-flex justify-content-between" action="/product">
-					  <input type="text" class="form-control" id="search_input" placeholder="Search Here" name="search">
+					  <input type="text" class="form-control" id="search_input" placeholder="Search Here" name="search" >
 					  <button type="submit" class="btn"></button>
 					  <span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
 				  </form>
@@ -231,8 +211,21 @@
 							</ul>
 						</form>
 					</div>
-					<div class="common-filter">
-						<div class="head">Price</div>
+					<!-- <div class="head">Price Filter</div>
+					<ul class="main-categories">
+							<li class="main-nav-list"><a class="nav-link" href="/product?minPrice=1&&maxPrice=1000"><span class="lnr lnr-arrow-right"></span>₹ 1 to ₹ 1000</a></li>
+							<li class="main-nav-list"><a class="nav-link" href="/product?minPrice=1000&&maxPrice=5000"><span class="lnr lnr-arrow-right"></span>₹ 1000 to ₹ 5000</a></li>
+							<li class="main-nav-list"><a class="nav-link" href="/product?minPrice=5000&&maxPrice=10000"><span class="lnr lnr-arrow-right"></span>₹ 5000 to ₹ 10000</a></li>
+							<li class="main-nav-list"><a class="nav-link" href="/product?minPrice=10000&&maxPrice=100000"><span class="lnr lnr-arrow-right"></span>Above ₹ 10000</a></li>
+
+
+						</li>
+					</ul> -->
+					  <!-- Price range filter section -->
+
+				
+					<!-- <div class="common-filter">
+						<div class="head">Price Filter</div>
 						<div class="price-range-area">
 							<div id="price-range"></div>
 							<div class="value-wrapper d-flex">
@@ -243,8 +236,9 @@
 								<span>$</span>
 								<div id="upper-value"></div>
 							</div>
+
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<div class="col-xl-9 col-lg-8 col-md-7">

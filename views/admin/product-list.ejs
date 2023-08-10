@@ -4,13 +4,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <!-- ... -->
-
-  <!-- Your existing CSS styles here -->
-
-</head>
-
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 <body>
   <div class="card">
     <div class="card-title">PRODUCT LIST</div>
@@ -22,7 +21,7 @@
     </form>
 
     <div class="table-container">
-      <table class="table">
+      <table class="table text-center">
         <thead>
           <tr>
             <th>Index</th>
@@ -61,12 +60,12 @@
                 </div>
               </td>
               <td>
-                <a href="/admin/edit-product/<%= product._id %>" class="btn btn-primary">Edit</a>
-                <button class="btn btn-danger" onclick="showDeleteConfirmation('<%= product._id %>')">Delete</button>
+                <a href="/admin/edit-product/<%= product._id %>" class="btn btn-primary w-100 mb-1">Edit</a>
+                <button class="btn btn-danger w-100 mb-1" onclick="showDeleteConfirmation('<%= product._id %>')">Delete</button>
                 <% if (product.is_Listed) { %>
-                  <a href="/admin/list?id=<%= product.id %>" class="btn btn-success">list</a>
+                  <a href="/admin/list?id=<%= product.id %>" class="btn btn-success w-100 ">hide</a>
                   <% } else { %>
-                  <a href="/admin/unlist?id=<%= product.id %>" class="btn btn-danger">unlist</a>
+                  <a href="/admin/unlist?id=<%= product.id %>" class="btn btn-danger w-100">show</a>
                   <% } %>
               </td>
             </tr>

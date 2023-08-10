@@ -1,191 +1,443 @@
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Favicon-->
+	<link rel="shortcut icon" href="img/fav.png">
+	<!-- Author Meta -->
+	<meta name="author" content="CodePixar">
+	<!-- Meta Description -->
+	<meta name="description" content="">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>Smart Wrist</title>
+	<!--
+			CSS
+			============================================= -->
+	<link rel="stylesheet" href="../user-assets/css/linearicons.css">
+	<link rel="stylesheet" href="../user-assets/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../user-assets/css/themify-icons.css">
+	<link rel="stylesheet" href="../user-assets/css/bootstrap.css">
+	<link rel="stylesheet" href="../user-assets/css/owl.carousel.css">
+	<link rel="stylesheet" href="../user-assets/css/nice-select.css">
+	<link rel="stylesheet" href="../user-assets/css/nouislider.min.css">
+	<link rel="stylesheet" href="../user-assets/css/ion.rangeSlider.css" />
+	<link rel="stylesheet" href="../user-assets/css/ion.rangeSlider.skinFlat.css" />
+	<link rel="stylesheet" href="../user-assets/css/main.css">
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
-<%- include('./includes/header') %>
-<br>
-<br>
-<br>
-<br>
-<!--================Checkout Area =================-->
-<section class="checkout_area section_gap">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-4">
-        <!-- Billing Details section -->
-        <div id="message" style="display: none;"></div>
-        <div class="billing_details">
-          <h3>Billing Details</h3>
-          <% if (user.address.length > 0) { %>
-          <form id="addressForm">
-            <% user.address.forEach((address, index) => { %>
-            <div class="card mb-3 address-card">
-              <div class="card-body">
-                <label>
-                  <input type="radio" name="selectedAddress" value="<%= address._id %>" <% if (index === 0) { %>checked<% } %>>
-                  <h5 class="card-title">Address <%= index + 1 %></h5>
-                  <p>Name: <%= address.name %></p>
-                  <p>Mobile: <%= address.mobile %></p>
-                  <p>State: <%= address.state %></p>
-                  <p>Pincode: <%= address.pincode %></p>
-                  <p>District: <%= address.district %></p>
-                  <p>Address: <%= address.address %></p>
-                  <!-- Add an "Edit Address" button -->
-                </label>
-              </div>
-            </div>
-            <% }) %>
-            <!-- Move the submit button inside the form -->
-            <button class="btn-primary" type="submit">Select Address</button>
-          </form>
-          <% } else { %>
-          <p>No addresses added yet.</p>
-          <% } %>
-        </div>
-        <!-- Rest of the checkout form -->
-      </div>
-      <div class="col-lg-8">
-        <!-- Your Order section -->
-        <div class="order_box">
-          <h2>Your Order</h2>
-          <ul class="list">
-            <li>
-              <div class="d-flex justify-content-between">
-                <div><strong>Product</strong></div>
-                <div><strong>Total</strong></div>
-              </div>
-            </li>
-            <% let cartTotal = 0; %>
-            <% cartItems.forEach((item, index) => { %>
-            <li>
-              <div class="d-flex justify-content-between">
-                <div><%= item.carted.name %> <span class="middle">x <%= item.quantity %></span></div>
-                <div>₹<%= item.total %></div>
-              </div>
-            </li>
-            <% cartTotal += item.total; %>
-            <% }) %>
-          </ul>
-          <ul class="list list_2">
-            <li>Subtotal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>₹<%= cartTotal %></span></li>
-            <!-- Replace the shipping rate with your shipping rate calculation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.js"></script>
 
-            <!-- <div class="payment_item">
-              <div class="radion_btn">
-                <input type="radio" id="f-option5" name="selector" checked>
-                <label for="f-option5">Check payments</label>
-                <div class="check"></div>
-              </div>
-              <p>Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p>
-            </div> -->
-            <form action="/checkout" method="post">
-            <div class="payment_item active">
-              <div class="radion_btn">
-                <input type="radio" id="f-option6" name="selector" >
-                <label for="f-option6">Paypal</label>
-                <img src="img/product/card.jpg" alt="">
-                <div class="check"></div>
-              </div> 
-            </div>
-            <div class="payment_item active">
-              <div class="radion_btn">
-                <input type="radio" id="selectedPaymentMethod" name="paymentMethod" value="COD"  >
-                <label for="selectedPaymentMethod">Cash On Delivery</label>
-                <img src="img/product/card.jpg" alt="">
-                <div class="check"></div>
-                <p>Please pay with cash upon delivery.</p>
-              </div>
-              <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal account.</p>
-            </div>
-            <div class="creat_account">
-              <input type="checkbox" id="f-option4" name="selector">
-              <label for="f-option4">I’ve read and accept the </label>
-              <a href="#">terms & conditions*</a>
-            </div>
-           
-              <!-- ... Add your existing form fields here ... -->
 
-              <!-- Add a hidden input field to hold the selected payment method -->
-              <!-- <input type="hidden" id="selectedPaymentMethod" name="paymentMethod" value="COD"> -->
+</head>
+<style>
+	/* Keep your existing CSS styles */
+	.img_zoom_container {
+	  position: relative;
+	  overflow: hidden;
+	  cursor: zoom-in;
+	}
+  
+	.img_zoom {
+	  transition: transform 0.9s ease-in-out;
+	  transform-origin: center center;
+	}
+  
+	/* Remove the background-image style from figure.zoom */
+	figure.zoom {
+	  background-position: 50% 50%;
+	  position: relative;
+	  margin: 10px auto;
+	  border: 5px solid white;
+	  box-shadow: -1px 5px 15px black;
+	  height: 500px;
+	  width: 500px;
+	  overflow: hidden;
+	  cursor: zoom-in;
+	}
+  
+	/* Add a rule to hide the img inside the figure */
+	figure.zoom img {
+	  display: none;
+	}
+	 .img_zoom_container {
+	  position: relative;
+	  overflow: hidden;
+	  cursor: zoom-in;
+	}
+  
+	.img_zoom {
+	  transition: transform 0.9s ease-in-out;
+	  transform-origin: center center;
+	}
+  </style>
 
-              <!-- Add the Proceed to Payment button -->
-              <button type="submit" class="primary-btn">Proceed to Payment</button>
-            </form>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!--================End Checkout Area =================-->
-<%- include('./includes/footer') %>
+<body>
+
+	<!-- Start Header Area -->
+    <%- include('../layouts/header.ejs') %>	
+
+	<!-- End Header Area -->
+
+	<!-- Start Banner Area -->
+
+	<!-- End Banner Area -->
+
+	<!--================Single Product Area =================-->
+
+	<div class="product_image_area">
+		<div class="container">
+			<div class="row s_product_inner">
+				<div class="col-lg-6">
+					<div class="s_Product_carousel">
+						<div class="single-prd-item img_zoom_container"  >
+							<figure class="zoom" onmousemove="zoom(event)" onmouseout="resetZoom(event)">
+							<img class="img-fluid" src="../product-images/<%= product.images[0]%>" alt="">
+						</figure>
+
+						</div>
+						<div class="single-prd-item">
+							<figure class="zoom" onmousemove="zoom(event)" onmouseout="resetZoom(event)">
+							<img class="img-fluid" src="../product-images/<%= product.images[1]%>" alt="">
+						</figure>
+
+						</div>
+						<div class="single-prd-item">
+							<figure class="zoom" onmousemove="zoom(event)" onmouseout="resetZoom(event)">
+							<img class="img-fluid" src="../product-images/<%= product.images[2]%>" alt="">
+						</figure>
+
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-5 offset-lg-1">
+					<div class="s_product_text">
+						<h3><%=product.name%></h3>
+						<h2><i class="fa fa-inr" aria-hidden="true"></i> <%=product.price%></h2>
+						<ul class="list">
+							<li><a class= href="#"><span>Category</span> :<%=product.category.name.toUpperCase()%></a></li>
+							<% if (product.stock <= 0) { %>
+								<li><a href="#"><span>Availability</span><span style="color: red; font-weight: bolder;">: Out of Stock</span></a></li>
+							  <% } else if (product.stock <= 5) { %>
+								<li><a href="#"><span>Availability</span>: In Stock</a></li>
+								<span style="color: red;">Hurry,Only <%= product.stock %>   items Remaining</span>
+							  <% } else { %>
+								<li><a href="#"><span>Availability</span>: In Stock</a></li>
+							  <% } %>
+							  
+
+
+
+						</ul>
+						<p><%=product.description%></p>
+						
+						<div class="card_area d-flex align-items-center">
+							<button class="primary-btn" onclick="addtocart('<%=product._id%>')">Add to Cart</button>
+							<a class="icon_btn" href="#"><i class="lnr lnr lnr-heart" onclick="addToWishList('<%=product._id%>')"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--================End Single Product Area =================-->
+
+	<!--================Product Description Area =================-->
+	<section class="product_description_area">
+		<div class="container">
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item">
+					<a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Description</a>
+                </li>
+			
+			</ul>
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+					<p><%=product.category.description%></p>
+				</div>
+				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+					<div class="table-responsive">
+						<table class="table">
+							<tbody>
+								<tr>
+									<td>
+										<h5>Width</h5>
+									</td>
+									<td>
+										<h5>128mm</h5>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Height</h5>
+									</td>
+									<td>
+										<h5>508mm</h5>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Depth</h5>
+									</td>
+									<td>
+										<h5>85mm</h5>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Weight</h5>
+									</td>
+									<td>
+										<h5>52gm</h5>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Quality checking</h5>
+									</td>
+									<td>
+										<h5>yes</h5>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Freshness Duration</h5>
+									</td>
+									<td>
+										<h5>03days</h5>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>When packeting</h5>
+									</td>
+									<td>
+										<h5>Without touch of hand</h5>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<h5>Each Box contains</h5>
+									</td>
+									<td>
+										<h5>60pcs</h5>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="comment_list">
+								<div class="review_item">
+									<div class="media">
+										<div class="d-flex">
+											<img src="img/product/review-1.png" alt="">
+										</div>
+										<div class="media-body">
+											<h4>Blake Ruiz</h4>
+											<h5>12th Feb, 2018 at 05:56 pm</h5>
+											<a class="reply_btn" href="#">Reply</a>
+										</div>
+									</div>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+										dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+										commodo</p>
+								</div>
+								<div class="review_item reply">
+									<div class="media">
+										<div class="d-flex">
+											<img src="img/product/review-2.png" alt="">
+										</div>
+										<div class="media-body">
+											<h4>Blake Ruiz</h4>
+											<h5>12th Feb, 2018 at 05:56 pm</h5>
+											<a class="reply_btn" href="#">Reply</a>
+										</div>
+									</div>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+										dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+										commodo</p>
+								</div>
+								<div class="review_item">
+									<div class="media">
+										<div class="d-flex">
+											<img src="img/product/review-3.png" alt="">
+										</div>
+										<div class="media-body">
+											<h4>Blake Ruiz</h4>
+											<h5>12th Feb, 2018 at 05:56 pm</h5>
+											<a class="reply_btn" href="#">Reply</a>
+										</div>
+									</div>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+										dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+										commodo</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class="review_box">
+								<h4>Post a comment</h4>
+								<form class="row contact_form" action="contact_process.php" method="post" id="contactForm" novalidate="novalidate">
+									<div class="col-md-12">
+										<div class="form-group">
+											<input type="text" class="form-control" id="name" name="name" placeholder="Your Full name">
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<input type="text" class="form-control" id="number" name="number" placeholder="Phone Number">
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<textarea class="form-control" name="message" id="message" rows="1" placeholder="Message"></textarea>
+										</div>
+									</div>
+									<div class="col-md-12 text-right">
+										<button type="submit" value="submit" class="btn primary-btn">Submit Now</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+		
+			</div>
+		</div>
+	</section>
+
+	
+
+
+
+	<!--================End Product Description Area =================-->
+
+	<!-- Start related-product Area -->
+
+	<!-- End related-product Area -->
+
+	<!-- start footer Area -->
+	<%- include('../layouts/footer.ejs') %>	
+
+	<!-- End footer Area -->
+
+	
+	  
+
+
+	
+	<script>
+		function addToWishList(proId) {
+			event.preventDefault();
+		$.ajax({
+		  url: '/add-to-wishlist',
+		  method: 'POST',
+		  data: {
+			proId: proId
+		  },
+		  success: (response) => {
+			if (response) {
+			  // Product added to Wishlist successfully
+			  Swal.fire({
+				position: 'centre',
+				icon: 'success',
+				title: 'Product added to wish list',
+				showConfirmButton: false,
+				timer: 1500
+				})
+			  
+	
+			} else {
+			  // Error adding product to Wishlist
+			  Swal.fire({
+				icon: 'error',
+				title: 'Product already exist in Wishlist',
+				timer: 2000
+			  });
+	
+			}
+		  }
+		})
+	  }
+	
+	
+	
+	</script>
+
+	<script src="../user-assets/js/vendor/jquery-2.2.4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+	 crossorigin="anonymous"></script>
+	<script src="../user-assets/js/vendor/bootstrap.min.js"></script>
+	<script src="../user-assets/js/jquery.ajaxchimp.min.js"></script>
+	<script src="../user-assets/js/jquery.nice-select.min.js"></script>
+	<script src="../user-assets/js/jquery.sticky.js"></script>
+	<script src="../user-assets/js/nouislider.min.js"></script>
+	<script src="../user-assets/js/jquery.magnific-popup.min.js"></script>
+	<script src="../user-assets/js/owl.carousel.min.js"></script>
+	<!--gmaps Js-->
+	<script src="../user-assets/https://maps.googleapis.com/maps/api/js?key=AIzaSyCjCGmQ0Uq4exrzdcL6rvxywDDOvfAu6eE"></script>
+	<script src="../user-assets/js/gmaps.min.js"></script>
+
+	<script src="../user-assets/js/main.js"></script>
+	<script>
+		function addtocart(proId) {
+		  $.ajax({
+			url: '/addToCart/' + proId,
+			method: 'POST',
+			success: (response) => {
+			  if (response.status==true) {
+				Swal.fire({
+				  title: 'Added To Cart',
+				  text: 'Your Product has been added to Cart',
+				  icon: 'success',
+				  timer: 5000
+				})
+				
+			  }else if(response.status=='outOfStock'){
+				Swal.fire({
+				  title: 'Out of Stock',
+				  text: 'Product Out Of Stock',
+				  icon: 'error',
+				  timer: 5000
+				})
+			  }
+			}
+		  })
+		}
+	</script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const addressForm = document.getElementById("addressForm");
+	function zoom(event) {
+	  var zoomer = event.currentTarget;
+	  var offsetX = event.offsetX ? event.offsetX : event.touches[0].pageX;
+	  var offsetY = event.offsetY ? event.offsetY : event.touches[0].pageY;
+	  var x = (offsetX / zoomer.offsetWidth) * 100;
+	  var y = (offsetY / zoomer.offsetHeight) * 100;
+	  zoomer.querySelector('img').style.transform = 'scale(1.3)';
+	  zoomer.querySelector('img').style.transformOrigin = x + '% ' + y + '%';
+	}
+  
+	function resetZoom(event) {
+	  var zoomer = event.currentTarget;
+	  zoomer.querySelector('img').style.transform = 'none';
+    }
+  </script>
+</body>
 
-    addressForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const selectedAddressId = document.querySelector(
-        'input[name="selectedAddress"]:checked'
-      ).value;
-
-      try {
-        const response = await fetch("/selectAddress", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ selectedAddress: selectedAddressId }),
-        });
-
-        if (response.ok) {
-          Swal.fire({
-            title: 'Address Selected',
-            text: '',
-            icon: 'success',
-            timer: 1000
-          })
-
-          console.log("Address selected successfully!");
-        } else {
-
-          console.error("Failed to select address");
-        }
-        messageDiv.style.display = "block";
-      } catch (error) {
-        console.error(error.message);
-      }
-    });
-  });
-
-</script>
-
-<style>
-  /* Add a custom class for the address card to target it specifically */
-  .address-card {
-    width: 80%; /* Adjust the width as needed */
-    height: 40%;
-    padding: 1%; /* Adjust the padding as needed */
-    margin-bottom: 20px; /* Adjust the margin as needed */
-    /* Add any other styles you want to customize the appearance of the address card */
-  }
-  /* Add a flexbox layout for the address cards */
-  .row {
-    display: flex;}
-   
-</style>
-
-<script>function checkCheckoutButton() {
-  const addressSelected = document.querySelector( 'input[name="selectedAddress"]:checked');
-  console.log(addressSelected);
-  const paymentSelected = document.querySelector('input[name="paymentMethod"]:checked');
-
-  const checkoutButton = document.getElementById('checkoutButton');
-
-  if (addressSelected && paymentSelected) {
-    checkoutButton.disabled = false;
-  } else {
-    checkoutButton.disabled = true;
-}
-}</script>
+</html>

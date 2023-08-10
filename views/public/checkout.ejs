@@ -15,7 +15,9 @@
         <!-- Billing Details section -->
         <div id="message" style="display: none;"></div>
         <div class="billing_details">
-          <h3>Billing Details</h3>
+          <h3>Shipping Address</h3>
+          <h6>Choose one address </h6>
+        
           <% if (user.address.length > 0) { %>
           <form id="addressForm">
             <!-- <button class="btn-primary" type="submit">Select Address and Proceed</button> -->
@@ -45,6 +47,11 @@
           <p>No addresses added yet.</p>
           <% } %>
         </div>
+        <h6>Not Added Add here</h6>
+        <button type="button" class="genric-btn primary radius"
+      " data-toggle="modal" data-target="#addAddressModal">
+          Add New Address
+        </button>
         <!-- Rest of the checkout form -->
       </div>
       <div class="col-lg-4">
@@ -119,6 +126,64 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="addAddressForm" method="get">
+          <div class="modal-body">
+            <!-- Address form -->
+            
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="mobile" class="form-label">Mobile</label>
+                <input type="tel" class="form-control" id="mobile" name="mobile" required>
+            </div>
+            <div class="mb-3">
+                <label for="landmark" class="form-label">Landmark</label>
+                <input type="text" class="form-control" id="landmark" name="landmark">
+            </div>
+            <div class="mb-3">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+            <div class="mb-3">
+                <label for="state" class="form-label">State</label>
+                <input type="text" class="form-control" id="state" name="state" required>
+            </div>
+            <div class="mb-3">
+                <label for="pincode" class="form-label">Pincode</label>
+                <input type="text" class="form-control" id="pincode" name="pincode" required>
+            </div>
+            <div class="mb-3">
+                <label for="district" class="form-label">District</label>
+                <input type="text" class="form-control" id="district" name="district" required>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+            </div>
+              <!-- Other address fields here -->
+          
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary" id="addAddressBtn">Add Address</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
 </section>
 <!--================End Checkout Area =================-->
 
@@ -199,3 +264,42 @@
     margin-bottom: 10px;
   }
 </style>
+
+
+<script>
+  document.getElementById("addAddressForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    // Collect form data
+    const formData = new FormData(event.target);
+    
+    // Convert form data to an object
+    const formDataObject = {};
+    formData.forEach((value, key) => {
+      formDataObject[key] = value;
+    });
+    
+    // Send a POST request using Fetch API
+    fetch("/addAddress", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formDataObject)
+    })
+    .then(response => response.json())
+    .then(data => {
+      $('#addAddressModal').modal('hide');
+      setTimeout(() => {
+        location.reload()
+      }, 500);
+      // Handle the response data
+      console.log(data);
+    })
+
+    .catch(error => {
+      // Handle errors
+      console.error("Error:", error);
+    });
+  });
+</script>

@@ -1,26 +1,71 @@
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
 
 <%- include("./includes/header") %>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
  
- 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.js"></script>
+  
+  <style>
+	/* Keep your existing CSS styles */
+	.img_zoom_container {
+	  position: relative;
+	  overflow: hidden;
+	  cursor: zoom-in;
+	}
+  
+	.img_zoom {
+	  transition: transform 0.9s ease-in-out;
+	  transform-origin: center center;
+	}
+  
+	/* Remove the background-image style from figure.zoom */
+	figure.zoom {
+	  background-position: 50% 50%;
+	  position: relative;
+	  margin: 10px auto;
+	  border: 5px solid white;
+	  box-shadow: -1px 5px 15px black;
+	  height: 500px;
+	  width: 500px;
+	  overflow: hidden;
+	  cursor: zoom-in;
+	}
+  
+	/* Add a rule to hide the img inside the figure */
+	figure.zoom img {
+	  display: none;
+	}
+	 .img_zoom_container {
+	  position: relative;
+	  overflow: hidden;
+	  cursor: zoom-in;
+	}
+  
+	.img_zoom {
+	  transition: transform 0.9s ease-in-out;
+	  transform-origin: center center;
+	}
+  </style>
   <div class="product_image_area">
     <div class="container">
         <div class="row s_product_inner">
             <div class="col-lg-6">
                 <div class="s_Product_carousel">
-                    <div class="single-prd-item">
+                    <div class="single-prd-item img_zoom_container">
+						<figure class="zoom" onmousemove="zoom(event)" onmouseout="resetZoom(event)">
                         <img class="img-fluid" src="../admin/images/<%= product.images[0]%>" alt="">
+					</figure>
                     </div>
                     <div class="single-prd-item">
+						<figure class="zoom" onmousemove="zoom(event)" onmouseout="resetZoom(event)">
                         <img class="img-fluid" src="../admin/images/<%= product.images[1]%>" alt="">
+					</figure>
                     </div>
+					<figure class="zoom" onmousemove="zoom(event)" onmouseout="resetZoom(event)"></figure>
                     <div class="single-prd-item">
                         <img class="img-fluid" src="../admin/images/<%= product.images[2]%>" alt="">
+					</figure>
                     </div>
                 </div>
             </div>
@@ -50,7 +95,7 @@
                         <div class="text-nowrap text-danger"  style="font-size: 150%;">
                             Temporarily Out of Stock
                         </div>
-                    <% } else if (isAuthenticated) { %>
+                    <% } else if (isAuthenticated && product.stock) { %>
                         <div class="card_area d-flex align-items-center">
                             <button class="primary-btn" onclick="addtocart('<%= product._id %>')">Add to Cart</button>
                             <!-- <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
@@ -69,8 +114,8 @@
 							
                         </div>
 						<div class="text-nowrap text-warning"  style="font-size: 150%;  padding-top: 5%;">
-                            Only few stock Left Hurry....
-                        </div>
+                            Only Few Stocks Left
+                        </div>  
 						
                     <% }else { %>
                         <div class="card_area d-flex align-items-center">
@@ -598,3 +643,19 @@
 		  })
 		}
 	</script> -->
+	<script>
+		function zoom(event) {
+		  var zoomer = event.currentTarget;
+		  var offsetX = event.offsetX ? event.offsetX : event.touches[0].pageX;
+		  var offsetY = event.offsetY ? event.offsetY : event.touches[0].pageY;
+		  var x = (offsetX / zoomer.offsetWidth) * 100;
+		  var y = (offsetY / zoomer.offsetHeight) * 100;
+		  zoomer.querySelector('img').style.transform = 'scale(1.9)';
+		  zoomer.querySelector('img').style.transformOrigin = x + '% ' + y + '%';
+		}
+	  
+		function resetZoom(event) {
+		  var zoomer = event.currentTarget;
+		  zoomer.querySelector('img').style.transform = 'none';
+	 }
+	  </script>

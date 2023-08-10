@@ -105,7 +105,7 @@ const productView = async(req,res)=>{
 
             {name:{$regex:'.*'+search+'.*',$options:'i'}},
         ]
-    }).sort({id:-1});
+    }).sort({_id:-1});
 
         // const productData= await Product.find({})
         res.render('product-list',{productData})
@@ -130,6 +130,8 @@ const editProduct = async(req,res)=>{
         const productId = req.params.id;
         const product = await Product.findById(productId);
         const categories = await Category.find();
+        // const images = req.files.map(file => file.filename);
+
         res.render('edit-product', { product, categories });
     }catch(error){
         console.error(error);
@@ -141,7 +143,7 @@ const updateEditProduct = async (req, res) => {
     try {
       
         upload.array('images')(req, res, async (err) => {
-            if (err) {
+            if (err) {  
                 console.error(err);
                 return res.redirect('/admin');
             }
@@ -190,7 +192,7 @@ const ProductSearch = async(req,res)=>{
     }
 }
 
-const ITEMS_PER_PAGE = 4; 
+const ITEMS_PER_PAGE = 15; 
 
 const orderStatus = async (req, res) => {
   try {
@@ -198,7 +200,7 @@ const orderStatus = async (req, res) => {
     const totalOrders = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrders / ITEMS_PER_PAGE);
 
-    const orders = await Order.find()
+    const orders = await Order.find().sort({_id:-1})
       .skip((page - 1) * ITEMS_PER_PAGE)
       .limit(ITEMS_PER_PAGE)
       .populate('user');
@@ -213,7 +215,29 @@ const orderStatus = async (req, res) => {
     res.redirect('/admin'); 
   }
 };
-
+ 
+const adminViewOrders = async (req, res) => {
+    try {
+      const orderId = req.params.orderId;
+      const order = await Order.findById(orderId).populate('items.productId');
+      if (!order) {
+        return res.status(404).json({ error: 'Order not found.' });
+      }
+  
+      const userId = req.session.user_id;
+      const user = await User.findById(userId);
+      const selectedAddressId = user.selectedAddress;
+      let selectedAddress;
+      if (selectedAddressId) {
+        selectedAddress = user.address.find((address) => address._id.equals(selectedAddressId));
+      }
+   
+      res.render('order-details-admin', { order: order, selectedAddress: selectedAddress });
+    } catch (error) {
+      console.log(error.message);
+      res.redirect('/'); 
+    }
+  };
 
 const updateStatus = async(req,res) => {
     try{
@@ -287,7 +311,8 @@ module.exports = {
     updateStatus,
     cancelOrder,
     listProduct,
-    unlistProduct
+    unlistProduct,
+    adminViewOrders
 };
 
 
