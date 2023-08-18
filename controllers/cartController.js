@@ -1,7 +1,7 @@
 const User = require("../models/userModel")
 const Admin = require("../models/adminModel")
 const Product = require('../models/productModel')
-const Category = require('../models/catagoryModel')
+const Category = require('../models/catagoryModel') 
 const Cart = require('../models/cart')
 const cartHelper = require('../Helper/cartHelper')
 const mongoose = require('mongoose');
@@ -37,7 +37,7 @@ const loadCart = async (req, res) => {
             $match: {user: new mongoose.Types.ObjectId(user)}
           },
           
-          {
+          { 
             $unwind: "$cartItems"
           },
           {
@@ -46,7 +46,7 @@ const loadCart = async (req, res) => {
               quantity:"$cartItems.quantity",
               total:"$cartItems.total"
             }
-          },
+          }, 
           {
             $lookup: {
               from: "products",
@@ -75,8 +75,8 @@ const loadCart = async (req, res) => {
       res.send({ success: false, error: error.message });
     }
   };
-
-
+    
+   
   
 const editQuantity = (req, res) => {
 
@@ -87,7 +87,7 @@ const editQuantity = (req, res) => {
     });
   }
 
-
+ 
 
   const deleteProduct = (req, res) => {
   

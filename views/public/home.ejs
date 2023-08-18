@@ -1,12 +1,26 @@
 <%- include("./includes/header") %>
-
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
      <body>
-		<% if (successMessage) { %>
-			<div class="alert alert-success" id="successMessage">
-				<%= successMessage %>
-			</div>
-		<% } %>
+		<script>
+					const queryParams = new URLSearchParams(window.location.search);
+					const successParam = queryParams.get('success');
+
+	if (successParam === 'true') {
+  // Import the Toastify library if you haven't already
+  // This code assumes the Toastify library is loaded before this script
+
+  // Show a Toastify success notification
+  Toastify({
+    text: "Logout successful!",
+    duration: 5000, // Display the toast for 5 seconds
+    gravity: "top", // Position the toast at the top
+    position: "right", // Position the toast on the right side
+    backgroundColor: "green", // Customize the toast background color
+  }).showToast();
+}
+	</script>
 		<script>
 			// Hide the success message after 5 seconds (5000 milliseconds)
 			setTimeout(() => {
@@ -20,8 +34,38 @@
 					<img  class="img-fluid" src="../admin/images/pott.webp" alt="" style=" padding-top:2%; margin: 0;">
 				</div>
 				
-               
-             
+			<!-- Include necessary styles/scripts for toastify-js here -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const successMessage = getCookie('successMessage');
+
+        if (successMessage === 'true') {
+            Toastify({
+                text: "Successfully signed in!",
+                duration: 3000, // Duration in milliseconds
+                newWindow: true,
+                close: true,
+                gravity: "top", // Position: top, bottom, left, right
+                position: "right", // Position: top, bottom, left, right
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                stopOnFocus: true, // Prevents dismissing toast on focus
+            }).showToast();
+
+            // Clear the success message cookie
+            document.cookie = "successMessage=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+    });
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+</script>
+
+<!-- Rest of your HTML content for the home page -->
+
      
     
 
@@ -278,3 +322,25 @@
 		  })
 		}
 	</script>
+
+<script>
+	const query = new URLSearchParams(window.location.search);
+	const success = queryParams.get('registered');
+
+if (success === 'true') {
+// Import the Toastify library if you haven't already
+// This code assumes the Toastify library is loaded before this script
+
+// Show a Toastify success notification
+Toastify({
+text: "Registration Sucessfull Please Login Now!",
+                duration: 3000, // Duration in milliseconds
+                newWindow: true,
+                close: true,
+                gravity: "top", // Position: top, bottom, left, right
+                position: "right", // Position: top, bottom, left, right
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                stopOnFocus: true
+}).showToast();
+}
+</script>

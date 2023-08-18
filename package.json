@@ -24,7 +24,9 @@
     "nocache": "^4.0.0",
     "nodemon": "^3.0.1",
     "otp-generator": "^4.0.1",
+    "razorpay": "^2.9.1",
     "sweetalert2": "^11.7.20",
-    "twilio": "^4.14.0"
+    "twilio": "^4.14.0",
+    "voucher-code-generator": "^1.3.0"
   }
 }

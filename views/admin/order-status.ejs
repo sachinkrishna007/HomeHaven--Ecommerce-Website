@@ -45,7 +45,11 @@
                             <h6 class="fw-semibold mb-0 text-info"><%= order.status %></h6>
                         <% } else if (order.status === 'CANCELLED') { %>
                             <h6 class="fw-semibold mb-0 text-info"><%= order.status %></h6>
-                        <% } %>
+                        <% } else if (order.status === 'Return-Req') { %>
+                            <h6 class="fw-semibold mb-0 text-success"><%= order.status %></h6>
+                        <% }else if (order.status === 'Return Accepted') { %>
+                            <h6 class="fw-semibold mb-0 text-info"><%= order.status %></h6>
+                        <% }%>
                     </td>
                     
                     <td class="border-bottom-0">
@@ -55,6 +59,7 @@
                                 <option value="Processing"class="text-warning" <% if (order.status === 'Processing') { %>selected<% } %>>Processing</option>
                                 <option value="Shipped" class="text-success" <% if (order.status === 'Shipped') { %>selected<% } %>>Shipped</option>
                                 <option value="Delivered" class="text-success" <% if (order.status === 'Delivered') { %>selected<% } %>>Delivered</option>
+                                <option value="CANCELLED" class="text-success" <% if (order.status === 'CANCELLED') { %>selected<% } %>>Cancel</option>
                                 <!-- Add more options for different statuses as needed -->
                             </select>
                        

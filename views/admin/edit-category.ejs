@@ -14,7 +14,8 @@
         <form action="/admin/editCategory/<%= categoriesData._id %>" method="POST" >
             <div class="mb-3">
               <label for="categoryName" class="form-label">Category Name</label>
-              <input type="text" class="form-control" id="categoryName" name="updatedname" value="<%= categoriesData.name %>" required>
+              <input type="text" class="form-control" id="categoryName" name="updatedname" value="<%= categoriesData.name %>" required oninput="convertToUppercase(this)">
+
             </div>
             <button type="submit" class="btn btn-primary">Update Category</button>
           </form>
@@ -22,4 +23,9 @@
            
 
 
-
+          <script>
+            function convertToUppercase(inputElement) {
+                inputElement.value = inputElement.value.toUpperCase();
+            }
+            </script>
+            

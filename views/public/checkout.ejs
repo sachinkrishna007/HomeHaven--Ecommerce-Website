@@ -1,6 +1,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <%- include('./includes/header') %>
 <br>
@@ -8,6 +10,7 @@
 <br>
 <br>
 <!--================Checkout Area =================-->
+
 <section class="checkout_area section_gap">
   <div class="container">
     <div class="row">
@@ -49,7 +52,7 @@
         </div>
         <h6>Not Added Add here</h6>
         <button type="button" class="genric-btn primary radius"
-      " data-toggle="modal" data-target="#addAddressModal">
+       data-toggle="modal" data-target="#addAddressModal">
           Add New Address
         </button>
         <!-- Rest of the checkout form -->
@@ -77,7 +80,13 @@
             <% }) %>
           </ul>
           <ul class="list list_2">
-            <li>Subtotal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>₹<%= cartTotal %></span></li>
+            <li><a href="#">Subtotal <span id="subTotal">₹<%= cartTotal %></span></a></li>
+            <li><a href="#">Discount  <span id="couponOffer">0</span></a></li>
+            <li><a href="#">Total <span id="total">₹<%=cartTotal%></span></a></li>
+            <input type="hidden" name="discountPercentage" id="discountPercentage" value="0">
+            <input type="hidden" name="discountAmount" id="discountAmount" value="0">
+            <input type="hidden" name="total" value="<%=cartTotal%>" id="totalVal" >
+            <!-- <li>Subtotal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span></span></li> -->
             <!-- Replace the shipping rate with your shipping rate calculation -->
 
             <!-- <div class="payment_item">
@@ -88,31 +97,87 @@
               </div>
               <p>Please send a check to Store Name, Store Street, Store Town, Store State / County, Store Postcode.</p> -->
             <!-- </div> -->
-            <form action="/checkout" method="post">
+            <form id="checkoutForm">
               <div class="payment_item active">
                 <div class="radion_btn">
-                  <input type="radio" id="f-option6" name="selector" >
-                  <label for="f-option6">Paypal</label>
+                  <input type="radio" id="razorPaymentMethod" name="paymentMethod" value="razorpay">
+                  <label for="razorPaymentMethod">Razorpay</label>
                   <img src="img/product/card.jpg" alt="">
                   <div class="check"></div>
+                  <p>Pay via Razorpay; you can pay with your credit/debit card,UPI,NetBanking and other.</p>
                 </div> 
               </div>
-              <div class="payment_item active">
+              <div class="payment_item active"> 
                 <div class="radion_btn">
-                  <input type="radio" id="selectedPaymentMethod" name="paymentMethod" value="COD"  >
-                  <label for="selectedPaymentMethod">Cash On Delivery</label>
+                  <input type="radio" id="codPaymentMethod" name="paymentMethod" value="COD"  >
+                  <label for="codPaymentMethod">Cash On Delivery</label>
                   <img src="img/product/card.jpg" alt="">
                   <div class="check"></div>
                   <p>Please pay with cash upon delivery.</p>
                 </div>
-                <p>Pay via PayPal; you can pay with your credit card if you don’t have a PayPal account.</p>
-              </div>
-              <div class="creat_account">
+              <div class="payment_item active"> 
+                <div class="radion_btn">
+                  <input type="radio" id="walletPaymentMethod" name="paymentMethod" value="wallet"  >
+                  <label for="walletPaymentMethod">wallet</label>
+                  <img src="img/product/card.jpg" alt="">
+                  <div class="check"></div>
+                  <p>Please using wallet.</p>
+                </div>
+              
+              <!-- <div class="creat_account">
                 <input type="checkbox" id="f-option4" name="selector">
-                <label for="f-option4">I’ve read and accept the </label>
+                <label for="f-option4">I"ve read and accept the </label>
                 <a href="#">terms & conditions*</a>
-              </div>
+              </div> -->
+              <div class="coupon_area">
+                  <!-- <button id="showCouponBtn" class="btn-primary"> Coupons</button> -->
+
+                <input type="text" placeholder="Enter coupon code" name="couponCode" id="couponCode">
+               
+                <a class="tp_btn" href="#" style="width: 100px; height: 40px; margin-top: 10px;" onclick="applyCoupon('<%=cartTotal %>')" >Apply</a>
+                <span id="couponErr"></span>
              
+              
+
+<!-- The pop-up content -->
+                    <div id="couponPopup" class="modal">
+                        <div id="coupon-content" class="modal-content">
+                            <span class="close" id="closePopup">&times;</span>
+                            <!-- Your coupon listing here -->
+                            <table id="coupon-table" class="coupon-table">
+                             
+                              <thead>
+                                <tr>
+                                    <th>Coupon Code</th>
+                                    <th>Coupon Discount</th>
+                                    <th>Minimum Purchase</th>
+                                    <th>Validity</th>
+                                    <th>Description</th>
+                                  
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% coupon.forEach(function(item,index) { %>
+                                    <tr>
+                                        <td style="font-weight: bold;"><%=item.couponCode%></td>
+
+                                        <td><%=item.minDiscountPercentage%>%</td>
+                                        <td> ₹<%=item.minPurchase%></td>
+                                        <td><%= new Date(item.validity).toDateString()%></td>
+                                        <td><%=item.description%></td>
+                                    </tr>
+                                    
+                                <% }); %>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+             
+        </div>
+        <br>
+        <br>
+        <br>
                 <!-- ... Add your existing form fields here ... -->
   
                 <!-- Add a hidden input field to hold the selected payment method -->
@@ -120,12 +185,15 @@
   
                 <!-- Add the Proceed to Payment button -->
                 <button type="submit" class="primary-btn">Proceed to Payment</button>
+
+              
               </form>
           </ul>
         </div>
       </div>
     </div>
   </div>
+  
   <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -303,3 +371,248 @@
     });
   });
 </script>
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.getElementById('checkoutForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  // <li><a href="#">Discount  <span id="couponOffer">0</span></a></li>
+  const formData = new FormData(this);
+  const paymentMethod = formData.get('paymentMethod');
+  // Get the <span> element containing the cart total
+    const cartTotalElement = document.getElementById("total");
+    const cartTotalValue = cartTotalElement.textContent;
+    //get the coupon code
+    const couponCodeInput = document.getElementById('couponCode');
+    const enteredCouponCode = couponCodeInput.value
+   
+    
+
+
+// Get the cart total value from the span's inner text
+const cartTotal = parseFloat(cartTotalValue.replace("₹", ""))
+
+
+const totalElement = document.getElementById('total');
+    const TotalValue = parseFloat(totalElement.textContent.replace("₹", ""));
+    
+
+
+
+  try {
+    const response = await fetch('/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        paymentMethod,cartTotal,enteredCouponCode,TotalValue
+      
+})
+ });
+const data = await  response.json()
+console.log(data);
+if(data.error){
+  
+  Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: data.error
+    });
+} else
+if(data.razorpayOrder){
+  var options = {
+    "key": "rzp_test_rTT2QUperDsgcn", // Enter the Key ID generated from the Dashboard
+    "amount":data.razorpayOrder.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": data.razorpayOrder.currency,
+    "name": "Home haven", //your business name
+    "description": "Payment Transaction",
+    "image": "/admin/images/1690050860743.png",
+    "order_id": data.razorpayOrder.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+
+        verifyPayment(response,data.razorpayOrder)
+        console.log("respo",response);
+
+
+        
+    },
+    "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+        "name": "Gaurav Kumar", //your customer's name
+        "email": "gaurav.kumar@example.com", 
+        "contact": "9000090000"  //Provide the customer's phone number for better conversion rates 
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+
+
+    rzp1.open();
+    e.preventDefault();
+
+
+}else if(data.orders){
+  Swal.fire({
+  icon: 'success',
+  title: 'Payment Successful',
+  text: 'Your order was successful.',
+}).then(() => {
+  // Automatically close the message after 5 seconds
+  setTimeout(() => {
+    Swal.close();
+    // Redirect to the confirmation page
+    window.location.href = '/confirmation';
+  }, 3000);
+});
+
+}
+  }catch(error){
+    console.log(error.message);
+  }
+})
+
+function verifyPayment(payment, data) {
+  console.log(payment, data);
+  fetch('/verifyPayment', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      payment: payment,
+      data: data,
+    }),
+  })
+    .then((response) => response.json())
+    .then((verificationResult) => {
+      if (verificationResult.success) {
+      
+        // Payment verified successfully, redirect to the confirmation page
+        window.location.href = '/confirmation '; // Change this to the actual URL of your confirmation page
+        // const confirmationURL = `/confirmation?orderId=${response.data.receipt}`
+        // window.location.href = confirmationURL;
+        // const queryParams = `orderId=${orderId}&paymentMethod=${data.paymentMethod}`;
+        // window.location.href = `/confirmation?${queryParams}`;
+      } else {
+        // Handle payment verification failure
+        console.log('Payment verification failed');
+      }
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
+}
+
+
+
+function applyCoupon(total) {
+  let couponCode = document.getElementById('couponCode').value;
+  
+  // Verify the existence and validity of the coupon code
+  $.ajax({
+    url: '/couponVerify/' + couponCode,
+    method: 'GET',
+    success: (response) => {
+      if (response.status == true) {
+        
+        // If coupon is valid, apply it to the total
+        $.ajax({
+          url: '/applyCoupon/' + couponCode,
+          method: 'GET',
+          success: (response) => {
+            console.log(response);
+            if (response.status == true) {
+              // Display success message and update UI elements
+              document.getElementById('couponErr').style.color = '#19ff11';
+              document.getElementById('couponErr').innerText = "Coupon Applied Successfully";
+              document.getElementById('total').innerText = '₹' + Math.floor(total - response.discountAmount);
+              document.getElementById('totalVal').value = Math.floor(total - response.discountAmount);
+              document.getElementById('couponOffer').innerText = response.discount + '%';
+              document.getElementById('discountPercentage').value = response.discount;
+              document.getElementById('discountAmount').value = Math.ceil(response.discountAmount);
+            } else {
+              // Display error message if coupon application fails
+              document.getElementById('couponErr').style.color = "#ff0707";
+              document.getElementById('couponErr').innerText = response.message;
+            }
+          }
+        });
+      } else {
+        // Display error message if coupon verification fails
+        document.getElementById('couponErr').style.color = "#ff0707";
+        document.getElementById('couponErr').innerText = response.message;
+        
+        // Reload the page after a delay
+        setTimeout(function() {
+          location.reload();
+        }, 5000);
+      }
+    }
+  });
+}
+
+
+</script>
+<style>
+  /* The pop-up overlay */
+  #couponPopup {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+  }
+
+  /* The pop-up content */
+  #coupon-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 60%;
+  }
+
+  /* Close button */
+  .close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+  }
+</style>
+
+
+
+<script>
+  const showCouponBtn = document.getElementById("showCouponBtn");
+  const couponPopup = document.getElementById("couponPopup");
+  const closePopup = document.getElementById("closePopup");
+
+  showCouponBtn.addEventListener("click", () => {
+      couponPopup.style.display = "block";
+  });
+
+  closePopup.addEventListener("click", () => {
+      couponPopup.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+      if (event.target === couponPopup) {
+          couponPopup.style.display = "none";
+      }
+  });
+</script>
+

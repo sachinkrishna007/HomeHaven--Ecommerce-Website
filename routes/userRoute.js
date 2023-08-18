@@ -36,6 +36,7 @@ const userMiddleWare = require("../middlewares/auth")
 const cartController = require('../controllers/cartController')
 const profileContoller = require('../controllers/profilecontoller')
 const ProductController = require('../controllers/productcontroller')
+const couponController = require('../controllers/couponController')
 
 userRoute.use(userMiddleWare.sessionCheck)
 
@@ -73,7 +74,10 @@ userRoute.post('/addAddress',userMiddleWare.checkBlockedUser,profileContoller.ad
 userRoute.get('/orderHistory',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,profileContoller.orderHistory)
 userRoute.post('/selectAddress',userMiddleWare.checkBlockedUser,profileContoller.selectAddress)
 userRoute.get('/orderDetails/:orderId',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,profileContoller.orderDetails)
-// userRoute.get('/editAddress/:userId/:addressIndex',profileContoller.EditAddressPage)
+userRoute.get('/editAddress/:id',profileContoller.editAddress)
+userRoute.post('/updateAddress/:id',profileContoller.updateAddress)
+userRoute.get('/deleteAddress/:id',profileContoller.deleteAddress)
+
 // userRoute.post('/editAddress/:userId/:addressIndex',profileContoller.updateAddress)
 
 
@@ -83,15 +87,16 @@ userRoute.get('/errroMessage',userController.errormessage)
 userRoute.get('/error',userController.errorpage)
 
 //cartRoutes
-userRoute.post('/add-to-cart/:id',cartController.addToCart);
-userRoute.get('/loadCart',cartController.loadCart)
-userRoute.put('/editQuantity',cartController.editQuantity)
-userRoute.delete('/deleteProduct',cartController.deleteProduct)
+userRoute.post('/add-to-cart/:id',userMiddleWare.checkBlockedUser,cartController.addToCart);
+userRoute.get('/loadCart',userMiddleWare.checkBlockedUser,cartController.loadCart)
+userRoute.put('/editQuantity',userMiddleWare.checkBlockedUser,cartController.editQuantity)
+userRoute.delete('/deleteProduct',userMiddleWare.checkBlockedUser,cartController.deleteProduct)
 
 //checkout
-userRoute.get('/checkout',userMiddleWare.isloggedout,userMiddleWare.checkoutMiddleware,userController.loadCheckout)
-userRoute.post('/checkout', userController.processCheckout)
-userRoute.get('/confirmation/:orderId',userMiddleWare.isloggedout,userController.confirmation)
+userRoute.get('/checkout',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,userMiddleWare.checkoutMiddleware,userController.loadCheckout)
+userRoute.post('/checkout',userMiddleWare.checkBlockedUser, userController.processCheckout)
+userRoute.get('/confirmation',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,userController.confirmation)
+userRoute.post('/verifyPayment',userController.verifyPayment)
 
 //forgotPassword
 userRoute.get('/forgotPassword',userMiddleWare.isloggedIn,userController.forgotPassword)
@@ -105,5 +110,16 @@ userRoute.post('/verify-oldPassword',profileContoller.verifyOldPassword)
 
 //cancel order
 userRoute.post('/cancel-order/:orderId',ProductController.cancelOrder)
+//returrn order
+userRoute.post('/return-order/:orderId',ProductController.returnOrder)
+
+//coupons
+
+userRoute.get('/applyCoupon/:id',couponController.applyCoupon)
+userRoute.get('/couponVerify/:id',couponController.verifyCoupon)
+
+
+//wallet
+userRoute.get('/wallet',profileContoller.LoadWallet)
 
 module.exports = userRoute

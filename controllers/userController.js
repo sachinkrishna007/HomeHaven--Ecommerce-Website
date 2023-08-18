@@ -2,17 +2,29 @@ const User = require('../models/userModel')
 const bcrypt = require('bcrypt')
 require('dotenv').config();
 const otpHelper = require("../Helper/otphelper");
+const userHelper = require('../Helper/userHelper')
 const Product = require("../models/productModel")
+const Coupon =  require('../models/couponModel')
 const path = require('path');
 const Cart = require('../models/cart')
 const mongoose = require('mongoose');
-const Order = require("../models/orderModel")
+const Order = require("../models/orderModel");
+const Razorpay = require('razorpay');
+// const { LoadWallet } = require('./profilecontoller');
+const {RAZOR_PAY_ID_KEY,RAZOR_PAY_SECRET_KEY} = process.env
+
+const razorPayInstance = new Razorpay({
+    key_id:RAZOR_PAY_ID_KEY,
+    key_secret:RAZOR_PAY_SECRET_KEY
+})
 
 
 const accountSid =process.env.TWILIO_SID;
 const authToken =process.env.TWILIO_AUTH_TOKEN;
 const verifySid =process.env.VERIFY_SID;
 const client = require("twilio")(accountSid, authToken);
+
+
 
 //bcrypt
 const securePassword = async (password) => {
@@ -101,7 +113,7 @@ const validation = async (req, res) => {
 }
 //verify oto and add user in signup
 const verifyOtp = async (req, res) => {
-    const { otp } = req.body;
+    const { otp } = req.body; 
     try {
         const userData = req.session.userData;
 
@@ -113,6 +125,7 @@ const verifyOtp = async (req, res) => {
                 .verificationChecks.create({ to: `+91${userData.mobile}`, code: otp })
                 .then(async (verification_check) => { // Mark the callback function as async
                     console.log(verification_check.status);
+                    if(verification_check.status==='approved'){
                     const spassword = await securePassword(userData.password);
                     const user = new User({
                         name: userData.name,
@@ -124,7 +137,7 @@ const verifyOtp = async (req, res) => {
                     try {
                         const userDataSave = await user.save();
                         if (userDataSave) {
-                            res.redirect('/');
+                            res.redirect('/?registered=true');
                         } else {
                             res.render('registration', { message: "Registration Failed" });
                         }
@@ -132,6 +145,9 @@ const verifyOtp = async (req, res) => {
                         console.log(error.message);
                         res.render('registration', { message: "Registration Failed" });
                     }
+                  }else{
+                    res.render('verifyOtp',{message:"invalid otp"})
+                  }
                 }).catch((error) => {
                     console.log(error.message);
                 });
@@ -165,8 +181,9 @@ const verifyLogin = async (req, res) => {
                 req.session.user_id = userData._id;
                 req.session.user = await User.findOne({ _id: req.session.user_id });
                 console.log(req.session.user_id)
-                req.session.successMessage = "Successfully signed in!";
-                console.log("sucessfully signed in")
+                // req.session.successMessage = "Successfully signed in!";
+                res.cookie('successMessage', 'true'); // Set the success message in a cookie
+                // console.log("sucessfully signed in")
                 res.redirect('/')
             } else {
                 res.render('login', { message: "password incorrect" })
@@ -236,9 +253,11 @@ const verifyOtpLogin = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-
+        
         req.session.destroy()
-        res.redirect('/')
+      
+        res.redirect('/?success=true')
+      
     }
     catch (error) {
         console.log(error.message);
@@ -254,6 +273,8 @@ const listProduct = async (req, res) => {
     const totalProducts = await Product.countDocuments({ is_Listed: true });
     const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
     const searchQuery = req.query.search || '';
+    const sortingOption = req.query.sort || '';
+    const category = req.query.category || '';
     const minPrice = parseFloat(req.query.minPrice); // Get the minimum price from request query parameters
       const maxPrice = parseFloat(req.query.maxPrice)
 
@@ -266,9 +287,19 @@ const listProduct = async (req, res) => {
         // Add other fields for searching, if needed
       ];
     }
-    
+    if (category) {
+        searchFilter.category = category;
+      }
+      
+      let sortCriteria ={}
+      if(sortingOption == 'price_asc'){
+        sortCriteria.price=1
+      }else if(sortingOption === 'price_desc'){
+        sortCriteria.price=-1
 
-    const productData = await Product.find(searchFilter)
+      }
+ 
+    const productData = await Product.find(searchFilter).sort({_id:-1})
       .skip((page - 1) * ITEMS_PER_PAGE)
       .limit(ITEMS_PER_PAGE);
 
@@ -277,6 +308,9 @@ const listProduct = async (req, res) => {
       totalPages,
       currentPage: page,
       searchQuery: req.query.search || '', // Pass the searchQuery to the template
+      selectedCategory: category,
+      selectedSort: sortingOption,
+      
     });
   } catch (error) {
     console.log(error.message);
@@ -288,7 +322,7 @@ const listProduct = async (req, res) => {
 const productDetail = async (req, res) => {
     try {
         const ProductId = req.params.id;
-        const product = await Product.findById(ProductId)
+        const product = await Product.findById(ProductId).populate('category')
 
         if (!product) {
             return res.status(404).send('product not found')
@@ -340,6 +374,7 @@ const loadProfile = async(req,res) =>{
 const loadCheckout = async (req, res) => {
     try {
       const user = await User.findById(req.session.user_id).populate('address');
+      const coupon = await Coupon.find()
       const cartItems = await Cart.aggregate([
         {
           $match: { user: new mongoose.Types.ObjectId(req.session.user_id) }
@@ -372,27 +407,36 @@ const loadCheckout = async (req, res) => {
         }
       ]);
   
-      res.render('checkout', { user, cartItems });
+      res.render('checkout', { user, cartItems ,coupon});
     } catch (error) {
       console.log(error.message);
       res.redirect('/cart'); 
     }
   };
 
+  
+
+
   const processCheckout = async (req, res) => {
     try {
-      const { paymentMethod, selectAddress } = req.body; 
+      const { paymentMethod, selectAddress,cartTotal ,enteredCouponCode,TotalValue} = req.body; 
+      console.log(req.body);
       const userId = req.session.user_id;
       const user = await User.findById(userId).populate('address');
       const cartItems = await Cart.findOne({ user: userId });
+      
+
       if (cartItems.cartTotal==0 ) {
+
         return res.render('error-message',{message:"no items in cart"})
       }
-      console.log(cartItems);
+    //   console.log(cartItems);
   
       const address = user.selectedAddress
       
       if (!address) {
+        console.log('addres not found');
+        return res.status(400).json({ error: 'Address not found' });
         return res.render('error-message',{message:"Address not found"})
       }
       const orderItems = cartItems.cartItems;
@@ -400,15 +444,31 @@ const loadCheckout = async (req, res) => {
       // Check if there is enough stock for each product in the order
       for (const item of orderItems) {
         const product = await Product.findById(item.productId);
-             
+            
         if (!product || product.stock < item.quantity) {
-          
-          return res.render('error-message',{message:"sorry product out of stock/not found"})
+          console.log("out of stock");
+          return res.status(400).json({ error: 'sorry product out of stock/not found' });
+          // return res.render('error-message',{message:"sorry product out of stock/not found"})
+         
+        }
+        if(!paymentMethod){
+          return res.status(400).json({ error: 'choose a Payment Method' });
         }
   
         // Reduce the stock quantity of the product
         product.stock -= item.quantity;
         await product.save();
+      }
+
+      if(paymentMethod==="wallet"){
+        const paymentAmount = TotalValue || cartTotal;
+        if (user.wallet < paymentAmount) {
+         return res.status(400).json({ error: 'Insufficient wallet balance' });
+        }else if(user.wallet >= paymentAmount){
+          user.wallet -= paymentAmount;
+          await user.save();
+        
+        }
       }
       
   
@@ -416,31 +476,105 @@ const loadCheckout = async (req, res) => {
         user: userId,
         address: address,
         items: cartItems.cartItems,
-        total: cartItems.cartTotal,
+        total:cartTotal,
         paymentMethod: paymentMethod,
         status: 'Pending',
+        discountTotal:TotalValue
+        
     
       });
-      await order.save();
-  
+
+     const orders = await order.save();
+     
+         
+
+      if (paymentMethod === 'razorpay') {
+        const newRazorpayOrder = async (cartItems, orders) => {
+          const razorpayOrder = await  razorPayInstance.orders.create({
+            amount:cartTotal * 100,
+            currency: "INR",
+            receipt: orders._id.toString() 
+          });
+          return razorpayOrder;
+        };
+    
+        const razorpayOrder = await newRazorpayOrder(cartItems, order);
+       
+        res.json({orders,razorpayOrder})
+    }else if(paymentMethod === 'COD' || paymentMethod==="wallet"){
+        res.json({orders})
+    }
+    
+     
       // Clear cart after placement
       await Cart.findOneAndUpdate({ user: userId }, { cartItems: [], cartTotal: 0 });
-  
-      res.redirect('/confirmation/' + order._id);
+     //add coupon to user
+     await addCouponToUser(enteredCouponCode, userId);
+    
+      
      
     } catch (error) {
       console.log(error.message);
       res.redirect('/checkout');
     }
-  };
-  
+  }; 
+ 
+
+  const addCouponToUser =  (couponCode, userId) => {
+    try {
+      return new Promise(async(resolve, reject) => {
+        const updated = await User
+          .updateOne(
+            { _id: userId },
+            {
+              $push: { 
+                coupons: couponCode,
+              },
+            }
+          )
+
+          .then((couponAdded) => {
+            resolve(couponAdded);
+
+          });
+       
+
+      });
+
+
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+  const verifyPayment = async (req, res) => {
+    try {
+      
+        const data = req.body;
+        console.log(data);
+        const crypto = require('crypto')
+        const hmac = crypto.createHmac('sha256', '2AvwPirbjue6XN0iQMf8L2eB');
+        hmac.update(data.payment.razorpay_order_id + '|' + data.payment.razorpay_payment_id);
+        const hashedHmac = hmac.digest('hex');
+        
+        if (hashedHmac === data.payment.razorpay_signature) {
+          
+            return res.json({ success: true,data });
+        } else {
+            return res.json({ success: false, error: 'Payment verification failed' });
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
   const confirmation = async (req,res)=>{
     try {
-        const orderId = req.params.orderId;
-        const order = await Order.findById(orderId).populate('items.productId');
-        if (!order) {
-            return res.status(404).json({ error: 'Order not found.' });
-          }
+        // const orderId = req.params.orderId;
+        // const orderId = req.query.orderId;
+        // const order = await Order.findById(orderId).populate('items.productId');
+        // if (!order) {
+        //     return res.status(404).json({ error: 'Order not found.' });
+        //   }
           const userId = req.session.user_id;
     const user = await User.findById(userId);
     const selectedAddressId = user.selectedAddress;
@@ -449,7 +583,7 @@ const loadCheckout = async (req, res) => {
       selectedAddress = user.address.find((address) => address._id.equals(selectedAddressId));
     }
     
-        res.render("confirmation",{ order: order, selectedAddress: selectedAddress,  })
+        res.render("confirmation",{ selectedAddress: selectedAddress })
     } catch (error) {
         console.log(error.message);
   }
@@ -462,7 +596,7 @@ const forgotPassword = async (req,res)=>{
     }
 }
 const forgotPasswordOtp = async (req,res)=>{
-    console.log("1");
+    
     try {
        const mobile =  req.body.mobile
        const user = await User.findOne({mobile: mobile})
@@ -561,5 +695,6 @@ module.exports = {
     forgotPasswordOtp,
     forgotpasswordVerify,
     resetPassword,
+    verifyPayment
   
 }

@@ -10,7 +10,8 @@
 <form action="/admin/category" method="post">
   <div class="mb-3">
     <label for="categoryName" class="form-label">Category Name</label>
-    <input type="text" class="form-control" id="categoryName" name="name" required>
+    <input type="text" class="form-control" id="categoryName" name="name" required oninput="this.value = this.value.toUpperCase()">
+
   </div>
   <button type="submit" class="btn btn-primary">Add Category</button>
   
@@ -81,6 +82,8 @@
               title: 'Category deleted successfully!',
               showConfirmButton: false,
               timer: 1500,
+            }).then(()=>{
+               location.reload();
             });
           })
           .catch((error) => {
@@ -96,3 +99,8 @@
     });
   }
 </script>
+<script>
+  function convertToUppercase(inputElement) {
+      inputElement.value = inputElement.value.toUpperCase();
+  }
+  </script>

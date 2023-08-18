@@ -1,0 +1,184 @@
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+  
+<br>
+<br>
+<br>
+<br>
+
+
+<body>
+  <div class="container">
+    <h2>Add Coupon</h2>
+    <form action="/admin/postCoupon" method="POST">
+      <div class="mb-3">
+        <label for="couponCode" class="form-label">Coupon Code</label>
+        <input type="text" id="couponName" class="form-control" value="" placeholder="Generate Coupon Code" aria-label="Recipient's username" aria-describedby="basic-addon2">
+        <button class="btn btn-outline-info" type="button" onclick="generateCoupon()">Generate Code</button>
+        <p id="error1" class="text-danger"></p>
+      </div>
+      <div class="mb-3">
+        <label for="validity" class="form-label">Validity Date</label>
+        <input type="date" class="form-control" id="validity" name="validity" required>
+        <p id="error2" class="text-danger"></p>
+      </div>
+      <div class="mb-3">
+        <label for="minPurchase" class="form-label">Minimum Purchase</label>
+        <input type="number" class="form-control" id="minAmount" name="minPurchase" required>
+        <p id="error3" class="text-danger"></p>
+
+      </div>
+      <div class="mb-3">
+        <label for="minDiscountPercentage" class="form-label">Discount Percentage</label>
+        <input type="number" class="form-control" id="discountPercentage" name="minDiscountPercentage" required>
+        <p id="error4" class="text-danger"></p>
+      </div>
+      <div class="mb-3">
+        <label for="maxDiscountValue" class="form-label">Maximum Discount Value</label>
+        <input type="number" class="form-control" id="maxDiscountValue" name="maxDiscountValue" required>
+        <p id="error5" class="text-danger"></p>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        <p id="error6" class="text-danger"></p>
+      </div>
+      <button type="button" class="btn btn-outline-info" onclick="validatorCoupon()">Submit</button>
+    
+    </form>
+
+
+    
+    
+</body>
+
+<style>
+    p {
+   font-size: 12px;
+ }
+</style>
+<script>
+    function validatorCoupon(){
+  const couponName = document.getElementById('couponName')
+  const validity = document.getElementById('validity')
+  const minAmount = document.getElementById('minAmount')
+  const discountPercentage = document.getElementById('discountPercentage')
+  const maxDiscount = document.getElementById('maxDiscountValue')
+  const description = document.getElementById('description')
+
+  const couponNameValue = couponName.value.trim()
+  const validityValue = validity.value.trim()
+  const minAmountValue = minAmount.value.trim()
+  const discountPercentageValue = discountPercentage.value.trim()
+  const maxDiscountValue = maxDiscount.value.trim()
+  const descriptionValue = description.value.trim()
+
+  const error1 = couponName.parentElement.querySelector('p')
+  const error2 = validity.parentElement.querySelector('p')
+  const error3 = minAmount.parentElement.querySelector('p')
+  const error4 = discountPercentage.parentElement.querySelector('p')
+  const error5 = maxDiscount.parentElement.querySelector('p')
+  const error6 = description.parentElement.querySelector('p')
+
+  error1.innerText = ''
+  error2.innerText = ''
+  error3.innerText = ''
+  error4.innerText = ''
+  error5.innerText = ''
+  error6.innerText = ''
+
+  let flag = 1
+
+  if (couponNameValue == '') {
+    error1.innerText = 'Coupon code is required'
+    flag = 2
+  }
+  if (validityValue == '') {
+    error2.innerText = 'Validity is required'
+    flag = 2
+  }
+  if (minAmountValue == '') {
+    error3.innerText = 'Minimum amount is required'
+    flag = 2
+  }
+  if (minAmountValue < 0) {
+    error3.innerText = 'Minimum amount should be greater than or Equal to Zero'
+    flag = 2
+  }
+  if (discountPercentageValue == '') {
+    error4.innerText = 'Discount percentage is required'
+    flag = 2
+  }
+  if (discountPercentageValue <= 0 ||discountPercentageValue >= 99) {
+    error4.innerText = 'Discount percentage should be between  1 and 99 '
+    flag = 2
+  }
+  if (maxDiscountValue == '') {
+    error5.innerText = 'Maximum discount is required'
+    flag = 2
+  }
+  if (maxDiscountValue <= 0) {
+    error5.innerText = 'Maximum discount should be greater than Zero'
+    flag = 2
+  }
+  if (descriptionValue == '') {
+    error6.innerText = 'Description is required'
+    flag = 2
+  }
+
+  if (flag == 1) {
+    submit(couponNameValue, validityValue, minAmountValue, discountPercentageValue, maxDiscountValue, descriptionValue)
+  }
+}
+
+
+function generateCoupon() {
+      $.ajax({
+        url: '/admin/generate-coupon-code',
+        method: 'GET',
+        success: (response) => {
+          document.getElementById('couponName').value = response.couponCode;
+        }
+  
+      })
+    }
+
+
+    function submit(coupon, validity, minAmount, minDiscountPercentage, maxDiscount, description) {
+    $.ajax({
+        url: '/admin/postCoupon',
+        method: 'POST',
+        data: {
+            couponCode: coupon,
+            validity: validity,
+            minPurchase: minAmount,
+            minDiscountPercentage: minDiscountPercentage,
+            maxDiscountValue: maxDiscount,
+            description: description
+        },
+        success: (response) => {
+            console.log(response.status);
+            if (response.status) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Coupon Added Successfully!',
+                    showConfirmButton: false,
+                    timer: 5000
+                }).then(() => {
+                    // Refresh the page to show the updated coupon list
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Coupon Code already exists!',
+                    timer: 5000
+                });
+            }
+        }
+    });
+}
+
+</script>

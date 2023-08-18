@@ -33,27 +33,33 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                 
                  
-                  <a href="/orderHistory" class="genric-btn primary radius" style="margin-left: 25%;" >Order History</a>
+                  <a href="/orderHistory" class="genric-btn success-border w-50  mx-auto"  >Order History</a>
                 
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                 
                  
-                  <button type="button" class="genric-btn primary radius" style="margin-left: 25%
-                  ;" data-toggle="modal" data-target="#addAddressModal">
+                  <button type="button" class="genric-btn success-border w-50  mx-auto" 
+                   data-toggle="modal" data-target="#addAddressModal">
                     Add Address
                   </button>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                 
                  
-                  <a href="/updatePassword" class="genric-btn warning radius " style="margin-left: 25%" >Edit Password</a>
+                  <a href="/updatePassword" class="genric-btn success-border  w-50  mx-auto"  >Edit Password</a>
                 
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                 
                  
-                  <a href="/logout" class="genric-btn warning radius " style="margin-left: 25%; width: 40%;" >Logout</a>
+                  <a href="/wallet" class="genric-btn success-border w-50 mx-auto " >Your Wallet</a>
+                
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                
+                 
+                  <a href="/logout" class="genric-btn danger-border w-50  mx-auto" >Logout</a>
                 
                 </li>
                 <!-- <li class="list-group-item d-flex justify-content-between align-items-center p-3">
@@ -84,7 +90,7 @@
                   <p class="mb-0">Name</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted mb-0"> <%= user.name %></p>
+                  <p class="text-muted"> <%= user.name %></p>
                 </div>
               </div>
               <hr>
@@ -115,40 +121,42 @@
                 </div>
               </div> -->
          
-              <div class="row">
+              <div class="row" >
                 <div class="col-sm-3">
-                  <p class="mb-0">Address</p>
+                  <!-- <p class="mb-0">Address</p> -->
                 </div>
                 <div class="col-sm-9">
                  <!-- Display existing addresses -->
-<%   if (user.address.length>0) { %>
-  <% user.address.forEach((address, index) => { %>
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title">Address <%= index + 1 %></h5>
-        <p>Name: <%= address.name %></p>
-        <p>Mobile: <%= address.mobile %></p>
-        <p>Landmark: <%= address.landmark || 'N/A' %></p>
-        <p>City: <%= address.city %></p>
-        <p>State: <%= address.state %></p>
-        <p>Pincode: <%= address.pincode %></p>
-        <p>District: <%= address.district %></p>
-        <p>Address: <%= address.address %></p>
-        <!-- Add an "Edit Address" button -->
-        
-      
-        </form>
-      </div>
-      
-    </div>
-  <% }) %>
-<% } else { %>
-  <p>No addresses added yet.</p>
-<% } %>
+
                 </div>
               </div>
             </div>
           </div>
+          <%   if (user.address.length>0) { %>
+            <% user.address.forEach((address, index) => { %>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h5 class="card-title">Address <%= index + 1 %></h5>
+                  <p>Name: <%= address.name %></p>
+                  <p>Mobile: <%= address.mobile %></p>
+                  <p>Landmark: <%= address.landmark || 'N/A' %></p>
+                  <p>City: <%= address.city %></p> 
+                  <p>State: <%= address.state %></p>
+                  <p>Pincode: <%= address.pincode %></p>
+                  <p>District: <%= address.district %></p>
+                  <p>Address: <%= address.address %></p>
+                  <!-- Add an "Edit Address" button -->
+                 <a class="genric-btn warning-border" href="/editAddress/<%= address._id %>">edit</a>
+                 <a class="genric-btn danger-border" href="/deleteAddress/<%= address._id %>">Delete</a>
+                
+                  </form>
+                </div>
+                
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No addresses added yet.</p>
+          <% } %>
          <!-- Add an "Edit Profile" button -->
          <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
           Add Address
@@ -170,10 +178,11 @@
                       <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name" required>
+                        <div id="stateError" class="error"></div> <!-- Error container for Name field -->
                     </div>
                     <div class="mb-3">
                         <label for="mobile" class="form-label">Mobile</label>
-                        <input type="tel" class="form-control" id="mobile" name="mobile" required>
+                        <input type="number" class="form-control" id="mobile" name="mobile" required>
                     </div>
                     <div class="mb-3">
                         <label for="landmark" class="form-label">Landmark</label>
@@ -189,7 +198,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="pincode" class="form-label">Pincode</label>
-                        <input type="text" class="form-control" id="pincode" name="pincode" required>
+                        <input type="number" class="form-control" id="pincode" name="pincode" required>
                     </div>
                     <div class="mb-3">
                         <label for="district" class="form-label">District</label>
@@ -210,6 +219,32 @@
               </div>
             </div>
           </div>
+          <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const addAddressForm = document.getElementById("addAddressForm");
+                const nameInput = document.getElementById("name");
+                const nameError = document.getElementById("nameError");
+    
+                addAddressForm.addEventListener("submit", function(event) {
+                    let valid = true;
+    
+                    // Clear previous error messages
+                    nameError.textContent = "";
+    
+                    // Validate name
+                    if (nameInput.value.trim() === "") {
+                        valid = false;
+                        nameError.textContent = "Name is required.";
+                    }
+    
+                    // Implement similar checks for other fields
+    
+                    if (!valid) {
+                        event.preventDefault();
+                    }
+                });
+            });
+        </script>
 
 
 
@@ -253,6 +288,7 @@
     .then(data => {
       $('#addAddressModal').modal('hide');
       // Handle the response data
+      location.reload()
       console.log(data);
     })
 
@@ -262,4 +298,5 @@
     });
   });
 </script>
+
 

@@ -49,14 +49,12 @@
                 </button>
               </td>
               <td>₹<%= product.price %></td>
-              <td><%= product.category %></td>
+              <td><%= product.category.name %></td>
               <td><%= product.stock %></td>
               <td>₹<%= product.offerprice %></td>
               <td>
                 <div class="img-container">
-                  <% product.images.forEach((img, imgIndex) => { %>
-                    <img src="images/<%= img %>" alt="Product Image <%= imgIndex + 1 %>" class="img-fluid">
-                  <% }); %>
+                  <img src="images/<%= product.images[0] %>" alt="Product Image 1" class="img-fluid">
                 </div>
               </td>
               <td>
@@ -87,6 +85,7 @@
           </div>
           <div class="modal-body">
             <!-- Add any product details you want to display in the modal -->
+            
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

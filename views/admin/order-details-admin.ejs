@@ -1,3 +1,6 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
 <div class="card py-5">
     <!-- views/admin/ordersList.ejs -->
     <div class="card-body">
@@ -13,6 +16,9 @@
                     </th>
                     <th class="border-bottom-0">
                         <h6 class="fw-semibold mb-0">Price</h6>
+                    </th>
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Status</h6>
                     </th>
                     
                     <th class="border-bottom-0">
@@ -34,6 +40,9 @@
                     </td>
                     <td class="border-bottom-0">
                         <p class="mb-0 fw-normal">₹<%= item.productId.price %></p>
+                    </td>
+                    <td class="border-bottom-0">
+                        <p class="mb-0 fw-normal"><%= order.status %></p>
                     </td>
                    
                     <td class="border-bottom-1">
@@ -62,10 +71,58 @@
                   </tr>
             </tbody>
         </table>
+        <% if (order.status == 'Return Accepted') { %>
+          <button disabled class="btn btn-danger"><%= order.status %></button>
+        <% } else if(order.status=='Return-Req') { %>
+         
+          <button onclick="ReturnOrder('<%= order._id %>')" class="btn btn-danger">Accept Return Request</button>
+        <% }%>
+
+       
     </div>
 </div>
 <!-- ... Table and other content ... -->
 
 <!-- Pagination Links -->
+<script>
 
+    function ReturnOrder(orderId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You are going to accept the cancel request',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, accept Return!',
+      }).then((result) => {
+      if (result.isConfirmed) {
+        // Send a POST request to the server to cancel the order
+        fetch(`/admin/accept-return/${orderId}`, {
+          method: 'POST',
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle the response data
+            console.log(data);
+            
+            // Display a success message
+            Swal.fire({
+              icon: 'success',
+              title: 'Return Requested Accepted',
+              text: ' Amount will be refunded.',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK',
+            }).then((result) => {
+              // Redirect to the order history page
+              window.location.href = '/admin/orders';
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            // Handle errors if necessary
+          });
+      }
+    });
+  }</script>
   

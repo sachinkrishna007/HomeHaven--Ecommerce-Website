@@ -160,41 +160,50 @@
 		<div class="row">
 			<div class="col-xl-3 col-lg-4 col-md-5">
 				<div class="sidebar-categories">
-					<div class="head" style="background-color: black;" >Browse Categories</div>
+					<div class="head" style="background-color: rgb(230, 34, 34);">Browse Categories</div>
 					<ul class="main-categories">
-						
-
-					
-						<li class="main-nav-list"><a class="border-bottom-0" data-toggle="collapse" href="#babyCare" aria-expanded="false"
-							 aria-controls="babyCare"><span class="lnr lnr-arrow-right"></span>SOFAS<span class="number">(48)</span></a>
-						
-						</li>
-						<li class="main-nav-list"><a class="border-bottom-0" data-toggle="collapse" href="#babyCare" aria-expanded="false"
-							 aria-controls="babyCare"><span class="lnr lnr-arrow-right"></span>SHOW PIECES<span class="number">(48)</span></a>
-						
-						</li>
-						<li class="main-nav-list"><a class="border-bottom-0" data-toggle="collapse" href="#babyCare" aria-expanded="false"
-							 aria-controls="babyCare"><span class="lnr lnr-arrow-right"></span><span class="number">(48)</span></a>
-						
-						</li>
-						<li class="main-nav-list"><a class="border-bottom-0" data-toggle="collapse" href="#babyCare" aria-expanded="false"
-							 aria-controls="babyCare"><span class="lnr lnr-arrow-right"></span>Sofas and Seatings<span class="number">(48)</span></a>
-						
-						</li>
+					  <li class="main-nav-list">
+						<a class="border-bottom-0 category-option" id="category-APPLIANCES">
+						  <span class="lnr lnr-arrow-right"></span>APPLIANCES<span></span>
+						</a>
+					  </li>
+					  <li class="main-nav-list">
+						<a class="border-bottom-0 category-option" id="category-Lightings">
+						  <span class="lnr lnr-arrow-right"></span>LIGHTINGS<span ></span>
+						</a>
+					  </li>
+					  <li class="main-nav-list">
+						<a class="border-bottom-0 category-option" id="category-Sofas and Seating">
+						  <span class="lnr lnr-arrow-right"></span>SOFAS AND SEATING<span ></span>
+						</a>
+					  </li>
+					  <li class="main-nav-list">
+						<a class="border-bottom-0 category-option" id="category-Show Pieces">
+						  <span class="lnr lnr-arrow-right"></span>SHOW PIECES<span ></span>
+						</a>
+					  </li>
+					  <!-- Add more category options as needed -->
 					</ul>
-				</div>
+				  </div>
+				  
 				<div class="sidebar-filter mt-50">
-					<div class="top-filter-head"  style="background-color:black">Product Filters</div>
+					<div class="top-filter-head"  style="background-color:rgb(230, 34, 34);">Product Filters</div>
 					<div class="common-filter">
-						<div class="head">Brands</div>
+						<div class="head">Price</div>
 						<form action="#">
-							<ul>
-								<li class="filter-list"><input class="pixel-radio" type="radio" id="apple" name="brand"><label for="apple">Apple<span>(29)</span></label></li>
-								<li class="filter-list"><input class="pixel-radio" type="radio" id="asus" name="brand"><label for="asus">Asus<span>(29)</span></label></li>
-								<li class="filter-list"><input class="pixel-radio" type="radio" id="gionee" name="brand"><label for="gionee">Gionee<span>(19)</span></label></li>
-								<li class="filter-list"><input class="pixel-radio" type="radio" id="micromax" name="brand"><label for="micromax">Micromax<span>(19)</span></label></li>
-								<li class="filter-list"><input class="pixel-radio" type="radio" id="samsung" name="brand"><label for="samsung">Samsung<span>(19)</span></label></li>
-							</ul>
+							<ul class="main-categories">
+								<li class="main-nav-list">
+								  <a class="nav-link" href="/product?sort=price_asc">
+									<span class="lnr lnr-arrow-right"></span>Low to High
+								  </a>
+								</li>
+								<li class="main-nav-list">
+								  <a class="nav-link" href="/product?sort=price_desc">
+									<span class="lnr lnr-arrow-right"></span>High to Low
+								  </a>
+								</li>
+							  </ul>
+							  
 						</form>
 					</div>
 					<div class="common-filter">
@@ -243,11 +252,10 @@
 			</div>
 			<div class="col-xl-9 col-lg-8 col-md-7">
 				<!-- Start Filter Bar -->
-				<div class="filter-bar d-flex flex-wrap align-items-center" style="background-color: black;">
+				<div class="filter-bar d-flex flex-wrap align-items-center" style="background-color: rgb(0, 0, 0);">
 					<div class="sorting">
 						<select>
-							<option value="1">Default sorting</option>
-							<option value="1">Default sorting</option>
+							
 							<option value="1">Default sorting</option>
 						</select>
 					</div>
@@ -350,13 +358,13 @@
 				<!-- End Filter Bar -->
 			</div>
 		</div>
-	</div>
 
-
+	<%- include('./includes/footer') %>
+	
 </body>
     
 </html>
-<%- include('./includes/footer') %>
+
 
 <script>
 	function addtocart(proId) {
@@ -389,4 +397,24 @@
     window.location.href = url;
     event.preventDefault();
   });
+
+
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const categoryOptions = document.querySelectorAll('.category-option');
+
+  categoryOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      const selectedCategory = option.textContent.trim();
+      const url = `/product?category=${encodeURIComponent(selectedCategory)}`;
+      window.location.href = url;
+    });
+  });
+});
+
 </script>
+
+>
+
+  

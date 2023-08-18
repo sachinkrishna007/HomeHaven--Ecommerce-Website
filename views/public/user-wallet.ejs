@@ -1,0 +1,43 @@
+<%- include('./includes/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Wallet Amount</title>
+</head>
+<body>
+    <div class="wallet-container">
+        <h1>Your Wallet Amount</h1>
+        <p id="wallet-amount">₹<%=user.wallet%></p>
+    </div>
+    <script src="script.js"></script>
+  
+</body>
+</html>
+<style>body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.wallet-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+#wallet-amount {
+    font-size: 24px;
+    color: #007bff;
+    margin-top: 10px;
+}
+</style>

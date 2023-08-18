@@ -1,0 +1,64 @@
+<body>
+
+    <main class="main-wrap">
+        
+        <form action="/admin/addBanner" method="post" enctype="multipart/form-data" id="myform">
+        <section class="content-main">
+        
+            <div class="row">
+                <div class="col-6">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Banner</h2>
+                        <div>
+                            <input class="btn btn-md rounded font-sm hover-up" value="Publish" type="submit"></input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- <div class="col-md-3">
+                                    <h6>1. General info</h6>
+                                </div> -->
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-label">Product title</label>
+                                        <input type="text" placeholder="Type here" class="form-control" name="title" id="name" onkeyup="titleValidation()">
+                                    </div>
+                                    <span id="title-error"></span>
+                                    <div class="mb-4">
+                                        <label class="form-label">Link</label>
+                                        <input placeholder="Type here" class="form-control" rows="4" name="link" id="description" onkeyup="descriptionValidation()">
+                                    </div>
+                                    <span id="description-error"></span>
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            <hr class="mb-4 mt-0">
+                           <!-- row.// -->
+                            
+                            <hr class="mb-4 mt-0">
+                            <div class="row">
+                                <!-- <div class="col-md-3">
+                                    <h6>4. Media</h6>
+                                </div> -->
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <label class="form-label">Main Image</label>
+                                        <input class="form-control" type="file" name="image">
+                                    </div>
+                                </div>
+                         <!-- col.// -->
+                            </div> <!-- .row end// -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </form>
+        <p><%=(typeof message!=='undefined')?message:""%></p>
+        </section> <!-- content-main end// -->
+
+    </main>

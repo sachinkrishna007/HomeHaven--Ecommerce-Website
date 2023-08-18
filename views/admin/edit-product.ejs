@@ -39,7 +39,7 @@
                 <label for="productCategory" class="form-label">Product Category</label>
                 <select class="form-select" id="productCategory" name="category" required>
                     <% categories.forEach(category => { %>
-                        <option value="<%= category._id %>"><%= category.name %></option>
+                      <option value="<%= category._id %>" <%= product.category && product.category.toString() === category._id.toString() ? 'selected' : '' %>><%= category.name %></option>
                     <% }); %>
                 </select>
             </div>
@@ -134,6 +134,8 @@ function viewImage3(event) {
        let dataURL = reader.result;
        let image = document.getElementById('imgView' + index);
        image.src = dataURL;
+
+       
  
        // Initialize Cropper.js on the image
        let cropper = new Cropper(image, {  

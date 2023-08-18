@@ -39,7 +39,13 @@ const userSchema=mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',
       },
-    
+      coupons:{
+        type:Array,
+    },
+    wallet:{
+        type:Number,
+        default:0
+    }
 
 
 })

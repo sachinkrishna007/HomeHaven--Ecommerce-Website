@@ -27,8 +27,10 @@ adminRoute.set('views', './views/admin')
 
 //require
 const adminController = require("../controllers/admincontroller")
-const productContoller=require('../controllers/productcontroller')
-const catagoryController=require('../controllers/catagorycontroller')
+const productContoller = require('../controllers/productcontroller')
+const catagoryController = require('../controllers/catagorycontroller')
+const couponController = require('../controllers/couponController')
+const bannerController = require('../controllers/bannercontroller')
 adminRoute.use(express.static('views/admin'));
 adminRoute.use(express.static('public'))
 adminRoute.use(expressEjsLayout)
@@ -64,16 +66,31 @@ adminRoute.get('/unlist',auth.islogin,productContoller.unlistProduct)
 adminRoute.post('/category', catagoryController.createCategory);
 adminRoute.get('/loadCategory',auth.islogin,auth.islogin,catagoryController.loadCategory)
 adminRoute.get('/search',auth.islogin,productContoller.ProductSearch)
-adminRoute.get('/editCategory',catagoryController.editCategory)
-adminRoute.get('/editCategory/:id',catagoryController.editCategory)
+adminRoute.get('/editCategory',auth.islogin,catagoryController.editCategory)
+adminRoute.get('/editCategory/:id',auth.islogin,catagoryController.editCategory)
 adminRoute.post('/editCategory/:id',catagoryController.updateCategory)
 adminRoute.post('/deleteCategory/:id',catagoryController.deleteCategory)
 
 
 //orders route
-adminRoute.get('/orders',productContoller.orderStatus)
+adminRoute.get('/orders',auth.islogin,productContoller.orderStatus)
 adminRoute.post('/updateStatus/:orderId',productContoller.updateStatus)
-adminRoute.get('/adminOrderDetails/:orderId',productContoller.adminViewOrders)
+adminRoute.get('/adminOrderDetails/:orderId',auth.islogin,productContoller.adminViewOrders)
 
+//coupon routes
+
+adminRoute.get('/addCoupons',auth.islogin,couponController.addCoupons)
+adminRoute.get('/generate-coupon-code',auth.islogin,couponController.generateCouponCode)
+adminRoute.post('/postCoupon',couponController.postCoupon)
+adminRoute.get('/listCoupon',auth.islogin,couponController.listCoupon)
+adminRoute.delete('/removeCoupon',couponController.removeCoupon)
+
+
+//accept return
+adminRoute.post('/accept-return/:orderId',productContoller.acceptreturn)
+
+
+//banner
+adminRoute.get('/addBanner',bannerController.addBanner)
 
 module.exports=adminRoute

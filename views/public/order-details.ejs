@@ -80,11 +80,14 @@
         <!-- Add the cancel order button -->
         <tr>
           <td colspan="5">
-            <% if (order.status !== 'CANCELLED' && order.status!=='Delivered') { %>
+            <% if (order.status == 'Pending' || order.status=='Processing'  ) { %>
               <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button>
-            <% } else  { %>
-              <button class="btn btn-danger" disabled> <%= order.status %></button>
-            <% } %>
+            <% } else if(order.status=='Delivered') { %>
+              <button onclick="ReturnOrder('<%= order._id %>')" class="btn btn-danger">Return Order</button>
+             
+            <% }else{
+               %> <button class="btn btn-danger" disabled> <%= order.status %></button> <%
+            } %>
           </td>
         </tr>
       </tbody>
@@ -112,10 +115,61 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            // Handle
+            // Handle the response data
             console.log(data);
-            // Redirect to the homepage or display a success message
-            window.location.href = '/orderHistory';
+            
+            // Display a success message
+            Swal.fire({
+              icon: 'success',
+              title: 'Order Cancelled',
+              text: ' Your money will be added to your wallet soon (online Payment Only).',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK',
+            }).then((result) => {
+              // Redirect to the order history page
+              window.location.href = '/orderHistory';
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            // Handle errors if necessary
+          });
+      }
+    });
+  }
+
+
+  function ReturnOrder(orderId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to revert this action!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, cancel it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Send a POST request to the server to cancel the order
+        fetch(`/return-order/${orderId}`, {
+          method: 'POST',
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Handle the response data
+            console.log(data);
+            
+            // Display a success message
+            Swal.fire({
+              icon: 'success',
+              title: 'Return Requested',
+              text: ' Your Return Request is Processed.',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK',
+            }).then((result) => {
+              // Redirect to the order history page
+              window.location.href = '/orderHistory';
+            });
           })
           .catch((error) => {
             console.error('Error:', error);

@@ -1,0 +1,118 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+
+
+<section class="content-main">
+<div class="content-header">
+    <h2 class="content-title">Coupons </h2>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <header class="border-bottom mb-4 pb-4">
+                    <div class="row">
+                        <div class="col-lg-5 col-6">
+                            <div class="input-group">
+                                <input type="text" placeholder="Search..." class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-lg-5 col-6 d-flex justify-content-end">
+                            <button class="btn btn-primary"
+                                onclick="location.href='/admin/addCoupons';">
+                                Add a Coupons
+                            </button>
+
+                        </div>
+                    </div>
+                </header>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="myTable">
+                        <thead>
+                            <tr>
+                                <th>No:</th>
+                                <th>Coupon Code</th>
+                                <th>Min Purchase Amount</th>
+                                <th>Discount %</th>
+                                <th>Max Discount Amount</th>
+                                <th>Expiry Date</th>
+                                <th class="text-end"> Action </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% couponList.forEach(function(item,index) { %>
+
+                                <tr>
+                                    <td>
+                                        <%=index + 1%>
+                                    </td>
+                                    <td>
+                                        <%=item.couponCode%>
+                                    </td>
+                                    <td>
+                                        <%=item.minPurchase%>
+                                    </td>
+                                    <td>
+                                        <%=item.minDiscountPercentage%>%
+                                    </td>
+                                    <td>₹<%=item.maxDiscountValue%>
+                                    </td>
+                                    <td>
+                                        <%= new Date(item.validity).toDateString()%>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn btn-danger"
+                                            onclick="removeCoupon('<%=item._id%>')">Remove</button>
+                                    </td>
+                                </tr>
+
+                                <% }); %>
+                        </tbody>
+                    </table>
+                </div> <!-- table-responsive.// -->
+            </div> <!-- col end// -->
+
+        </div> <!-- row end// -->
+    </div> <!-- card-body // -->
+</div>
+
+
+<script>
+
+    //to remove the Coupon
+    function removeCoupon(couponId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to recover this coupon!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/admin/removeCoupon',
+                method: 'delete',
+                data: {
+                    couponId: couponId
+                },
+                success: (response) => {
+                    if (response.status) {
+                        Swal.fire(
+                            'Deleted!',
+                            'The coupon has been deleted.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+
+</script>

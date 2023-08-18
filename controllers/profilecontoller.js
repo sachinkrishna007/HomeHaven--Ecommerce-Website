@@ -164,14 +164,107 @@ const updatePassword = async (req, res) => {
 
   } catch (error) {
       console.log(error.message);
-      // Handle any errors that may occur during the password reset process
+      
       return res.render('password-update', { message: "Password reset failed" });
   }
 };
 
 
+const LoadWallet = async (req,res) =>{
+  try {
+    const UserId = req.session.user_id
+    const user = await User.findOne({_id:UserId})
+   console.log(user);
+    res.render('user-wallet',{user})
+    
+  } catch (error) {
+    console.log(error.message);
+    
+  }
+}
+
+const editAddress = async(req,res)=>{
+  try{
+    const id= req.params.id
+    const userid = req.session.user_id
+    const user = await User.findOne({_id:userid})
+    if (!user) {
+      
+      return res.render('error-message', { message: 'User not found' });
+
+    }
+    const address = user.address.id(id);
+    if (!address) {
+      
+      return res.render('error-message', { message: 'Address not found' });
+    }
+    res.render('edit-Address', { address });
 
 
+
+  }catch(error){
+    console.log(error.message);
+  }
+}
+const updateAddress = async (req,res)=>{
+  try {
+    const id= req.params.id
+    console.log(id);
+    const userid = req.session.user_id
+    const user = await User.findOne({_id:userid})
+    const { name, mobile, landmark, city, state, pincode, district, address } = req.body;
+
+    const addressToUpdate = user.address.id(id);
+    if (!addressToUpdate) {
+     
+      return res.render('error-message', { message: 'Address not found' });
+    }
+
+    addressToUpdate.name = name;
+    addressToUpdate.mobile = mobile;
+    addressToUpdate.landmark = landmark;
+    addressToUpdate.city = city;
+    addressToUpdate.state = state;
+    addressToUpdate.pincode = pincode;
+    addressToUpdate.district = district;
+    addressToUpdate.address = address;
+
+    await user.save();
+    res.redirect('/profile');
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const deleteAddress = async(req,res)=>{
+  const addressId = req.params.id;
+  try {
+    const userid = req.session.user_id
+    const user = await User.findOne({_id:userid})
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+  }
+  const addressIndex = user.address
+  
+  if (addressIndex === -1) {
+    return res.status(404).json({ error: 'Address not found' });
+}
+if (user.selectedAddress && user.selectedAddress.toString() === addressId) {
+  user.selectedAddress = null;
+}
+
+user.address.splice(addressIndex, 1);
+await user.save();
+res.redirect('/profile')
+
+
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: 'An error occurred while deleting the address' });
+    
+  }
+}
 
   
   module.exports ={
@@ -183,6 +276,10 @@ const updatePassword = async (req, res) => {
     updatePassword,
     updatePasswordLoad,
     verifyOldPassword,
+    LoadWallet,
+    editAddress,
+    updateAddress,
+    deleteAddress
   
    
   }

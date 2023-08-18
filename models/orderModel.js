@@ -39,8 +39,13 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Processing', 'Shipped', 'Delivered','CANCELLED'],
+    enum: ['Pending', 'Processing', 'Shipped', 'Delivered','CANCELLED',"Return-Req",'Return Accepted'],
     default: 'Pending',
+  },
+ 
+  discountTotal:{
+    type: Number,
+    required: true,
   },
   createdAt: {
     type: Date,

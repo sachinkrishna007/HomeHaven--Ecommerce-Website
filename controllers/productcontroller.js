@@ -35,7 +35,7 @@ const upload = multer({
     },
 });
 
-
+   
 const addProduct = async (req, res) => {
     
     try {
@@ -53,7 +53,7 @@ const addProduct = async (req, res) => {
                 name:req.body.name,
                 description:req.body.description,
                 price:req.body.price,
-                category:category.name,
+                category:category._id,
                 stock:req.body.stock,
                 offerprice:req.body.offerprice,
 
@@ -99,13 +99,13 @@ const productView = async(req,res)=>{
         let search = ''
       if(req.query.search){
         search = req.query.search
-      }
+      } 
       const productData= await Product.find({
         $or: [
 
             {name:{$regex:'.*'+search+'.*',$options:'i'}},
         ]
-    }).sort({_id:-1});
+    }).sort({_id:-1}).populate('category');
 
         // const productData= await Product.find({})
         res.render('product-list',{productData})
@@ -139,43 +139,86 @@ const editProduct = async(req,res)=>{
     }
 }
 // uncle bob cleancode structure
-const updateEditProduct = async (req, res) => {
-    try {
+// const updateEditProduct = async (req, res) => {
+//     try {
       
-        upload.array('images')(req, res, async (err) => {
-            if (err) {  
-                console.error(err);
-                return res.redirect('/admin');
-            }
+//         upload.array('images')(req, res, async (err) => {
+//             if (err) {  
+//                 console.error(err);
+//                 return res.redirect('/admin');
+//             }
 
-            const productId = req.params.id;
-            // const { name, description, price, category } = req.body;
-            const imageNames = req.files.map((file) => path.basename(file.path));
-            const category = await Category.findOne({_id:req.body.category})
+//             const productId = req.params.id;
+//             // const { name, description, price, category } = req.body;
+//             const imageNames = req.files.map((file) => path.basename(file.path));
+//             const category = await Category.findOne({_id:req.body.category})
 
 
-            const updatedProduct = await Product.findByIdAndUpdate(
-                productId,
-                {
-                    name:req.body.name,
-                    description:req.body.description,
-                    price:req.body.price,
-                    category:category.name,
-                    stock:req.body.stock,
-                    offerprice:req.body.offerprice,
-                    images: imageNames,
+//             const updatedProduct = await Product.findByIdAndUpdate(
+//                 productId,
+//                 {
+//                     name:req.body.name,
+//                     description:req.body.description,
+//                     price:req.body.price,
+//                     category:category.name,
+//                     stock:req.body.stock,
+//                     offerprice:req.body.offerprice,
+//                     images: imageNames,
 
-                },
-                { new: true }
-            );
+//                 },
+//                 { new: true }
+//             );
 
-            res.redirect('/admin/productView');
-        });
-    } catch (error) {
-        console.error(error.message);
-        res.status(500).send('Internal Server Error');
-    }
+//             res.redirect('/admin/productView');
+//         });
+//     } catch (error) {
+//         console.error(error.message);
+//         res.status(500).send('Internal Server Error');
+//     }
+// };
+
+
+const updateEditProduct = async (req, res) => {
+  try {
+      upload.array('images')(req, res, async (err) => {
+          if (err) {  
+              console.error(err);
+              return res.redirect('/admin');
+          }
+
+          const productId = req.params.id;
+          const existingProduct = await Product.findById(productId);
+
+          const category = await Category.findOne({ _id: req.body.category });
+
+          // Check if new images are uploaded
+          let newImageNames = existingProduct.images;
+          if (req.files && req.files.length > 0) {
+              newImageNames = req.files.map((file) => path.basename(file.path));
+          }
+
+          const updatedProduct = await Product.findByIdAndUpdate(
+              productId,
+              {
+                  name: req.body.name,
+                  description: req.body.description,
+                  price: req.body.price,
+                  category: category._id,
+                  stock: req.body.stock,
+                  offerprice: req.body.offerprice,
+                  images: newImageNames,
+              },
+              { new: true }
+          );
+
+          res.redirect('/admin/productView');
+      });
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).send('Internal Server Error');
+  }
 };
+
 
 const ProductSearch = async(req,res)=>{
     try{
@@ -254,27 +297,106 @@ const updateStatus = async(req,res) => {
 }
 
 const cancelOrder = async (req, res) => {
-    try {
-      const orderId = req.params.orderId;
-  
-      const order = await Order.findById(orderId).populate('items.productId');
-      for (const item of order.items) {
-        const product = item.productId;
-        const originalStock = product.stock;
-  
-        // Increase the stock quantity
-        product.stock = originalStock + item.quantity;
-        await product.save();
-      }
-      await Order.findByIdAndUpdate(orderId, { status: "CANCELLED" });
-  
-      res.json({ message: 'Order cancelled successfully' });
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ error: 'An error occurred while cancelling the order' });
-    }
-  };
+  try {
+    const orderId = req.params.orderId;
 
+    const order = await Order.findById(orderId).populate('items.productId');
+    for (const item of order.items) {
+      const product = item.productId;
+      const originalStock = product.stock;
+
+      // Increase the stock quantity
+      product.stock = originalStock + item.quantity;
+      await product.save();
+    }
+
+    // Check if the payment type is online (razorpay)
+    if (order.paymentMethod === 'razorpay' || order.paymentMethod==="wallet") {
+      const totalAmountRefunded = order.total; // Refund the order's total amount
+    
+
+      // Fetch the user's wallet balance
+      const userId = order.user;
+      const user = await User.findById(userId);
+      const currentWalletBalance = user.wallet || 0;
+     
+
+      // Update the user's wallet balance
+      user.wallet = currentWalletBalance + totalAmountRefunded;
+      
+      await user.save();
+
+      await Order.findByIdAndUpdate(orderId, { status: "CANCELLED" });
+
+      res.json({ message: 'Order cancelled successfully. Wallet refunded.' });
+    } else {
+      await Order.findByIdAndUpdate(orderId, { status: "CANCELLED" });
+      res.json({ message: 'Order cancelled successfully' });
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: 'An error occurred while cancelling the order' });
+  }
+};
+
+
+const returnOrder = async(req,res) =>{
+  try {
+    console.log('reached');
+    const orderId = req.params.orderId;
+    console.log(orderId);
+    const order = await Order.findById(orderId).populate('items.productId');
+      await Order.findByIdAndUpdate(orderId, { status: "Return-Req" });
+      res.json({ message: 'Order retun requested' });
+    
+  } catch (error) {
+    
+  }
+}
+
+const acceptreturn = async (req,res) => {
+  try {
+    const orderId = req.params.orderId;
+    const order = await Order.findById(orderId).populate('items.productId');
+    for (const item of order.items) {
+      const product = item.productId;
+      const originalStock = product.stock;
+
+      // Increase the stock quantity
+      product.stock = originalStock + item.quantity;
+
+      await product.save();
+
+      if (order.paymentMethod === 'razorpay' || order.paymentMethod==="wallet") {
+        const totalAmountRefunded = order.total; // Refund the order's total amount
+      
+  
+        // Fetch the user's wallet balance
+        const userId = order.user;
+        const user = await User.findById(userId);
+        const currentWalletBalance = user.wallet || 0;
+       
+  
+        // Update the user's wallet balance
+        user.wallet = currentWalletBalance + totalAmountRefunded;
+        
+        await user.save();
+  
+
+
+      await Order.findByIdAndUpdate(orderId, { status: "Return Accepted" });
+      res.json({ message: 'Order retun requested' });
+      }else{
+        await Order.findByIdAndUpdate(orderId, { status: "Return Accepted" });
+        res.json({ message: 'Order retun requested' });
+      }
+
+    }
+  } catch (error) {
+    
+  }
+
+}
   // list
  const listProduct = async(req,res)=>{
     try {
@@ -312,7 +434,9 @@ module.exports = {
     cancelOrder,
     listProduct,
     unlistProduct,
-    adminViewOrders
+    adminViewOrders,
+    returnOrder,
+    acceptreturn
 };
 
 

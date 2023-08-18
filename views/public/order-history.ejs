@@ -45,6 +45,10 @@
                                             <span class="order-status text-info">Delivered</span>
                                         <% }  else if (order.status === 'CANCELLED') { %>
                                             <span class="order-status text-info">Cancelled</span>
+                                        <% }else if (order.status === 'Return-Req') { %>
+                                            <span class="order-status text-info">Return Pending</span>
+                                        <% }else if (order.status === 'Return Accepted') { %>
+                                            <span class="order-status text-info">Return success</span>
                                         <% }%>
                                     </td>
                                     
