@@ -5,7 +5,9 @@ const otpHelper = require("../Helper/otphelper");
 const userHelper = require('../Helper/userHelper')
 const Product = require("../models/productModel")
 const Coupon =  require('../models/couponModel')
+const Banner = require('../models/bannerModel')
 const path = require('path');
+const Category = require("../models/catagoryModel")
 const Cart = require('../models/cart')
 const mongoose = require('mongoose');
 const Order = require("../models/orderModel");
@@ -42,10 +44,12 @@ const loadhome = async (req, res) => {
     try {
 
         const product = await Product.find().limit(6).sort({_id:-1})
+        const banner = await Banner.find()
+        const category = await Category.find()
         // const user =  await User.findById(req.session.user_id)
       const successMessage = req.session.successMessage;
       req.session.successMessage = null;
-        res.render('home', {product,successMessage})
+        res.render('home', {product,successMessage,banner,category})
     } catch (error) {
         console.log(error.message);
     }
@@ -73,28 +77,28 @@ const validation = async (req, res) => {
     const email = req.body.email;
     const mobileNumber = req.body.mobile
     const existingUser = await User.findOne({ email: email })
-    if (!req.body.name || req.body.name.trim().length === 0) {
-        return res.render("registration", { message: "Name is required" });
-    }
-    if (/\d/.test(req.body.name) || /\d/.test(req.body.name)) {
-        return res.render("registration", { message: "Numbers not allowed in nam" });
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        return res.render("registration", { message: "Email Not Valid" });
-    }
+    // if (!req.body.name || req.body.name.trim().length === 0) {
+    //     return res.render("registration", { message: "Name is required" });
+    // }
+    // if (/\d/.test(req.body.name) || /\d/.test(req.body.name)) {
+    //     return res.render("registration", { message: "Numbers not allowed in nam" });
+    // }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(email)) {
+    //     return res.render("registration", { message: "Email Not Valid" });
+    // }
     if (existingUser) {
         return res.render("registration", { message: "Email already exists" })
     }
-    const mobileNumberRegex = /^\d{10}$/;
-    if (!mobileNumberRegex.test(mobileNumber)) {
-        return res.render("registration", { message: "Mobile Number should be 10 digit" });
+    // const mobileNumberRegex = /^\d{10}$/;
+    // if (!mobileNumberRegex.test(mobileNumber)) {
+    //     return res.render("registration", { message: "Mobile Number should be 10 digit" });
 
-    }
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-    if (!passwordRegex.test(req.body.password)) {
-        return res.render("registration", { message: "Password Should Contain atleast 8 characters,one number and a special character" });
-    }
+    // }
+    // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    // if (!passwordRegex.test(req.body.password)) {
+    //     return res.render("registration", { message: "Password Should Contain atleast 8 characters,one number and a special character" });
+    // }
 
 
     client.verify.v2
@@ -269,12 +273,15 @@ const logout = async (req, res) => {
 const listProduct = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const ITEMS_PER_PAGE = 6;
+    const ITEMS_PER_PAGE = 9;
     const totalProducts = await Product.countDocuments({ is_Listed: true });
     const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
     const searchQuery = req.query.search || '';
+    
     const sortingOption = req.query.sort || '';
-    const category = req.query.category || '';
+    const categoryId = req.query.category || '';
+    
+    const Cat = await Category.find({})
     const minPrice = parseFloat(req.query.minPrice); // Get the minimum price from request query parameters
       const maxPrice = parseFloat(req.query.maxPrice)
 
@@ -287,8 +294,8 @@ const listProduct = async (req, res) => {
         // Add other fields for searching, if needed
       ];
     }
-    if (category) {
-        searchFilter.category = category;
+    if (categoryId) {
+        searchFilter.category= categoryId;
       }
       
       let sortCriteria ={}
@@ -299,7 +306,7 @@ const listProduct = async (req, res) => {
 
       }
  
-    const productData = await Product.find(searchFilter).sort({_id:-1})
+    const productData = await Product.find(searchFilter).sort(sortCriteria)
       .skip((page - 1) * ITEMS_PER_PAGE)
       .limit(ITEMS_PER_PAGE);
 
@@ -308,8 +315,7 @@ const listProduct = async (req, res) => {
       totalPages,
       currentPage: page,
       searchQuery: req.query.search || '', // Pass the searchQuery to the template
-      selectedCategory: category,
-      selectedSort: sortingOption,
+      selectedSort: sortingOption,Cat,categoryId,
       
     });
   } catch (error) {
@@ -419,7 +425,7 @@ const loadCheckout = async (req, res) => {
 
   const processCheckout = async (req, res) => {
     try {
-      const { paymentMethod, selectAddress,cartTotal ,enteredCouponCode,TotalValue} = req.body; 
+      const { paymentMethod, selectAddress,cartTotal ,enteredCouponCode,TotalValue,subTotalvalue} = req.body; 
       console.log(req.body);
       const userId = req.session.user_id;
       const user = await User.findById(userId).populate('address');
@@ -430,7 +436,7 @@ const loadCheckout = async (req, res) => {
 
         return res.render('error-message',{message:"no items in cart"})
       }
-    //   console.log(cartItems);
+      // console.log(cartItems);
   
       const address = user.selectedAddress
       
@@ -466,10 +472,17 @@ const loadCheckout = async (req, res) => {
          return res.status(400).json({ error: 'Insufficient wallet balance' });
         }else if(user.wallet >= paymentAmount){
           user.wallet -= paymentAmount;
+          user.walletTransaction.push({
+            type: 'debit',
+            amount: paymentAmount,
+            date: new Date()
+        });
           await user.save();
         
         }
       }
+    
+      
       
   
       const order = new Order({
@@ -479,13 +492,14 @@ const loadCheckout = async (req, res) => {
         total:cartTotal,
         paymentMethod: paymentMethod,
         status: 'Pending',
-        discountTotal:TotalValue
+        discountTotal:TotalValue,
+        subTotal:subTotalvalue
         
     
       });
 
      const orders = await order.save();
-     
+     console.log(orders+ "orders");
          
 
       if (paymentMethod === 'razorpay') {
@@ -550,14 +564,17 @@ const loadCheckout = async (req, res) => {
     try {
       
         const data = req.body;
-        console.log(data);
+       
+        const OrderId = data.data.receipt
+        // console.log(OrderId);
         const crypto = require('crypto')
         const hmac = crypto.createHmac('sha256', '2AvwPirbjue6XN0iQMf8L2eB');
         hmac.update(data.payment.razorpay_order_id + '|' + data.payment.razorpay_payment_id);
         const hashedHmac = hmac.digest('hex');
-        
+     
         if (hashedHmac === data.payment.razorpay_signature) {
-          
+
+             await Order.findByIdAndUpdate(OrderId,{onlinePaymentStatus:"success" });
             return res.json({ success: true,data });
         } else {
             return res.json({ success: false, error: 'Payment verification failed' });
@@ -670,7 +687,14 @@ const forgotpasswordVerify =async(req,res)=>{
     }
 };
 
-
+const contact = async(req,res)=>{
+  try {
+    res.render('contact')
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
 
 module.exports = {
     loadhome,
@@ -695,6 +719,7 @@ module.exports = {
     forgotPasswordOtp,
     forgotpasswordVerify,
     resetPassword,
-    verifyPayment
+    verifyPayment,
+    contact
   
 }

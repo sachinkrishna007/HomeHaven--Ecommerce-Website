@@ -1,4 +1,8 @@
 <%- include("./includes/header") %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
+ 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
@@ -30,9 +34,9 @@
 				}
 			}, 5000);
 		</script>
-				<div style="padding-top:10% ;" class="container-fluid banner-img" >
+				<!-- <div style="padding-top:10% ;" class="container-fluid banner-img" >
 					<img  class="img-fluid" src="../admin/images/pott.webp" alt="" style=" padding-top:2%; margin: 0;">
-				</div>
+				</div> -->
 				
 			<!-- Include necessary styles/scripts for toastify-js here -->
 
@@ -71,7 +75,36 @@
 
 
 <!-- End banner Area -->
-
+<!-- start banner Area -->
+	
+<section class="">
+	<div class="container-fluid">
+	  <div id="bannerSlider" class="carousel slide row fullscreen align-items-center justify-content-start" data-ride="carousel">
+		<div class="carousel-inner">
+		  <% banner.forEach((banner, index) => { %>
+		  <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+			<div class="row align-items-center d-flex">
+			  <div class="col-lg-12">
+				<div class="banner-img">
+				  <a href="<%=banner.link %>"><img class="img-fluid" src="../admin/banner/<%= banner.image %>" alt=""  style="width: 100%; height: 100vh;" alt=""></a>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		  <% }) %>
+		</div>
+		<a class="carousel-control-prev" href="#bannerSlider" role="button" data-slide="prev" style="align-items:end; margin-bottom: 10px;" >
+			<img src="../assets/img/banner/prev.png" style="margin-bottom: 75px;">
+			<span class="sr-only">Previous</span>
+		  </a>
+		  <a class="carousel-control-next" href="#bannerSlider" role="button" data-slide="next" style="align-items:end;margin-bottom: 10px;">
+			<img src="../assets/img/banner/Next.png" style="margin-bottom: 75px;">
+			<span class="sr-only">Next</span>
+		  </a>
+	  </div>
+	</div>
+  </section>
+<!-- End banner Area -->
 	<!-- End banner Area -->
 
 	<!-- start features Area -->
@@ -269,18 +302,18 @@
 									<% } %>
 								</div>
 								<div class="prd-bottom">
-									<a href="" class="social-info  "  onclick="addtocart('<%=product._id%>')">
+									<!-- <a href="" class="social-info  "  onclick="addtocart('<%=product._id%>')">
 										<span class="ti-bag" style="background-color:black"></span>
 										<p class="hover-text">add to bag</p>
-									</a>
-									<a href="" class="social-info">
+									</a> -->
+									<!-- <a href="" class="social-info">
 										<span class="lnr lnr-heart"style="background-color:red" ></span>
 										<p class="hover-text">Wishlist</p>
-									</a>
-									<a href="" class="social-info">
+									</a> -->
+									<!-- <a href="" class="social-info">
 										<span class="lnr lnr-sync"  style="background-color:black"></span>
 										<p class="hover-text">compare</p>
-									</a>
+									</a> -->
 									<a href="/productDetail/<%= product._id%>" class="social-info">
 										<span class="lnr lnr-move"  style="background-color:black"></span>
 										<p class="hover-text">view more</p>
@@ -309,7 +342,7 @@
 	  
 			success: (response) => {
 				console.log(response);
-			  if (response.status==true || response==false) {
+			  if (response.status==true) {
 				Swal.fire({
 				  title: 'Added To Cart',
 				  text: 'Your Product has been added to Cart',

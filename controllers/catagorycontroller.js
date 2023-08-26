@@ -5,12 +5,12 @@ const Product=require('../models/productModel')
 const Category=require('../models/catagoryModel')
 
 
-//  function to create a new category
+
 const createCategory = async (req, res) => {
   try {
       const { name } = req.body;
 
-      // Check if category with the same name already exists
+      
       const existingCategory = await Category.findOne({ name });
       
 
@@ -18,7 +18,7 @@ const createCategory = async (req, res) => {
           return res.render('display-error', { layouts:false,message: "Category already added" });
       }
 
-      // If category doesn't exist, create a new category
+     
       const newCategory = new Category({
           name,
       });
@@ -69,7 +69,6 @@ const updateCategory = async (req, res) => {
       return res.status(404).json({ message: "Category not found" });
     }
 
-    // Redirect to the page where you list all categories after updating
     res.redirect('/admin/loadCategory');
   } catch (error) {
     console.log(error.message);

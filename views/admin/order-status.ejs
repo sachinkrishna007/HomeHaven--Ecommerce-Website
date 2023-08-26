@@ -1,7 +1,10 @@
+<body>
+<div class="content-wrapper">
 <div class="card py-5">
     <!-- views/admin/ordersList.ejs -->
     <div class="card-body">
         <h5 class="card-title fw-semibold mb-4">ORDERS LIST</h5>
+        <div class="table-container">
         <table class="table text-nowrap mb-0 align-middle">
             <thead class="text-dark fs-4">
                 <tr>
@@ -16,6 +19,10 @@
                     </th>
                     <th class="border-bottom-0">
                         <h6 class="fw-semibold mb-0">Status</h6>
+                    </th>
+                 
+                    <th class="border-bottom-0">
+                        <h6 class="fw-semibold mb-0">Payment Status</h6>
                     </th>
                     <th class="border-bottom-0">
                         <h6 class="fw-semibold mb-0">Action</h6>
@@ -51,6 +58,14 @@
                             <h6 class="fw-semibold mb-0 text-info"><%= order.status %></h6>
                         <% }%>
                     </td>
+                   
+                    <td class="border-bottom-0">
+                        <% if (order.paymentMethod === 'razorpay') { %>
+                            <p class="mb-0 fw-normal">₹<%= order.onlinePaymentStatus %></p>
+                        <% } else  { %>
+                          <h6><%= order.paymentMethod %></h6>
+                        <% } %>
+                    </td>
                     
                     <td class="border-bottom-0">
                         <form action="/admin/updateStatus/<%= order._id %>" method="post">
@@ -65,7 +80,7 @@
                        
                       
 
-                     
+                            <input type="hidden" name="currentPage" value="<%= currentPage %>">
                             <button type="submit" class="btn btn-primary">Update Status</button>
                             <a href="/admin/adminOrderDetails/<%= order._id %>" class="btn btn-primary">View</a>
                         </form>
@@ -76,6 +91,11 @@
         </table>
     </div>
 </div>
+</div>
+</div>
+
+    
+</body>
 <!-- ... Table and other content ... -->
 
 <!-- Pagination Links -->
@@ -99,4 +119,14 @@
     <% } %>
   </div>
   
-  
+  <style>body {
+    margin: 0;
+    padding: 0;
+    
+    font-family: Arial, sans-serif;
+}
+
+
+
+/* Customize table styles as needed */
+</style>

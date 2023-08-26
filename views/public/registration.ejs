@@ -20,9 +20,10 @@
     <section class="login_box_area section_gap">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-6 py-5">
                     <div class="login_box_img">
-                        <img class="img-fluid" src="../admin/images/armchair-green-living-room-with-copy-space_43614-910.avif
+                        
+                        <img class="img-fluid " src="../admin/images/armchair-green-living-room-with-copy-space_43614-910.avif
                         " alt="">
                         <div class="hover">
                             <h4></h4>
@@ -32,33 +33,38 @@
                     </div>
                 </div>
                 <div class="col-lg-6"  >
-                    
+                    <br>
+                    <br>
                     <div class="login_form_inner" style="padding: 0px;" >
                         <h3>Register Here</h3>
-                        <form class="row login_form" action="" method="post" id="contactForm" novalidate="novalidate" onsubmit="return validatePassword();" >
+                        <form class="row login_form" action="" method="post" id="myForm" >
                             <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" name="name" placeholder="Username"
-                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'">
+                                <input type="text" class="form-control" name="name" placeholder="Username" id="name"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'" onkeyup="fnameValidation()" >
+                                    <span id="fnameError" class="text-danger"></span>
+
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="email" class="form-control" name="email" placeholder="Email"
-                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
+                                <input type="email" class="form-control" name="email" placeholder="Email" id="email"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" onkeyup="emailValidation()">
+                                    <span id="emailError" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="number" class="form-control" name="mobile" placeholder="Enter mobile"
-                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Mobile Number'">
+                                <input type="text" class="form-control" name="mobile" placeholder="Enter mobile" id="mno"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Mobile Number'" onkeyup="mnoValidation()">
+                                    <span id="mnoError" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 form-group">
-                                <input type="password" class="form-control" name="password" placeholder="Password"
-                                  onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
+                                <input type="password" class="form-control" name="password" placeholder="Password" id="password"
+                                  onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'" onkeyup="passwordValidation()">
+                                  <span id="passwordError" class="text-danger"></span>
                               </div>
                               <div class="col-md-12 form-group">
-                                <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password"
-                                  oninput="validatePassword()" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'">
-                                <span id="passwordMatchStatus"></span>
-                              </div>
+                                <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" id="confpassword"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'" onkeyup="confPasswordValidation()">
+                                <span id="confPasswordError" class="text-danger"></span>
+                            </div>
                             
-
                             <div class="col-md-12 form-group">
                                 <div class="creat_account">
                                     <!-- <input type="checkbox" id="f-option2" name="selector"> -->
@@ -87,43 +93,132 @@
 
 
    
-    <script>
-        function validatePassword() {
-          const password = document.getElementsByName('password')[0].value;
-          const confirmPassword = document.getElementsByName('confirmPassword')[0].value;
-          const passwordMatchStatus = document.getElementById('passwordMatchStatus');
-      
-          if (password.trim() === '' || confirmPassword.trim() === '') {
-            passwordMatchStatus.textContent = ''; // Clear previous status
-            return;
-          }
-      
-          if (password !== confirmPassword) {
-            passwordMatchStatus.textContent = 'Passwords do not match';
-          } else {
-            passwordMatchStatus.textContent = 'Passwords match';
-          }
-        }
-      </script>
-<style>
-    .password-match-status {
-      font-size: 1rem;
-      margin-top: 5px;
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      text-align: center;
-      line-height: 20px;
-      border-radius: 50%;
-      color: #fff;
-      font-weight: bold;
-    }
+ 
+
+  <script>
+    const myForm = document.getElementById("myForm")
   
-    .password-match-status.match {
-      background-color: #00cc00; /* Green background for matching */
-    }
+
+  const fname = document.getElementById("name")
+ 
+  const email = document.getElementById("email")
+  const mno = document.getElementById("mno")
+	const password = document.getElementById("password")
+		
+
+
+  const fnameError = document.getElementById("fnameError")
+
+  const mnoError = document.getElementById("mnoError")
+  const emailError = document.getElementById("emailError")
+  const passwordError = document.getElementById("passwordError")
+	
+
+
+
+
+
+  const nameRegex = /^[A-Za-z]+$/;
   
-    .password-match-status.no-match {
-      background-color: #cc0000; /* Red background for not matching */
+  function fnameValidation(){
+			const fnameValue = fname.value
+			if(fnameValue.trim()==0){
+				fnameError.innerHTML = ' Name is required'
+				fnameError.style.color = 'red'
+				fname.style.border = "solid 2px red";
+				return false;
+			}
+
+			if (!fnameValue.match(/^[A-Za-z]+$/)) {
+    fnameError.innerHTML = ' Name is not Valid (should not contain numbers)';
+    fnameError.style.color = 'red';
+    fname.style.border = "solid 2px red";
+    return false;
+}
+
+
+
+
+			fnameError.innerHTML = ""
+			fnameError.style.color = "green"
+			fname.style.border = "solid 2px green";
+			return true
+		}
+
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+		function emailValidation(){
+			const emailValue = email.value
+			if(!emailValue.match(emailRegex)){
+				emailError.innerHTML = 'Email not valid'
+				emailError.style.color = 'red'
+				email.style.border = "solid 2px red";
+				return false;
+			}
+			emailError.innerHTML = ""
+			emailError.style.color = "green"
+			email.style.border = "solid 2px green";
+			return true
+		}
+
+
+    const mobileRegex =  /^\d{10}$/
+		function mnoValidation(){
+			const mnoValue = mno.value
+			if(!mnoValue.match(mobileRegex)){
+				mnoError.innerHTML = 'Mobile Number not valid'
+				mnoError.style.color = 'red'
+				mno.style.border = "solid 2px red";
+				return false;
+			}
+			mnoError.innerHTML = ""
+			mnoError.style.color = "green"
+			mno.style.border = "solid 2px green";
+			return true
+		}
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+		function passwordValidation(){
+			const passwordValue = password.value
+			if(!passwordValue.match(passwordRegex)){
+				passwordError.innerHTML = 'Password should contain atleast 8 characters ,One Uppercase number and a special character'
+				passwordError.style.color = 'red'
+				password.style.border = "solid 2px red";
+				return false;
+			}
+			passwordError.innerHTML = ""
+			passwordError.style.color = "green"
+			password.style.border = "solid 2px green";
+			return true
+		}
+
+    function confPasswordValidation() {
+    const passwordValue = document.getElementById('password').value; // Replace 'password' with the actual ID of your password input
+    const confPasswordValue = document.getElementById('confpassword').value; // Replace 'confpassword' with the actual ID of your confirm password input
+    
+    const confPasswordError = document.getElementById('confPasswordError');
+    const confPassword = document.getElementById('confpassword');
+    
+    if (passwordValue !== confPasswordValue) {
+        confPasswordError.innerHTML = 'Password and Confirm Password should be same';
+        confPasswordError.style.color = 'red';
+        confPassword.style.border = "solid 2px red";
+        return false;
     }
-  </style>
+    
+    confPasswordError.innerHTML = "";
+    confPasswordError.style.color = "green";
+    confPassword.style.border = "solid 2px green";
+    return true;
+}
+myForm.addEventListener("submit",(event)=>{
+			event.preventDefault();
+			if(!fnameValidation() ||  !emailValidation() ||!mnoValidation() || !passwordValidation() || !confPasswordValidation()) {
+				return false
+			}else{
+				myForm.submit()
+			}
+
+		})
+
+  </script>

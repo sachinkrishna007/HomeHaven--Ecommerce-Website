@@ -37,6 +37,7 @@ const cartController = require('../controllers/cartController')
 const profileContoller = require('../controllers/profilecontoller')
 const ProductController = require('../controllers/productcontroller')
 const couponController = require('../controllers/couponController')
+const wishlistController = require('../controllers/wishlistController')
 
 userRoute.use(userMiddleWare.sessionCheck)
 
@@ -115,11 +116,24 @@ userRoute.post('/return-order/:orderId',ProductController.returnOrder)
 
 //coupons
 
-userRoute.get('/applyCoupon/:id',couponController.applyCoupon)
-userRoute.get('/couponVerify/:id',couponController.verifyCoupon)
+userRoute.get('/applyCoupon/:id',userMiddleWare.isloggedout,couponController.applyCoupon)
+userRoute.get('/couponVerify/:id',userMiddleWare.isloggedout,couponController.verifyCoupon)
 
 
 //wallet
-userRoute.get('/wallet',profileContoller.LoadWallet)
+userRoute.get('/wallet',userMiddleWare.isloggedout,profileContoller.LoadWallet)
+
+userRoute.get('/invoice',userMiddleWare.isloggedout,ProductController.downloadInvoice)
+
+
+//wishlist
+userRoute.post('/add-to-wishlist',wishlistController.addWishList)
+userRoute.get('/wishlist',userMiddleWare.isloggedout,wishlistController.loadWishlist)
+userRoute.delete('/remove-product-wishlist',userMiddleWare.isloggedout,wishlistController.removeProductWishlist)
+
+
+//contact
+userRoute.get('/contact',userController.contact)
+userRoute.post('/contact',profileContoller.postContact)
 
 module.exports = userRoute

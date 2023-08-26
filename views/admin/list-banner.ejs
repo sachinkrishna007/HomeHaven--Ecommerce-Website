@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner List</title>
+</head>
+<body>
+    <h1>Banner List</h1>
+    <a class="btn btn-secondary" href="/admin/addBanner"> Add Banner</a>
+    <br>
+    <br>
+    
+    <ul class="banner-list">
+        <% banner.forEach((banner) => { %>
+        <li class="banner-item">
+            <img class="banner-image" src="../admin/banner/<%= banner.image %>" alt="Banner Image">
+            <div>
+                <p><%= banner.text %></p>
+               
+                <a class="btn btn-danger" href="/admin/deleteBanner?title=<%= encodeURIComponent(banner.title) %>">Delete</a>
+            </div>
+        </li>
+        <% }) %>
+    </ul>
+    
+</body>
+</html>
+<style>
+    .banner-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .banner-item {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+    }
+
+    .banner-image {
+        max-width: 100px; /* Adjust the image width as needed */
+        height: auto;
+        margin-right: 10px;
+    }
+</style>

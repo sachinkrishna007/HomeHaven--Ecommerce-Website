@@ -5,33 +5,35 @@ const Product = require('../models/productModel')
 const Category = require('../models/catagoryModel')
 const Order = require('../models/orderModel')
 const path = require('path')
-
-
+const easyinvoice = require("easyinvoice");
+const fs=require('fs')
 const multer = require('multer')
+const { Readable } = require('stream');
 const { CANCELLED } = require("dns")
-
-
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Promise Rejection:', reason);
+});
+    
 // const upload = require('./multerConfig');
 
 
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'views/admin/images'); // Specify the destination folder
+        cb(null, 'views/admin/images'); 
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now(); // Get the current timestamp
-        const ext = path.extname(file.originalname); // Get the file extension
-        const filename = uniqueSuffix + ext; // Construct the filename with timestamp and extension
+        const uniqueSuffix = Date.now();
+        const ext = path.extname(file.originalname); 
+        const filename = uniqueSuffix + ext; 
         cb(null, filename);
     },
 });
 
-// Set up the multer middleware with size limit (in bytes)
 const upload = multer({
     storage,
     limits: {
-        fileSize: 1024 * 1024 * 5, // 5 MB (adjust the size limit as needed)
+        fileSize: 1024 * 1024 * 5, 
     },
 });
 
@@ -48,6 +50,7 @@ const addProduct = async (req, res) => {
             // const { name, description, price, category } = req.body;
             const imageNames = req.files.map((file) => path.basename(file.path));
             const category = await Category.findOne({_id:req.body.category})
+            console.log();
 
             const newProduct = new Product({
                 name:req.body.name,
@@ -185,6 +188,16 @@ const updateEditProduct = async (req, res) => {
               console.error(err);
               return res.redirect('/admin');
           }
+          var existingImages = req.body.existingImages || []
+          const removedImages = req.body.removedImages || [];
+          var newImages  = []
+          for(let i=0;i<req.files.length;i++){
+            if(req.files[i]!==undefined){
+              newImages.push(req.files[i].filename)
+            }
+          }
+          const remainingImages = existingImages.filter(image => !removedImages.includes(image));
+      
 
           const productId = req.params.id;
           const existingProduct = await Product.findById(productId);
@@ -192,10 +205,10 @@ const updateEditProduct = async (req, res) => {
           const category = await Category.findOne({ _id: req.body.category });
 
           // Check if new images are uploaded
-          let newImageNames = existingProduct.images;
-          if (req.files && req.files.length > 0) {
-              newImageNames = req.files.map((file) => path.basename(file.path));
-          }
+          // let newImageNames = existingProduct.images;
+          // if (req.files && req.files.length > 0) {
+          //     newImageNames = req.files.map((file) => path.basename(file.path));
+          // }
 
           const updatedProduct = await Product.findByIdAndUpdate(
               productId,
@@ -206,7 +219,7 @@ const updateEditProduct = async (req, res) => {
                   category: category._id,
                   stock: req.body.stock,
                   offerprice: req.body.offerprice,
-                  images: newImageNames,
+                  images:remainingImages.concat(newImages),
               },
               { new: true }
           );
@@ -285,11 +298,11 @@ const adminViewOrders = async (req, res) => {
 const updateStatus = async(req,res) => {
     try{
         const orderId = req.params.orderId;
-        const {newStatus} = req.body;
+        const {newStatus,currentPage} = req.body;
 
         await Order.findByIdAndUpdate(orderId,{status:newStatus})
 
-        res.redirect('/admin/orders')
+        res.redirect(`/admin/orders?page=${currentPage}`)
 
     }catch(error){
         console.log(error.message);
@@ -323,6 +336,11 @@ const cancelOrder = async (req, res) => {
 
       // Update the user's wallet balance
       user.wallet = currentWalletBalance + totalAmountRefunded;
+      user.walletTransaction.push({
+        type: 'credit',
+        amount:totalAmountRefunded,
+        date: new Date()
+    });
       
       await user.save();
 
@@ -379,6 +397,12 @@ const acceptreturn = async (req,res) => {
   
         // Update the user's wallet balance
         user.wallet = currentWalletBalance + totalAmountRefunded;
+        user.walletTransaction.push({
+          type: 'credit',
+          amount: totalAmountRefunded,
+          date: new Date()
+      });
+      
         
         await user.save();
   
@@ -419,7 +443,99 @@ const acceptreturn = async (req,res) => {
       console.log(error)
     }
   }
- 
+
+  const downloadInvoice = async (req, res) => {
+    try {
+      const id = req.query.id;
+      const user = req.session.user_id;
+  
+     
+      const customer = {
+       
+      };
+  
+     
+      const order = await Order.findOne({ _id: id }).populate('items.productId');
+      console.log('Order ID:', order._id.toString());
+    console.log('Order Created At:', order.createdAt);
+      const date = order.createdAt.toLocaleDateString();
+  
+      const products = order.items.map(async (item) => {
+        
+        const product = await Product.findOne({ _id: item.productId });
+  
+        return {
+          quantity: item.quantity,
+          description: product.name, 
+          price: item.total,
+          "tax-rate":0,
+          total:order.subTotal
+          
+        };
+      });
+  
+      const productsWithData = await Promise.all(products);
+  
+      const subTotal = productsWithData.reduce((total, product) => total + product.price, 0);
+  
+      const totalAmount = subTotal; 
+      console.log('subTotal:', subTotal);
+       console.log('totalAmount:', totalAmount);
+
+  
+      const data = {
+        documentTitle: 'Invoice',
+        currency: 'USD',
+        marginTop: 25,
+        marginRight: 25,
+        marginLeft: 25,
+        marginBottom: 25,
+        logo: 'https://public.easyinvoice.cloud/img/watermark-draft.jpg',
+        sender: {
+          company: 'Home Haven',
+          address: 'Brototype',
+          zip: '686633',
+          city: 'Maradu',
+          country: 'India',
+          taxNotation: 'vatnone'
+        },
+        client: {
+         
+         
+        },
+        invoiceNumber:order._id.toString(),
+        invoiceDate: order.createdAt.toISOString(),
+        information: {
+          number: order._id.toString(), // Invoice number
+          date: order.createdAt.toISOString(), // Invoice date
+          'due-date': 'Nil', // Due date (customize as needed)
+        },
+        products: productsWithData,
+        amount: {
+          subtotal: subTotal.toFixed(2), // Display subtotal with two decimal places
+          total: (subTotal + totalAmount).toFixed(2)
+        },
+
+        bottomNotice: 'Thank you, Keep shopping.',
+      };
+  
+      const pdfResult = await easyinvoice.createInvoice(data);
+      const pdfBuffer = Buffer.from(pdfResult.pdf, 'base64');
+  
+      res.setHeader('Content-Disposition', 'attachment; filename="invoice.pdf"');
+      res.setHeader('Content-Type', 'application/pdf');
+  
+      const pdfStream = new Readable();
+      pdfStream.push(pdfBuffer);
+      pdfStream.push(null);
+  
+      pdfStream.pipe(res);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      res.status(500).send('Error generating invoice.');
+    }
+  };
+  
 module.exports = {
     addProduct,
     loadProduct,
@@ -436,7 +552,8 @@ module.exports = {
     unlistProduct,
     adminViewOrders,
     returnOrder,
-    acceptreturn
+    acceptreturn,
+    downloadInvoice
 };
 
 

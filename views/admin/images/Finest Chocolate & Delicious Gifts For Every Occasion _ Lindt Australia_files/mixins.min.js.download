@@ -1,0 +1,12 @@
+define('mixins',['module'],function(module){'use strict';var contexts=require.s.contexts,defContextName='_',defContext=contexts[defContextName],unbundledContext=require.s.newContext('$'),defaultConfig=defContext.config,unbundledConfig={baseUrl:defaultConfig.baseUrl,paths:defaultConfig.paths,shim:defaultConfig.shim,config:defaultConfig.config,map:defaultConfig.map},rjsMixins;unbundledContext.configure(unbundledConfig);function hasPlugin(name){return!!~name.indexOf('!');}
+function addPlugin(name){return'mixins!'+name;}
+function removeBaseUrl(url,config){var baseUrl=config.baseUrl||'',index=url.indexOf(baseUrl);if(~index){url=url.substring(baseUrl.length-index);}
+return url;}
+function getPath(name,config){var url=unbundledContext.require.toUrl(name);return removeBaseUrl(url,config);}
+function isRelative(name){return!!~name.indexOf('./');}
+function applyMixins(target){var mixins=Array.prototype.slice.call(arguments,1);mixins.forEach(function(mixin){target=mixin(target);});return target;}
+rjsMixins={load:function(name,req,onLoad,config){var path=getPath(name,config),mixins=this.getMixins(path),deps=[name].concat(mixins);req(deps,function(){onLoad(applyMixins.apply(null,arguments));});},getMixins:function(path){var config=module.config()||{},mixins;if(path.indexOf('?')!==-1){path=path.substring(0,path.indexOf('?'));}
+mixins=config[path]||{};return Object.keys(mixins).filter(function(mixin){return mixins[mixin]!==false;});},hasMixins:function(path){return this.getMixins(path).length;},processNames:function(names,context){var config=context.config;function processName(name){var path=getPath(name,config);if(!hasPlugin(name)&&(isRelative(name)||rjsMixins.hasMixins(path))){return addPlugin(name);}
+return name;}
+return typeof names!=='string'?names.map(processName):processName(names);}};return rjsMixins;});require(['mixins'],function(mixins){'use strict';var contexts=require.s.contexts,defContextName='_',defContext=contexts[defContextName],originalContextRequire=defContext.require,processNames=mixins.processNames;defContext.require=function(deps,callback,errback){deps=processNames(deps,defContext);return originalContextRequire(deps,callback,errback);};Object.keys(originalContextRequire).forEach(function(key){defContext.require[key]=originalContextRequire[key];});defContext.defQueue.shift=function(){var queueItem=Array.prototype.shift.call(this),lastDeps=queueItem&&queueItem[1];if(Array.isArray(lastDeps)){queueItem[1]=processNames(queueItem[1],defContext);}
+return queueItem;};});

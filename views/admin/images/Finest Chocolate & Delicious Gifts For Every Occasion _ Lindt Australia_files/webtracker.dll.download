@@ -1,0 +1,148 @@
+var sim_mode = "sim_I";
+function sim_mk(sim_a,sim_b)
+{
+	sim_a=""+sim_a;
+	while (sim_a.length < sim_b)
+	    sim_a = "0" + sim_a;
+	return sim_a;
+}
+function ma_track()
+{
+	// pass cookie
+    sim_cookies = document.cookie.split(';');
+    var sim_PC = "";
+    var sim_TC = "";
+    var sim_CNT = 0;
+    var sim_DIR = 0;
+
+    sim_snd = 0;
+    sim_ident = 0;
+    sim_urlp = "";
+    // add url
+    //The origin property is not supported in Opera version 12 (and earlier) + IE versions
+    if (!window.location.origin) { window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : ''); }
+
+    var current_url = window.location.origin + window.location.pathname + window.location.search
+
+    sim_params = current_url.split('?');
+    sim_domainstr = sim_params[0];
+	sim_domainstr = sim_domainstr.replace("http://", "");
+	sim_domainstr = sim_domainstr.replace("https://", "");
+	sim_domainstr = sim_domainstr.replace(":", "");
+	sim_domainstr = sim_domainstr.split("/")[0];
+	sim_dots = sim_domainstr.split(".");
+
+	sim_domainstr = "";
+	for (sim_s = sim_dots.length - 1; sim_s >= 0; sim_s--)
+	{
+	    if (0 && sim_domainstr.length > 7)
+			break;
+	    if (sim_domainstr != "")
+	        sim_domainstr = sim_dots[sim_s] + "." + sim_domainstr;
+		else
+		    sim_domainstr = sim_dots[sim_s];		
+	}
+
+
+
+    if (sim_params[1])
+	{
+	    sim_pset = sim_params[1].split('&');
+	    for (i = 0; i < sim_pset.length; i++)
+		{
+		    sim_kv = sim_pset[i].split('=');
+		    if (sim_kv[0] == "m_i")
+			{
+			    sim_urlp = sim_urlp + "sim_I=" + sim_kv[1] + "&";
+			    document.cookie = "m_dir=1;path=/;domain=" + sim_domainstr + ";";
+			    sim_snd = 1;
+			    sim_ident = 1;
+			    sim_DIR = 1;
+				break;
+			}
+		}	 
+	}
+
+    for (sim_c = 0; sim_c < sim_cookies.length; sim_c++)
+	{
+	    sim_trcookie = sim_cookies[sim_c].split('=');
+	    if (sim_trcookie.length > 1)
+		{
+		    sim_trcookie[0] = sim_trcookie[0].replace(' ', '')
+		    sim_trcookie[1] = sim_trcookie[1].replace(' ', '')
+		    if (sim_trcookie[0] == "m_trk")
+			{
+			    sim_PC = sim_trcookie[1];
+			    sim_ident = 1;
+			    if (sim_mode == "sim_I")
+				    sim_snd = 1;
+
+			    sim_urlp = sim_urlp + "sim_PC=" + escape(sim_PC) + "&";
+			}
+            if (sim_trcookie[0] == "m_ses")
+			{
+			    sim_TC = sim_trcookie[1];
+			}
+			if (sim_trcookie[0] == "m_cnt")
+			{
+			    sim_CNT = sim_trcookie[1];
+			    sim_CNT = (Number(sim_CNT) + 1);
+			}
+			if (sim_trcookie[0] == "m_dir")
+			{
+			    sim_DIR = 1;
+			}
+		}
+	}
+
+    sim_urlp = sim_urlp + "sim_D=" + escape(sim_DIR) + "&";
+    sim_urlp = sim_urlp + "sim_DM=" + escape(sim_domainstr) + "&";
+
+
+
+
+    if (sim_TC == "")
+	{
+	    sim_d = new Date();
+	    sim_TC = sim_mk(sim_d.getFullYear(), 4) + sim_mk(sim_d.getMonth() + 1, 2) + sim_mk(sim_d.getDate(), 2) + sim_mk(sim_d.getHours(), 2) + sim_mk(sim_d.getMinutes(), 2) + sim_mk(sim_d.getSeconds(), 2)
+	    document.cookie = "m_ses=" + sim_TC + ";path=/;domain=" + sim_domainstr + ";";			
+	};
+	document.cookie = "m_cnt=" + sim_CNT + ";path=/;domain=" + sim_domainstr + ";";
+	sim_urlp = sim_urlp + "sim_TC=" + escape(sim_TC) + "&sim_CN=" + sim_CNT + "&";
+
+
+	// add parameters
+	for (i=0; i<arguments.length; i++)
+	{
+	    if (sim_mode == "sim_V" || (sim_ident == 1 && sim_mode == "sim_IV"))
+	        sim_snd = 1;
+	    sim_urlp += "P" + (i) + "=" + escape(arguments[i]) + "&";   // no sim_P here, because P is for the parameters
+	}
+
+	// add random code
+	sim_urlp += "sim_R=" + ("" + Math.random()).substring(3);
+
+	if (sim_mode == "sim_A")
+		sim_snd=1;
+	// request
+	if (sim_snd == 1) {
+	    window.trackerLoaded = true; // push trackdata once per request
+	    var sim_headSection = document.getElementsByTagName("head")[0];
+	    var sim_baseUrl = "https://lindt.slgnt.eu/optiext/webtracker.dll";
+	    sim_baseUrl = location.protocol + sim_baseUrl.substring(sim_baseUrl.indexOf("//"));
+	    var sim_wtScript = document.createElement("script");
+	    sim_wtScript.type = "text/javascript";
+	    sim_wtScript.src = sim_baseUrl + "?sim_A=T&" + sim_urlp;
+	    sim_headSection.appendChild(sim_wtScript);
+    }
+
+};
+
+(function () {
+    if (typeof trackdata !=="undefined" && trackdata instanceof Array && (typeof trackerLoaded === "undefined" || trackerLoaded === false)) {
+        ma_track.apply(null, trackdata);
+    }
+    if (typeof webtrackerCallback == 'function') { 
+		webtrackerCallback(); 
+	}
+})();

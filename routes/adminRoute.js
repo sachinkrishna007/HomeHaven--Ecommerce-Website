@@ -83,14 +83,23 @@ adminRoute.get('/addCoupons',auth.islogin,couponController.addCoupons)
 adminRoute.get('/generate-coupon-code',auth.islogin,couponController.generateCouponCode)
 adminRoute.post('/postCoupon',couponController.postCoupon)
 adminRoute.get('/listCoupon',auth.islogin,couponController.listCoupon)
-adminRoute.delete('/removeCoupon',couponController.removeCoupon)
+adminRoute.delete('/removeCoupon',auth.islogin,couponController.removeCoupon)
 
 
 //accept return
-adminRoute.post('/accept-return/:orderId',productContoller.acceptreturn)
+adminRoute.post('/accept-return/:orderId',auth.islogin,productContoller.acceptreturn)
 
 
 //banner
-adminRoute.get('/addBanner',bannerController.addBanner)
+adminRoute.get('/addBanner',auth.islogin,bannerController.addBanner)
+adminRoute.post('/postBanner',auth.islogin,bannerController.postbanner)
+adminRoute.get('/listBanner',auth.islogin,bannerController.listBanner)
+adminRoute.get('/deleteBanner',auth.islogin,bannerController.deleteBanner)
 
+
+//sales report 
+adminRoute.get('/salesReport',auth.islogin,adminController.SalesReport)
+adminRoute.post('/salesReport',auth.islogin,adminController.postSalesReport)
+
+adminRoute.get('/getContact',auth.islogin,adminController.loadMessages)
 module.exports=adminRoute

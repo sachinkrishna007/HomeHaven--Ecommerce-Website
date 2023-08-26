@@ -42,8 +42,18 @@ const orderSchema = new mongoose.Schema({
     enum: ['Pending', 'Processing', 'Shipped', 'Delivered','CANCELLED',"Return-Req",'Return Accepted'],
     default: 'Pending',
   },
+  onlinePaymentStatus:{
+    type:String,
+    enum:['Failed','success'],
+    default:'Failed'
+
+  },
  
   discountTotal:{
+    type: Number,
+    required: true,
+  },
+  subTotal:{
     type: Number,
     required: true,
   },

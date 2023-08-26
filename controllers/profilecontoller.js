@@ -2,6 +2,7 @@ const User = require("../models/userModel")
 const Product = require("../models/productModel")
 const Order = require('../models/orderModel')
 const bcrypt = require('bcrypt')
+const Contact = require('../models/contactModel')
 
 
 const loadAddress = async (req,res) =>{
@@ -266,6 +267,26 @@ res.redirect('/profile')
   }
 }
 
+const postContact = async(req,res)=>{
+  try {
+    
+    const { name, email, subject, message } = req.body; 
+  
+  const savedContact = await Contact.create({
+    name,
+    email,
+    subject,
+    message,
+  });
+
+res.render("contact",{message:"Message Sent SuccessFully"})
+    
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
   
   module.exports ={
     loadAddress,
@@ -279,7 +300,8 @@ res.redirect('/profile')
     LoadWallet,
     editAddress,
     updateAddress,
-    deleteAddress
+    deleteAddress,
+    postContact
   
    
   }

@@ -11,10 +11,12 @@ const {ObjectId} = require('mongodb')
 const addCart = async (productId,userId)=>{
    
     const product = await Product.findOne({_id:productId})
+    console.log(product);
       const productObj = {
           productId:productId,
           quantity:1,
-          total:product.price
+          total:product.price,
+          category:product.category
       }
      
   
@@ -52,7 +54,8 @@ const addCart = async (productId,userId)=>{
                       const newCart = await Cart({
                           user:userId,
                           cartItems:productObj,
-                          cartTotal:product.price
+                          cartTotal:product.price,
+                          category:product.category
                       })
                       await newCart.save().then((response)=>{
                           resolve({status:true})

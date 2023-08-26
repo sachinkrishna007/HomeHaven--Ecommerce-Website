@@ -31,9 +31,9 @@ const adminRoute=require('./routes/adminRoute');
 app.use('/admin',adminRoute)
 
 
-// app.use('*',(req,res)=>{
-//     res.redirect('/error')
-// })
+app.use('*',(req,res)=>{
+    res.redirect('/error')
+})
 
 //port
 app.listen(3000,function(){

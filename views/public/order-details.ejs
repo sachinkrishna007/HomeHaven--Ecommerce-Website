@@ -18,20 +18,24 @@
 <br>
 <br>
 <br>
-
 <div class="details_item" style="padding:2%;">
   <h4>Shipping Address</h4>
-  <ul class="list">
-    <li><span>Name</span> : <%=selectedAddress.name %></li>
-    <li><span>Name</span> : <%=selectedAddress.mobile %></li>
-    <li><span>Address</span> : <%= selectedAddress.address %></li>
-    <li><span>City</span> : <%= selectedAddress.city %></li>
-    <li><span>Locality</span> : <%= selectedAddress.landmark || 'N/A' %></li>
-    <li><span>Pincode</span> : <%= selectedAddress.pincode %></li>
-    <li><span>State</span> : <%= selectedAddress.district %></li>
-    <li><span>State</span> : <%= selectedAddress.state %></li>
-  </ul>
+  <% if (selectedAddress) { %>
+    <ul class="list">
+      <li><span>Name</span> : <%= selectedAddress.name %></li>
+      <li><span>Name</span> : <%= selectedAddress.mobile %></li>
+      <li><span>Address</span> : <%= selectedAddress.address %></li>
+      <li><span>City</span> : <%= selectedAddress.city %></li>
+      <li><span>Locality</span> : <%= selectedAddress.landmark || 'N/A' %></li>
+      <li><span>Pincode</span> : <%= selectedAddress.pincode %></li>
+      <li><span>State</span> : <%= selectedAddress.district %></li>
+      <li><span>State</span> : <%= selectedAddress.state %></li>
+    </ul>
+  <% } else { %>
+    <p>Address not found.</p>
+  <% } %>
 </div>
+
 
 <div class="order_details_table">
   <h2>Order Details</h2>
@@ -41,6 +45,7 @@
         <tr>
           <th scope="col">Product</th>
           <th scope="col">Image</th> 
+          <th scope="col">payment Method</th> 
           <th scope="col">Price</th>
           <th scope="col">Quantity</th>
           <th scope="col">Total</th>
@@ -57,6 +62,12 @@
             <img src="../admin/images/<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" style="width: 50px; height: 50px;">
           </td>
           <td>
+            <p> <%= order.paymentMethod %></p>
+          </td>
+         
+        
+          </td>
+          <td>
             <p>₹ <%= item.productId.price %></p>
           </td>
           <td>
@@ -69,9 +80,12 @@
         <% }) %>
         <tr>
           <td colspan="4">
+            <h4>Discount Amount</h4>
             <h4>Total Amount</h4>
           </td>
           <td>
+           
+            <p><%= (order.subTotal - order.total) ? `₹${order.subTotal - order.total}` : '0' %></p>
             <p>₹ <%= order.total %></p>
           </td>
         </tr>
@@ -80,15 +94,28 @@
         <!-- Add the cancel order button -->
         <tr>
           <td colspan="5">
-            <% if (order.status == 'Pending' || order.status=='Processing'  ) { %>
-              <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button>
+            <% if (order.onlinePaymentStatus =="Failed" && order.paymentMethod=='razorpay') { %>
+             
+             
             <% } else if(order.status=='Delivered') { %>
               <button onclick="ReturnOrder('<%= order._id %>')" class="btn btn-danger">Return Order</button>
              
-            <% }else{
-               %> <button class="btn btn-danger" disabled> <%= order.status %></button> <%
+            <% }else if(order.status=="Pending" || order.status=='Processing') {
+               %>  <button onclick="cancelOrder('<%= order._id %>')" class="btn btn-danger">Cancel Order</button><%
             } %>
-          </td>
+
+
+
+                      <% if ( order.onlinePaymentStatus == "success" && order.paymentMethod=='razorpay' && order.status=='Delivered') { %>
+                        <a href="/invoice?id=<%= order._id %>" class="btn btn-primary">Download Invoice</a>
+          <% } else if(order.status == "Delivered" && order.paymentMethod=='COD'){ %>
+            <a href="/invoice?id=<%= order._id %>" class="btn btn-primary">Download Invoice</a>
+            
+          <% } else if(order.status == "Delivered" && order.paymentMethod=='wallet'){ %>
+            <a href="/invoice?id=<%= order._id %>" class="btn btn-primary">Download Invoice</a>
+            
+          <% }%>
+
         </tr>
       </tbody>
     </table>
@@ -178,5 +205,26 @@
       }
     });
   }
+
+
+  
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+    $(document).ready(function ($) {
+        $(document).on('click', '#generatePdfButton', function (event) {
+            event.preventDefault();
+            var element = document.querySelector('.table-responsive'); // Change this selector
+            let randomNumber = Math.floor(Math.random() * (10000000000 - 1)) + 1;
+            var opt = {
+                margin: 0,
+                filename: 'SalesReport' + randomNumber + '.pdf',
+                html2canvas: { scale: 10 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+    
+            html2pdf().set(opt).from(element).save();
+        });
+    });
+   </script>

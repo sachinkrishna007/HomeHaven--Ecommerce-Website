@@ -121,7 +121,8 @@
                   <label for="walletPaymentMethod">wallet</label>
                   <img src="img/product/card.jpg" alt="">
                   <div class="check"></div>
-                  <p>Please using wallet.</p>
+                  <p class="">Pay using wallet: <br class=> Available Balance :<%=user.wallet%></p>
+                 
                 </div>
               
               <!-- <div class="creat_account">
@@ -130,11 +131,11 @@
                 <a href="#">terms & conditions*</a>
               </div> -->
               <div class="coupon_area">
-                  <!-- <button id="showCouponBtn" class="btn-primary"> Coupons</button> -->
+                  <button id="showCouponBtn" type="button" class="btn-primary"> Available Coupons</button>
 
-                <input type="text" placeholder="Enter coupon code" name="couponCode" id="couponCode">
+                <input type="text" class="" placeholder="Enter coupon code" name="couponCode" id="couponCode">
                
-                <a class="tp_btn" href="#" style="width: 100px; height: 40px; margin-top: 10px;" onclick="applyCoupon('<%=cartTotal %>')" >Apply</a>
+                <a  class="tp_btn small button" href="#"  onclick="applyCoupon('<%=cartTotal %>')">Apply</a>
                 <span id="couponErr"></span>
              
               
@@ -165,6 +166,9 @@
                                         <td> ₹<%=item.minPurchase%></td>
                                         <td><%= new Date(item.validity).toDateString()%></td>
                                         <td><%=item.description%></td>
+                                        <!-- <td>
+                                          <button type="button" class="btn btn-primary" onclick="copyToClipboard('<%= item.couponCode %>')">Copy</button>
+                                      </td> -->
                                     </tr>
                                     
                                 <% }); %>
@@ -388,6 +392,10 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
     const couponCodeInput = document.getElementById('couponCode');
     const enteredCouponCode = couponCodeInput.value
    
+   
+    const subTotal = document.getElementById("subTotal")
+    const subTotalAmount = subTotal.textContent
+    const subTotalvalue = parseFloat(subTotalAmount.replace("₹", ""))
     
 
 
@@ -402,13 +410,15 @@ const totalElement = document.getElementById('total');
 
 
   try {
+
+    
     const response = await fetch('/checkout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        paymentMethod,cartTotal,enteredCouponCode,TotalValue
+        paymentMethod,cartTotal,enteredCouponCode,TotalValue,subTotalvalue
       
 })
  });
@@ -496,7 +506,7 @@ function verifyPayment(payment, data) {
     .then((response) => response.json())
     .then((verificationResult) => {
       if (verificationResult.success) {
-      
+           
         // Payment verified successfully, redirect to the confirmation page
         window.location.href = '/confirmation '; // Change this to the actual URL of your confirmation page
         // const confirmationURL = `/confirmation?orderId=${response.data.receipt}`
@@ -616,3 +626,22 @@ function applyCoupon(total) {
   });
 </script>
 
+<script>
+  function copyToClipboard(couponCode) {
+      const dummyInput = document.createElement('input');
+      document.body.appendChild(dummyInput);
+      dummyInput.value = couponCode;
+      dummyInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummyInput);
+     
+      Toastify({
+            text: 'Coupon code copied to clipboard: ' + couponCode,
+            duration: 3000,  // Duration in milliseconds
+            gravity: 'bottom', // Position the toast at the bottom
+            position: 'right', // Position the toast on the right
+            backgroundColor: '#007bff',
+            stopOnFocus: true
+        }).showToast();
+  }
+</script>

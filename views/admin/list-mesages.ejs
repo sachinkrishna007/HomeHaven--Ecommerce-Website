@@ -1,0 +1,70 @@
+<br>
+<br>
+<br>
+<br>
+<br>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contact Form Messages</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+    }
+
+    
+    table {
+      width: 80%;
+      margin: auto;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #333;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Contact Form Messages</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Subject</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% contacts.forEach(contact => { %>
+        <tr>
+          <td><%= contact.name %></td>
+          <td><%= contact.email %></td>
+          <td><%= contact.subject %></td>
+          <td><%= contact.message %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>
+

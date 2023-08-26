@@ -1,8 +1,14 @@
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
 <body>
-
+<br>
+<br>
+<br>
+<br><br>
     <main class="main-wrap">
         
-        <form action="/admin/addBanner" method="post" enctype="multipart/form-data" id="myform">
+        <form action="/admin/postBanner" method="post" enctype="multipart/form-data" id="myform">
         <section class="content-main">
         
             <div class="row">
@@ -10,7 +16,7 @@
                     <div class="content-header">
                         <h2 class="content-title">Add New Banner</h2>
                         <div>
-                            <input class="btn btn-md rounded font-sm hover-up" value="Publish" type="submit"></input>
+                            <input class="btn btn-primary" value="Submit" type="submit"></input>
                         </div>
                     </div>
                 </div>
@@ -25,13 +31,13 @@
                                 </div> -->
                                 <div class="col-md-9">
                                     <div class="mb-4">
-                                        <label class="form-label">Product title</label>
-                                        <input type="text" placeholder="Type here" class="form-control" name="title" id="name" onkeyup="titleValidation()">
+                                        <label class="form-label">Banner title</label>
+                                        <input type="text" placeholder="Type here" class="form-control" name="title" id="name" >
                                     </div>
                                     <span id="title-error"></span>
                                     <div class="mb-4">
                                         <label class="form-label">Link</label>
-                                        <input placeholder="Type here" class="form-control" rows="4" name="link" id="description" onkeyup="descriptionValidation()">
+                                        <input placeholder="Type here" class="form-control" rows="4" name="link" id="description">
                                     </div>
                                     <span id="description-error"></span>
                                 </div> <!-- col.// -->
@@ -62,3 +68,40 @@
         </section> <!-- content-main end// -->
 
     </main>
+
+    <script>
+        document.getElementById('bannerForm').addEventListener('submit', async function (event) {
+          event.preventDefault();
+        
+          const formData = new FormData(this);
+        
+          try {
+            const response = await fetch('/postBanner', {
+              method: 'POST',
+              body: formData,
+            });
+        
+            if (response.ok) {
+              const responseData = await response.json(); // Parse the JSON response
+        
+              // Show the response message to the user using Toastify or any other method
+              Toastify({
+                text: responseData.message, // Use the message from the response
+                duration: 5000,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+              }).showToast();
+        
+              // You might want to redirect the user to a different page or update UI after success
+              // window.location.href = '/successPage';
+            } else {
+              const errorText = await response.text();
+              console.error(`Error: ${errorText}`);
+            }
+          } catch (error) {
+            console.error(`Fetch error: ${error.message}`);
+          }
+        });
+        </script>
+        

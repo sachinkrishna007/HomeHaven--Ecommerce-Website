@@ -16,6 +16,7 @@
 	<meta charset="UTF-8">
 	<!-- Site Title -->
 	<title>Home Haven</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/HH_Train_%281967-1972%29.svg/2048px-HH_Train_%281967-1972%29.svg.png">
 	<!--
 		CSS
 		============================================= -->
@@ -62,15 +63,13 @@
 												<li class="nav-item"><a class="nav-link" href="single-blog.html">Blog Details</a></li>
 											</ul>
 										</li> -->
-							<li class="nav-item submenu dropdown">
-								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								 aria-expanded="false">Account</a>
-								<ul class="dropdown-menu">
-									<li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+							
 									<li class="nav-item"><a class="nav-link" href="/profile">profile</a></li>
 
 
-								</ul>
+								
+								<li class="nav-item"><a class="nav-link"  href="/wishList" >wishList</a></li>
+								
 
 							</li>
 							
@@ -88,22 +87,18 @@
 											</ul>
 										</li> -->
 
-							<li class="nav-item submenu dropdown">
-								<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								 aria-expanded="false">Account</a>
-								<ul class="dropdown-menu">
+						
 									<li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
 									<!-- <li class="nav-item"><a class="nav-link" href="logout">Tracking</a></li> -->
 									<!-- <li class="nav-item"><a class="nav-link" href="elements.html">Elements</a></li> -->
-								</ul>
-							</li>
+							
 							<% } %>   
 
-							<li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+							<li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
 						</ul>
 						<% if (isAuthenticated) { %>
 						<ul class="nav navbar-nav navbar-right">
-							<li class="nav-item"><a href="/loadCart" class="cart"><span class="ti-bag"></span></a></li>
+							<li class="nav-item"><a href="/loadCart" class="cart"><span class="ti-shopping-cart"></span></a></li>
 							<li class="nav-item">
 								<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
 							</li>
@@ -111,7 +106,7 @@
 						</ul>
 						<% } else{%> 
 							<ul class="nav navbar-nav navbar-right">
-								<li class="nav-item"><a href="/login" class="cart"><span class="ti-bag"></span></a></li>
+								<li class="nav-item"><a href="/login" class="cart"><span class="ti-shopping-cart"></span></a></li>
 								<li class="nav-item">
 									<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
 								</li>

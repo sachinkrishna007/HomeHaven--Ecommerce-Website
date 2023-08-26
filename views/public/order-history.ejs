@@ -23,6 +23,7 @@
                             <th>Date</th>
                           
                             <th>Status</th>
+                            <th> Payment Status</th>
                             <th>Total</th>
                             <th>Actions</th>
                         </tr>
@@ -52,6 +53,13 @@
                                         <% }%>
                                     </td>
                                     
+                                    <td class="border-bottom-0">
+                                        <% if (order.paymentMethod === 'razorpay') { %>
+                                            <p class="mb-0 fw-normal"><%= order.onlinePaymentStatus %></p>
+                                        <% } else  { %>
+                                          <p><%= order.paymentMethod %></p>
+                                        <% } %>
+                                    </td>
                                     <td>₹<%= order.total %></td>
                                     <td>
                                         <a href="/orderDetails/<%= order._id %>" class="btn btn-primary">View</a>

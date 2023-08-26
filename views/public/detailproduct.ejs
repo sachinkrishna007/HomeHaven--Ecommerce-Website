@@ -5,7 +5,8 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.js"></script>
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.js"></script>
-  
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <style>
 	/* Keep your existing CSS styles */
 	.img_zoom_container {
@@ -72,16 +73,34 @@
             <div class="col-lg-5 offset-lg-1">
                 <div class="s_product_text">
                    
-                    <h3 class="" style="color: rgb(0, 0, 0);"><%= product.name %></h3>
+                    <h3 class=""><%= product.name %></h3>
     
-					<h5 class="" style="font-weight: bold;">M.R.P</h5>
+					<!-- <h5 class="" style="font-weight: bold;">M.R.P</h5> -->
 					
-					<h3 class="" style="font-weight: bold; color: rgb(6, 209, 40);">₹<%= product.price %></h3>
-                    
+					<h3 class="" style="font-weight: bold; color: rgb(0, 0, 0);">M.R.P &nbsp; &nbsp;  ₹<%= product.price %></h3>
+             
                     <ul class="list">
-                        <li><a style="color: rgb(255, 0, 0);" href="#"> Category:    <%= product.category.name %></a></li>
-                        <!-- <li><a href="#"><span>Availability</span> </a></li> -->
-                    </ul>
+
+						<li><a class="active" href="#"><span>Category</span>: <%= product.category.name %></a></li>
+                       
+						<% if (product.stock == 0) { %>
+							<div class="text-nowrap text-danger">
+							  <ul> <!-- Add <ul> tag here -->
+								<li><a class="text-danger" href="#"><span class="text-dark">Availability</span> : Out of Stock</a></li>
+							  </ul> <!-- Close <ul> tag here -->
+							</div>
+						  <% } else if (product.stock < 10) { %>
+							<div class="text-nowrap text-success">
+							  <ul> <!-- Add <ul> tag here -->
+								<li><a class="text-warning" href="#"><span class="text-dark">Availability</span> : Only <%= product.stock %> stock left</a></li>
+							  </ul> <!-- Close <ul> tag here -->
+							</div>
+						  <% } else { %>
+							<ul> <!-- Add <ul> tag here -->
+							  <li><a href="#"><span>Availability</span> : In Stock</a></li>
+							</ul> <!-- Close <ul> tag here -->
+						  <% } %>
+						  
                     <p><%= product.description %></p>
                     <!-- <div class="product_count">
                         <label for="qty">Quantity:</label>
@@ -91,37 +110,27 @@
                         <button onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) && sst > 0 ) result.value--;return false;"
                             class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
                     </div> -->
-                    <% if (product.stock == 0) { %>
-                        <div class="text-nowrap text-danger"  style="font-size: 150%;">
-                            Temporarily Out of Stock
-                        </div>
-                    <% } else if (isAuthenticated && product.stock) { %>
+                   
+                    <%   if (isAuthenticated &&product.stock>0) { %>
                         <div class="card_area d-flex align-items-center">
+
                             <button class="primary-btn" onclick="addtocart('<%= product._id %>')">Add to Cart</button>
-                            <!-- <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
-                            <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a> -->
+            
+                            <button  onclick="addToWishList('<%=product._id%>')" class="icon_btn"><i class="lnr lnr lnr-heart"></i></button>
+							
 							
                         </div>
-						<div class="text-nowrap text-success"  style="font-size: 150%; padding-top: 5%;">
-                            Available to Buy
+						<div class="text-nowrap text-success" >
+							
+							
+                         
                         </div>
 
-                    <% }  else if (isAuthenticated && product.stock<10) { %>
-                        <div class="card_area d-flex align-items-center">
-                            <button class="primary-btn" onclick="addtocart('<%= product._id %>')">Add to Cart</button>
-                            <!-- <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
-                            <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a> -->
-							
-                        </div>
-						<div class="text-nowrap text-warning"  style="font-size: 150%;  padding-top: 5%;">
-                            Only Few Stocks Left
-                        </div>  
-						
-                    <% }else { %>
+                    <% } 
+					else if(!isAuthenticated) { %>
                         <div class="card_area d-flex align-items-center">
                             <a class="primary-btn" href="/login">Add to Cart</a>
-                            <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
-                            <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
+                         
                         </div>
                     <% } %> 
                 </div>
@@ -170,7 +179,7 @@
 						more than one would suddenly need to learn how to adjust all the cooking practices utilized before into a
 						streamlined plan of cooking that is more efficient for one person creating less</p>
 				</div>
-				<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+				<!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 					<div class="table-responsive">
 						<table class="table">
 							<tbody>
@@ -241,7 +250,7 @@
 							</tbody>
 						</table>
 					</div>
-				</div>
+				</div> -->
 				<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
 					<div class="row">
 						<div class="col-lg-6">
@@ -458,7 +467,7 @@
 	<!--================End Product Description Area =================-->
 
 	<!-- Start related-product Area -->
-	<section class="related-product-area section_gap_bottom">
+	<!-- <section class="related-product-area section_gap_bottom">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-lg-6 text-center">
@@ -592,7 +601,7 @@
 			</div>
 		</div>
 	</section>
-	<!-- End related-product Area -->
+	End related-product Area -->
 
 	<script>
 		function addtocart(proId) {
@@ -658,4 +667,49 @@
 		  var zoomer = event.currentTarget;
 		  zoomer.querySelector('img').style.transform = 'none';
 	 }
+
+
+
+	 
 	  </script>
+
+
+	  <script>
+	function addToWishList(proId) {
+		event.preventDefault();
+    $.ajax({
+      url: '/add-to-wishlist',
+      method: 'POST',
+      data: {
+        proId: proId
+      },
+      success: (response) => {
+        if (response) {
+		  Toastify({
+                text: "Added to Wishlist",
+                duration: 3000, 
+                newWindow: true,
+                close: true,
+                gravity: "top",
+                position: "right", 
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                stopOnFocus: true, 
+            }).showToast();
+          
+
+        } else {
+          
+          Swal.fire({
+            icon: 'error',
+            title: 'Product already exist in Wishlist',
+            timer: 2000
+          });
+
+        }
+      }
+    })
+  }
+
+
+
+</script>
