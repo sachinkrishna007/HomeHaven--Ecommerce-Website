@@ -7,7 +7,7 @@ const loadWishlist = async(req,res)=>{
     wishListHelper.WishListProducts(user).then((wishlistProducts) => {
         
 
-        res.render("wishList", {
+        res.render("wishlist", {
           user,
           wishlistProducts,
           wishlistCount,
