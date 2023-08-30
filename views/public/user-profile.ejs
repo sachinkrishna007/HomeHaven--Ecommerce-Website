@@ -87,16 +87,16 @@
             <div class="card-body">
               <div class="row">
                 <div class="col-sm-3">
-                  <p class="mb-0">Name</p>
+                  <p class="mb-0">Full Name:</p>
                 </div>
                 <div class="col-sm-9">
-                  <p class="text-muted"> <%= user.name %></p>
+                  <p class="text-muted"> <%= user.name %> &nbsp;<%= user.lastName %></p>
                 </div>
               </div>
               <hr>
               <div class="row">
                 <div class="col-sm-3">
-                  <p class="mb-0">Email</p>
+                  <p class="mb-0">Email:</p>
                 </div>
                 <div class="col-sm-9">
                   <p class="text-muted mb-0"> <%= user.email %></p>
@@ -105,13 +105,13 @@
               <hr>
               <div class="row">
                 <div class="col-sm-3">
-                  <p class="mb-0">Mobile</p>
+                  <p class="mb-0">Mobile:</p>
                 </div>
                 <div class="col-sm-9">
                   <p class="text-muted mb-0">+91<%= user.mobile %></p>
                 </div>
               </div>
-              <hr>
+              
               <!-- <div class="row">
                 <div class="col-sm-3">
                   <p class="mb-0">Mobile</p>
@@ -146,8 +146,8 @@
                   <p>District: <%= address.district %></p>
                   <p>Address: <%= address.address %></p>
                   <!-- Add an "Edit Address" button -->
-                 <a class="genric-btn warning-border" href="/editAddress/<%= address._id %>">edit</a>
-                 <a class="genric-btn danger-border" href="/deleteAddress/<%= address._id %>">Delete</a>
+                 <a class="genric-btn success" href="/editAddress/<%= address._id %>">edit</a>
+                 <a class="genric-btn danger" href="/deleteAddress/<%= address._id %>">Delete</a>
                 
                   </form>
                 </div>
@@ -175,42 +175,39 @@
                   <div class="modal-body">
                     <!-- Address form -->
                     
+                    <form>
                       <div class="mb-3">
-                        
-                        <input type="text" class="form-control" id="name" name="name" required placeholder="Enter Your Name">
-                        <div id="stateError" class="error"></div> <!-- Error container for Name field -->
-                    </div>
-                    <div class="mb-3">
-                       
-                        <input type="number" class="form-control" id="mobile" name="mobile" placeholder="Enter Your Mobile Number" required>
-                    </div>
-                    <div class="mb-3">
-                        
-                        <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Landmark">
-                    </div>
-                    <div class="mb-3">
-                       
-                        <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
-                    </div>
-                    <div class="mb-3">
-                        
-                        <input type="text" class="form-control" id="state" name="state" placeholder="State" required>
-                    </div>
-                    <div class="mb-3">
-                       
-                        <input type="number" class="form-control" id="pincode" name="pincode" placeholder="Pincode" required>
-                    </div>
-                    <div class="mb-3">
-                        
-                        <input type="text" class="form-control" id="district" name="district" placeholder="District" required>
-                    </div>
-                    <div class="mb-3">
-                       
-                        <textarea class="form-control" id="address" name="address" rows="3" placeholder="Address" required></textarea>
-                    </div>
-                      <!-- Other address fields here -->
-                  
-                  </div>
+                          <input type="text" class="form-control" id="name" name="name" required placeholder="Enter Your Name">
+                          <div class="error" id="nameError"></div>
+                      </div>
+                      <div class="mb-3">
+                          <input type="tel" class="form-control" id="mobile" name="mobile" pattern="[0-9]{10}" placeholder="Enter Your Mobile Number" required>
+                          <div class="error" id="mobileError"></div>
+                      </div>
+                      <div class="mb-3">
+                          <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Landmark">
+                      </div>
+                      <div class="mb-3">
+                          <input type="text" class="form-control" id="city" name="city" required placeholder="City">
+                          <div class="error" id="cityError"></div>
+                      </div>
+                      <div class="mb-3">
+                          <input type="text" class="form-control" id="state" name="state" required placeholder="State">
+                          <div class="error" id="stateError"></div>
+                      </div>
+                      <div class="mb-3">
+                          <input type="number" class="form-control" id="pincode" name="pincode" required placeholder="Pincode">
+                          <div class="error" id="pincodeError"></div>
+                      </div>
+                      <div class="mb-3">
+                          <input type="text" class="form-control" id="district" name="district" required placeholder="District">
+                          <div class="error" id="districtError"></div>
+                      </div>
+                      <div class="mb-3">
+                          <textarea class="form-control" id="address" name="address" rows="3" required placeholder="Address"></textarea>
+                          <div class="error" id="addressError"></div>
+                      </div>
+         
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" id="addAddressBtn">Add Address</button>
@@ -300,3 +297,54 @@
 </script>
 
 
+<script>document.querySelector('form').addEventListener('submit', function(event) {
+  const name = document.getElementById('name');
+  const mobile = document.getElementById('mobile');
+  const city = document.getElementById('city');
+  const state = document.getElementById('state');
+  const pincode = document.getElementById('pincode');
+  const district = document.getElementById('district');
+  const address = document.getElementById('address');
+
+  if (!name.value) {
+      displayError('nameError', 'Name is required');
+      event.preventDefault();
+  }
+
+  if (!mobile.validity.valid) {
+      displayError('mobileError', 'Please enter a valid 10-digit mobile number');
+      event.preventDefault();
+  }
+
+  if (!city.value) {
+      displayError('cityError', 'City is required');
+      event.preventDefault();
+  }
+
+  if (!state.value) {
+      displayError('stateError', 'State is required');
+      event.preventDefault();
+  }
+
+  if (!pincode.validity.valid) {
+      displayError('pincodeError', 'Please enter a valid pincode');
+      event.preventDefault();
+  }
+
+  if (!district.value) {
+      displayError('districtError', 'District is required');
+      event.preventDefault();
+  }
+
+  if (!address.value) {
+      displayError('addressError', 'Address is required');
+      event.preventDefault();
+  }
+});
+
+function displayError(id, message) {
+  const errorElement = document.getElementById(id);
+  errorElement.innerText = message;
+  errorElement.style.color = 'red';
+}
+</script>

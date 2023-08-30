@@ -39,11 +39,16 @@
                         <h3>Register Here</h3>
                         <form class="row login_form" action="" method="post" id="myForm" >
                             <div class="col-md-12 form-group">
-                                <input type="text" class="form-control" name="name" placeholder="Username" id="name"
-                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'" onkeyup="fnameValidation()" >
+                                <input type="text" class="form-control" name="name" placeholder="First Name" id="name"
+                                    onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" onkeyup="fnameValidation()" >
                                     <span id="fnameError" class="text-danger"></span>
 
                             </div>
+                            <div class="col-md-12 form-group">
+								<input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Last Name'" onkeyup="lnameValidation()">
+								<span id="lnameError" class="text-danger"></span>
+
+							</div>
                             <div class="col-md-12 form-group">
                                 <input type="email" class="form-control" name="email" placeholder="Email" id="email"
                                     onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'" onkeyup="emailValidation()">
@@ -100,6 +105,7 @@
   
 
   const fname = document.getElementById("name")
+  const lname = document.getElementById("lname")
  
   const email = document.getElementById("email")
   const mno = document.getElementById("mno")
@@ -108,6 +114,7 @@
 
 
   const fnameError = document.getElementById("fnameError")
+  const lnameError = document.getElementById("lnameError")
 
   const mnoError = document.getElementById("mnoError")
   const emailError = document.getElementById("emailError")
@@ -123,14 +130,14 @@
   function fnameValidation(){
 			const fnameValue = fname.value
 			if(fnameValue.trim()==0){
-				fnameError.innerHTML = ' Name is required'
+				fnameError.innerHTML = 'First Name is required'
 				fnameError.style.color = 'red'
 				fname.style.border = "solid 2px red";
 				return false;
 			}
 
 			if (!fnameValue.match(/^[A-Za-z]+$/)) {
-    fnameError.innerHTML = ' Name is not Valid (should not contain numbers)';
+    fnameError.innerHTML = ' First Name is not Valid (should not contain numbers)';
     fnameError.style.color = 'red';
     fname.style.border = "solid 2px red";
     return false;
@@ -144,6 +151,32 @@
 			fname.style.border = "solid 2px green";
 			return true
 		}
+        function lnameValidation(){
+			const lnameValue = lname.value
+			if(lnameValue.trim()==0){
+				lnameError.innerHTML = 'Last Name is required'
+				lnameError.style.color = 'red'
+				lname.style.border = "solid 2px red";
+				return false;
+			}
+
+			if(!lnameValue.match(nameRegex)){
+				lnameError.innerHTML = 'LastName is not Valid'
+				lnameError.style.color = 'red'
+				lname.style.border = "solid 2px red";
+				return false;
+			}
+
+
+
+			lnameError.innerHTML = ""
+			lnameError.style.color = "green"
+			lname.style.border = "solid 2px green";
+			return true
+		
+		}
+
+
 
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

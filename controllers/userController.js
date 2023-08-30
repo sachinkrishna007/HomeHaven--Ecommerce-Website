@@ -77,6 +77,7 @@ const validation = async (req, res) => {
     const email = req.body.email;
     const mobileNumber = req.body.mobile
     const existingUser = await User.findOne({ email: email })
+    const existingMobile = await User.findOne({mobile:mobileNumber})
     // if (!req.body.name || req.body.name.trim().length === 0) {
     //     return res.render("registration", { message: "Name is required" });
     // }
@@ -89,6 +90,9 @@ const validation = async (req, res) => {
     // }
     if (existingUser) {
         return res.render("registration", { message: "Email already exists" })
+    }
+    if (existingMobile) {
+        return res.render("registration", { message: "Mobile already exists" })
     }
     // const mobileNumberRegex = /^\d{10}$/;
     // if (!mobileNumberRegex.test(mobileNumber)) {
@@ -133,6 +137,7 @@ const verifyOtp = async (req, res) => {
                     const spassword = await securePassword(userData.password);
                     const user = new User({
                         name: userData.name,
+                        lastName: userData.lname,
                         email: userData.email,
                         mobile: userData.mobile,
                         password: spassword,

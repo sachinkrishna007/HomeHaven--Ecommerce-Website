@@ -211,40 +211,36 @@
           <div class="modal-body">
             <!-- Address form -->
             
-              <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-            </div>
             <div class="mb-3">
-                <label for="mobile" class="form-label">Mobile</label>
-                <input type="tel" class="form-control" id="mobile" name="mobile" required>
-            </div>
-            <div class="mb-3">
-                <label for="landmark" class="form-label">Landmark</label>
-                <input type="text" class="form-control" id="landmark" name="landmark">
-            </div>
-            <div class="mb-3">
-                <label for="city" class="form-label">City</label>
-                <input type="text" class="form-control" id="city" name="city" required>
-            </div>
-            <div class="mb-3">
-                <label for="state" class="form-label">State</label>
-                <input type="text" class="form-control" id="state" name="state" required>
-            </div>
-            <div class="mb-3">
-                <label for="pincode" class="form-label">Pincode</label>
-                <input type="text" class="form-control" id="pincode" name="pincode" required>
-            </div>
-            <div class="mb-3">
-                <label for="district" class="form-label">District</label>
-                <input type="text" class="form-control" id="district" name="district" required>
-            </div>
-            <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-            </div>
-              <!-- Other address fields here -->
-          
+              <input type="text" class="form-control" id="name" name="name" required placeholder="Enter Your Name">
+              <div class="error" id="nameError"></div>
+          </div>
+          <div class="mb-3">
+              <input type="tel" class="form-control" id="mobile" name="mobile" pattern="[0-9]{10}" placeholder="Enter Your Mobile Number" required>
+              <div class="error" id="mobileError"></div>
+          </div>
+          <div class="mb-3">
+              <input type="text" class="form-control" id="landmark" name="landmark" placeholder="Landmark">
+          </div>
+          <div class="mb-3">
+              <input type="text" class="form-control" id="city" name="city" required placeholder="City">
+              <div class="error" id="cityError"></div>
+          </div>
+          <div class="mb-3">
+              <input type="text" class="form-control" id="state" name="state" required placeholder="State">
+              <div class="error" id="stateError"></div>
+          </div>
+          <div class="mb-3">
+              <input type="number" class="form-control" id="pincode" name="pincode" required placeholder="Pincode" pattern="[0-9]{6}">
+              <div class="error" id="pincodeError"></div>
+          </div>
+          <div class="mb-3">
+              <input type="text" class="form-control" id="district" name="district" required placeholder="District">
+              <div class="error" id="districtError"></div>
+          </div>
+          <div class="mb-3">
+              <textarea class="form-control" id="address" name="address" rows="3" required placeholder="Address"></textarea>
+              <div class="error" id="addressError"></div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -482,7 +478,7 @@ var rzp1 = new Razorpay(options);
     Swal.close();
     // Redirect to the confirmation page
     window.location.href = '/confirmation';
-  }, 3000);
+  }, 1000);
 });
 
 }
@@ -644,4 +640,57 @@ function applyCoupon(total) {
             stopOnFocus: true
         }).showToast();
   }
+</script>
+<script>
+  document.querySelector('form').addEventListener('submit', function(event) {
+    const name = document.getElementById('name');
+    const mobile = document.getElementById('mobile');
+    const city = document.getElementById('city');
+    const state = document.getElementById('state');
+    const pincode = document.getElementById('pincode');
+    const district = document.getElementById('district');
+    const address = document.getElementById('address');
+
+    if (!name.value) {
+        displayError('nameError', 'Name is required');
+        event.preventDefault();
+    }
+
+    if (!mobile.validity.valid) {
+        displayError('mobileError', 'Please enter a valid 10-digit mobile number');
+        event.preventDefault();
+    }
+
+    if (!city.value) {
+        displayError('cityError', 'City is required');
+        event.preventDefault();
+    }
+
+    if (!state.value) {
+        displayError('stateError', 'State is required');
+        event.preventDefault();
+    }
+
+    if (!pincode.validity.valid) {
+        displayError('pincodeError', 'Please enter a valid pincode');
+        event.preventDefault();
+    }
+
+    if (!district.value) {
+        displayError('districtError', 'District is required');
+        event.preventDefault();
+    }
+
+    if (!address.value) {
+        displayError('addressError', 'Address is required');
+        event.preventDefault();
+    }
+});
+
+function displayError(id, message) {
+    const errorElement = document.getElementById(id);
+    errorElement.innerText = message;
+    errorElement.style.color = 'red';
+}
+
 </script>
