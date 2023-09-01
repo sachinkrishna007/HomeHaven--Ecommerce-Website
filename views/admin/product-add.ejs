@@ -16,9 +16,6 @@
 
     <form action="/admin/product" method="post" enctype="multipart/form-data" id="myForm" onsubmit="return validateProduct()">
 
-      <div>
-        <button class="btn btn-success" type="submit">Submit</button>
-      </div>
       <div class="mb-3">
         <label for="productName" class="form-label">Name</label>
         <input type="text" class="form-control" id="productName" name="name" onkeyup="nameValidation()">
@@ -119,6 +116,9 @@
 
 
 
+        <div>
+          <button class="btn btn-success" type="submit">Submit</button>
+        </div>
         <!-- .row end// -->
       </div>
   </div>

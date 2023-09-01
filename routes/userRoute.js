@@ -121,7 +121,7 @@ userRoute.get('/couponVerify/:id',userMiddleWare.isloggedout,couponController.ve
 
 
 //wallet
-userRoute.get('/wallet',userMiddleWare.isloggedout,profileContoller.LoadWallet)
+userRoute.get('/wallet',userMiddleWare.isloggedout,userMiddleWare.checkBlockedUser,profileContoller.LoadWallet)
 
 userRoute.get('/invoice',userMiddleWare.isloggedout,ProductController.downloadInvoice)
 

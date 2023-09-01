@@ -612,7 +612,7 @@ const loadCheckout = async (req, res) => {
 }
 const forgotPassword = async (req,res)=>{
     try {
-        res.render('forgotPassword')
+        res.render('forgotpassword')
     } catch (error) {
         error.mesage
     }
