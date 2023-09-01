@@ -386,7 +386,7 @@ const acceptreturn = async (req,res) => {
 
       await product.save();
 
-      if (order.paymentMethod === 'razorpay' || order.paymentMethod==="wallet") {
+      if (order.paymentMethod === 'razorpay' || order.paymentMethod==="wallet" ||order.paymentMethod==="COD") {
         const totalAmountRefunded = order.total; // Refund the order's total amount
       
   

@@ -199,7 +199,7 @@ const editAddress = async(req,res)=>{
       
       return res.render('error-message', { message: 'Address not found' });
     }
-    res.render('edit-Address', { address });
+    res.render('edit-address', { address });
 
 
 
