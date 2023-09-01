@@ -282,16 +282,17 @@ const adminViewOrders = async (req, res) => {
   
       const userId = req.session.user_id;
       const user = await User.findById(userId);
-      const selectedAddressId = user.selectedAddress;
-      let selectedAddress;
-      if (selectedAddressId) {
-        selectedAddress = user.address.find((address) => address._id.equals(selectedAddressId));
-      }
+      // const selectedAddressId = user.selectedAddress;
+      // console.log(selectedAddressId);
+      // let selectedAddress;
+      // if (selectedAddressId) {
+      //   selectedAddress = user.address.find((address) => address._id.equals(selectedAddressId));
+      // }
    
-      res.render('order-details-admin', { order: order, selectedAddress: selectedAddress });
+      res.render('order-details-admin', { order: order});
     } catch (error) {
       console.log(error.message);
-      res.redirect('/'); 
+      res.redirect('/dashboard'); 
     }
   };
 
