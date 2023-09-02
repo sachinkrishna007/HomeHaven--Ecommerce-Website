@@ -624,7 +624,7 @@ const forgotPasswordOtp = async (req,res)=>{
        const user = await User.findOne({mobile: mobile})
        console.log(user);
        if(!user){
-        res.render('forgotPassword',{message:"Mobile number Not found"})
+        res.render('forgotpassword',{message:"Mobile number Not found"})
          
        }
        
