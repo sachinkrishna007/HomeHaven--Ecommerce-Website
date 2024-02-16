@@ -6,12 +6,12 @@ const loadWishlist = async(req,res)=>{
     const wishlistCount = await wishListHelper.WishListCount(user);
     wishListHelper.WishListProducts(user).then((wishlistProducts) => {
         
-
+ 
         res.render("wishlist", {
           user,
-          wishlistProducts,
+          wishlistProducts,   
           wishlistCount,
-        });
+        });   
       });
 }
 const addWishList = async (req, res) => {
