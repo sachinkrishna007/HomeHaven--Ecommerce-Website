@@ -145,27 +145,27 @@ const verifyOtp = async (req, res) => {
       //     .then(async (verification_check) => { // Mark the callback function as async
       //         console.log(verification_check.status);
       //         if(verification_check.status==='approved'){
-              const spassword = await securePassword(userData.password);
-              const user = new User({
-                  name: userData.name,
-                  lastName: userData.lname,
-                  email: userData.email,
-                  mobile: userData.mobile,
-                  password: spassword,
-                  is_admin: 0
-              });
-              try {
-                  const userDataSave = await user.save();
-                  if (userDataSave) {
-                      res.redirect('/?registered=true');
-                  } else {
-                      res.render('registration', { message: "Registration Failed" });
-                  }
-              } catch (error) {
-                  console.log(error.message);
-                  res.render('registration', { message: "Registration Failed" });
-              }
-      //       
+      const spassword = await securePassword(userData.password);
+      const user = new User({
+        name: userData.name,
+        lastName: userData.lname,
+        email: userData.email,
+        mobile: userData.mobile,
+        password: spassword,
+        is_admin: 0,
+      });
+      try {
+        const userDataSave = await user.save();
+        if (userDataSave) {
+          res.redirect("/?registered=true");
+        } else {
+          res.render("registration", { message: "Registration Failed" });
+        }
+      } catch (error) {
+        console.log(error.message);
+        res.render("registration", { message: "Registration Failed" });
+      }
+      //
       //     }).catch((error) => {
       //         console.log(error.message);
       //     });
@@ -592,26 +592,57 @@ const forgotPassword = async (req, res) => {
 };
 const forgotPasswordOtp = async (req, res) => {
   try {
+    console.log(req.body);
     const mobile = req.body.mobile;
-    const user = await User.findOne({ mobile: mobile });
-    console.log(user);
+    const user = await User.findOne({ email: mobile });
+
     if (!user) {
-      res.render("forgotpassword", { message: "Mobile number Not found" });
+      res.render("forgotpassword", { message: "email  Not found" });
     } else {
-      client.verify.v2
-        .services(verifySid)
-        .verifications.create({ to: `+91${mobile}`, channel: "sms" })
-        .then((verification) => {
-          console.log(verification.status);
-          res.render("passwordOtp", { mobile: mobile });
-        })
-        .catch((error) => {
-          console.error("Error sending message:", error);
-          res.render("login", { otpError: true, msg: "Error sending OTP" });
-        });
+      console.log("here");
+      const otp = otpGenerator.generate(6, {
+        digits: true,
+        alphabets: false,
+        upperCase: false,
+        specialChars: false,
+      });
+      const transporter = nodeMailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_PASSWORD,
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.GMAIL_USER,
+        to: mobile,
+        subject: " Home - Haven OTP",
+        text: `Your OTP for Reseting Password is: ${otp}`,
+      };
+      try {
+        await OTP.create({ email:mobile, otp });
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Message sent: %s", info.messageId);
+        res.render("passwordOtp", { mobile: mobile });
+      } catch (error) {
+        console.error("Error sending email:", error);
+        res.render("login", { otpError: true, msg: "Error sending OTP" });
+      }
+      // client.verify.v2
+      //   .services(verifySid)
+      //   .verifications.create({ to: `+91${mobile}`, channel: "sms" })
+      //   .then((verification) => {
+      //     console.log(verification.status);
+      //     res.render("passwordOtp", { mobile: mobile });
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error sending message:", error);
+      //     res.render("login", { otpError: true, msg: "Error sending OTP" });
+      //   });
     }
   } catch (error) {
-    error.mesage;
+    console.log(error.message);
   }
 };
 
@@ -620,7 +651,7 @@ const forgotpasswordVerify = async (req, res) => {
     const otp = req.body.otp;
     const mobile = req.body.mobile;
 
-    const user = await User.findOne({ mobile: mobile });
+    const user = await User.findOne({ email: mobile });
     if (!user) {
       return res.render("login", {
         msg: "User not found. Please register or try again.",
@@ -630,13 +661,18 @@ const forgotpasswordVerify = async (req, res) => {
     if (user.is_Blocked) {
       return res.render("login", { msg: "You are Blocked" });
     }
-    client.verify.v2
-      .services(verifySid)
-      .verificationChecks.create({ to: `+91${mobile}`, code: otp })
-      .then((verification_check) => {
-        console.log(verification_check.status);
-        res.render("password-reset", { mobile: mobile });
-      });
+    const otpDocument = await OTP.findOne({ email: mobile, otp });
+    if (!otpDocument) {
+      res.render("password-reset", { message: "Invalid OTP" });
+    }
+    res.render("password-reset", { mobile: mobile });
+    // client.verify.v2
+    //   .services(verifySid)
+    //   .verificationChecks.create({ to: `+91${mobile}`, code: otp })
+    //   .then((verification_check) => {
+    //     console.log(verification_check.status);
+    //     res.render("password-reset", { mobile: mobile });
+    //   });
   } catch (error) {
     console.log(error.message);
   }
@@ -653,7 +689,7 @@ const resetPassword = async (req, res) => {
     }
     const hashedPassword = await securePassword(password);
     await User.findOneAndUpdate(
-      { mobile: mobile },
+      { email: mobile },
       { password: hashedPassword }
     );
     return res.render("login", {
